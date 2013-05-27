@@ -14,7 +14,7 @@
   </context-param>
   <context-param>
     <param-name>conn</param-name>
-    <param-value>jdbc:mysql://192.168.1.107:3306/bilgeguard</param-value>
+    <param-value>jdbc:mysql://93.103.12.155:3306/bilgeguard</param-value>
   </context-param>
   <context-param>
     <param-name>user</param-name>
