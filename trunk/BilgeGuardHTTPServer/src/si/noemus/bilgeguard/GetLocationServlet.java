@@ -1,7 +1,7 @@
 package si.noemus.bilgeguard;
 
 import java.io.IOException;
-import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.Locale;
@@ -40,14 +40,14 @@ public class GetLocationServlet extends InitServlet implements Servlet {
 
 		String user = (String) request.getParameter("user");
 
-		JSONArray result = getLocation(user);
+		JSONObject result = getLocation(user);
 		System.out.println("result="+result);
 		
-    	OutputStream out = null;
-    	response.setContentType("text/html");
-		response.setHeader("Content-disposition", null);
-		out = response.getOutputStream();
-		out.write(result.toString().getBytes());
+		PrintWriter  out = null;
+    	response.setContentType("application/json;charset=utf-8");
+		response.setHeader("cache-control", "no-cache");
+		out = response.getWriter();
+		out.write(result.toString());
 		out.flush();
 		out.close();
 	}
@@ -65,11 +65,11 @@ public class GetLocationServlet extends InitServlet implements Servlet {
 	}	
 	
 
-	private JSONArray getLocation(String user) {
+	private JSONObject getLocation(String user) {
     	ResultSet rs = null;
 	    Statement stmt = null;
-    	JSONArray results = new JSONArray();
-
+    	//JSONArray results = new JSONArray();
+	    JSONObject current = new JSONObject();
 	    try {
 	    	connectionMake();
 
@@ -83,7 +83,7 @@ public class GetLocationServlet extends InitServlet implements Servlet {
 	    	stmt = con.createStatement();   	
 	    	rs = stmt.executeQuery(sql);
 	    	while (rs.next()) {
-	    		JSONObject current = new JSONObject();
+	    		
 	    		current.put("date", rs.getString("date"));
 	    		String loc = rs.getString("text");
 	    		String[] locData = loc.split(":");
@@ -91,7 +91,7 @@ public class GetLocationServlet extends InitServlet implements Servlet {
 	    		String lon = locData[3].substring(4);
 	    		current.put("lat", lat);
 	    		current.put("lon", lon);
-	    		results. add(current);
+	    		//results. add(current);
 	    	
 	    	}
 	    	
@@ -110,7 +110,7 @@ public class GetLocationServlet extends InitServlet implements Servlet {
 			}
 	    }	
 
-	    return results;
+	    return current;
 	}
 	
 	
