@@ -14,7 +14,7 @@
   </context-param>
   <context-param>
     <param-name>conn</param-name>
-    <param-value>jdbc:mysql://localhost:3306/bilgeguard</param-value>
+    <param-value>jdbc:mysql://192.168.1.107:3306/bilgeguard</param-value>
   </context-param>
   <context-param>
     <param-name>user</param-name>
@@ -47,5 +47,14 @@
     <servlet-name>SendSMSServlet</servlet-name>
     <url-pattern>/SendSMSServlet</url-pattern>
   </servlet-mapping>
+  
+  <servlet>
+    <servlet-name>GetLocationServlet</servlet-name>
+    <servlet-class>si.noemus.bilgeguard.GetLocationServlet</servlet-class>
+  </servlet>  
+  <servlet-mapping>
+    <servlet-name>GetLocationServlet</servlet-name>
+    <url-pattern>/GetLocationServlet</url-pattern>
+  </servlet-mapping>  
   
 </web-app>

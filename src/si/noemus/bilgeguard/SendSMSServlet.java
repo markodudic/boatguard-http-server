@@ -26,7 +26,7 @@ public class SendSMSServlet extends InitServlet implements Servlet {
 	public SendSMSServlet() {
 		super();
 	}
-
+ 
 	/*
 	 * (non-Java-doc)
 	 * 
@@ -72,7 +72,7 @@ public class SendSMSServlet extends InitServlet implements Servlet {
 			stmt = con.createStatement();   	
 
 	    	String	sql = "insert into smsserver_out (recipient, text, create_date) " + 
-	    				"select obu, '" + message + "', now() from users where name = '" + user + "'";
+	    				"select obu, '#bilgeguard:" + message + "', now() from users where name = '" + user + "'";
 	    		
     		System.out.println("sql="+sql);
 	    	stmt.executeUpdate(sql);
