@@ -56,6 +56,7 @@ public class SendSMSServlet extends InitServlet implements Servlet {
     	OutputStream out = null;
     	response.setContentType("text/html");
 		response.setHeader("Content-disposition", null);
+		response.setHeader("Access-Control-Allow-Origin", "*");
 		out = response.getOutputStream();
 		out.write("ok.".getBytes());
 		out.flush();
@@ -72,7 +73,7 @@ public class SendSMSServlet extends InitServlet implements Servlet {
 			stmt = con.createStatement();   	
 
 	    	String	sql = "insert into smsserver_out (recipient, text, create_date) " + 
-	    				"select obu, '#bilgeguard:" + message + "', now() from users where name = '" + user + "'";
+	    				"select obu, '#bg:" + message + "', now() from users where name = '" + user + "'";
 	    		
     		System.out.println("sql="+sql);
 	    	stmt.executeUpdate(sql);
