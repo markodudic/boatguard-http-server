@@ -15,7 +15,7 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 
-public class GetLocationServlet extends InitServlet implements Servlet {
+public class GetStateServlet extends InitServlet implements Servlet {
 
 	Locale locale = Locale.getDefault();
 	
@@ -24,7 +24,7 @@ public class GetLocationServlet extends InitServlet implements Servlet {
 	 * 
 	 * @see javax.servlet.http.HttpServlet#HttpServlet()
 	 */
-	public GetLocationServlet() {
+	public GetStateServlet() {
 		super();
 	}
  
@@ -46,6 +46,7 @@ public class GetLocationServlet extends InitServlet implements Servlet {
 		PrintWriter  out = null;
     	response.setContentType("application/json;charset=utf-8");
 		response.setHeader("cache-control", "no-cache");
+		response.setHeader("Access-Control-Allow-Origin", "*");
 		out = response.getWriter();
 		out.write(result.toString());
 		out.flush();
@@ -75,7 +76,7 @@ public class GetLocationServlet extends InitServlet implements Servlet {
 
 	    	String	sql = "select date_format(message_date, '%d.%m.%Y %k:%i:%s') as date, text " +
 						"from smsserver_in left join (select obu from users where name='"+user+"') as user on (originator = obu) " +
-						"where obu is not null and text like '#bg:location:%' " +
+						"where obu is not null and text like '#bg:%' " +
 						"order by message_date desc " +
 						"limit 1";
 	    		
@@ -83,16 +84,27 @@ public class GetLocationServlet extends InitServlet implements Servlet {
 	    	stmt = con.createStatement();   	
 	    	rs = stmt.executeQuery(sql);
 	    	while (rs.next()) {
-	    		
 	    		current.put("date", rs.getString("date"));
-	    		String loc = rs.getString("text");
-	    		String[] locData = loc.split(":");
-	    		String lat = locData[2].substring(4);
-	    		String lon = locData[3].substring(4);
-	    		current.put("lat", lat);
-	    		current.put("lon", lon);
-	    		//results. add(current);
 	    	
+	    		/*
+	    		#BG:00,02F3,01F3,00E,15.1,46.5,20130523181121.000
+	    		1.-UVOD
+	    		2.-STANJE PUMPE (00-NE PUMPA, 01-PUMPA, 10-ZAMAŠENA)
+	    		3.-PRETEÈENE As
+	    		4.-STANJE NAPETOSTI
+	    		5.-TRENUTNI TOK( ENOTE ŠE NE VEM)
+	    		6.-LONGITUDE
+	    		7.-LATITUDE
+	    		8.-UTC TIME
+	    		*/
+	    		String data = rs.getString("text").split(":")[1];
+	    		String[] dataA = data.split(",");
+	    		current.put("pumpa", dataA[0]);
+	    		current.put("baterija_as", dataA[1]);
+	    		current.put("baterija_napetost", dataA[2]);
+	    		current.put("baterija_tok", dataA[3]);
+	    		current.put("lon", dataA[4]);
+	    		current.put("lat", dataA[5]);
 	    	}
 	    	
 	    } catch (Exception theException) {
