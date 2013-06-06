@@ -17,7 +17,7 @@ import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 
 
-public class GetStateServlet extends InitServlet implements Servlet {
+public class GetSettingsServlet extends InitServlet implements Servlet {
 
 	Locale locale = Locale.getDefault();
 	
@@ -26,7 +26,7 @@ public class GetStateServlet extends InitServlet implements Servlet {
 	 * 
 	 * @see javax.servlet.http.HttpServlet#HttpServlet()
 	 */
-	public GetStateServlet() {
+	public GetSettingsServlet() {
 		super();
 	}
  
@@ -62,8 +62,7 @@ public class GetStateServlet extends InitServlet implements Servlet {
 	    JSONObject jObj=(JSONObject)jArray.get(1);
 	    String user = (String) jObj.get("user");
 	    
-	    
-		JSONObject result = getLocation(user);
+	   JSONObject result = getSettings(user);
 		System.out.println("result="+result);
 		
 		PrintWriter  out = null;
@@ -78,6 +77,44 @@ public class GetStateServlet extends InitServlet implements Servlet {
 	}	
 	
 
+	private JSONObject getSettings(String user) {
+    	ResultSet rs = null;
+	    Statement stmt = null;
+
+	    JSONObject current = new JSONObject();
+	    try {
+	    	connectionMake();
+
+	    	String	sql = "select x_geo_fence, y_geo_fence, radius " +
+						"from users " +
+						"where name='"+user+"'";
+	    		
+    		System.out.println("sql="+sql);
+	    	stmt = con.createStatement();   	
+	    	rs = stmt.executeQuery(sql);
+	    	while (rs.next()) {
+	    		current.put("x_geo_fence", rs.getString("x_geo_fence"));
+	    		current.put("y_geo_fence", rs.getString("y_geo_fence"));
+	    		current.put("radius", rs.getString("radius"));
+	    	}
+	    	
+	    } catch (Exception theException) {
+	    	theException.printStackTrace();
+	    } finally {
+	    	try {
+	    		if (rs != null) {
+	    			rs.close();
+	    		}
+
+	    		if (stmt != null) {
+	    			stmt.close();
+	    		}
+			} catch (Exception e) {
+			}
+	    }	
+
+	    return current;
+	}
 	
 	
 	

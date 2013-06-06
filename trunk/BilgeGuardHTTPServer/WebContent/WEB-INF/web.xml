@@ -49,12 +49,30 @@
   </servlet-mapping>
   
   <servlet>
-    <servlet-name>GetLocationServlet</servlet-name>
-    <servlet-class>si.noemus.bilgeguard.GetLocationServlet</servlet-class>
+    <servlet-name>GetStateServlet</servlet-name>
+    <servlet-class>si.noemus.bilgeguard.GetStateServlet</servlet-class>
   </servlet>  
   <servlet-mapping>
-    <servlet-name>GetLocationServlet</servlet-name>
-    <url-pattern>/GetLocationServlet</url-pattern>
+    <servlet-name>GetStateServlet</servlet-name>
+    <url-pattern>/GetStateServlet</url-pattern>
   </servlet-mapping>  
+  
+  <servlet>
+    <servlet-name>GetSettingsServlet</servlet-name>
+    <servlet-class>si.noemus.bilgeguard.GetSettingsServlet</servlet-class>
+  </servlet>  
+  <servlet-mapping>
+    <servlet-name>GetSettingsServlet</servlet-name>
+    <url-pattern>/GetSettingsServlet</url-pattern>
+  </servlet-mapping>  
+  
+  <servlet>
+    <servlet-name>SetSettingsServlet</servlet-name>
+    <servlet-class>si.noemus.bilgeguard.SetSettingsServlet</servlet-class>
+  </servlet>  
+  <servlet-mapping>
+    <servlet-name>SetSettingsServlet</servlet-name>
+    <url-pattern>/SetSettingsServlet</url-pattern>
+  </servlet-mapping>
   
 </web-app>
