@@ -39,7 +39,7 @@ public class GetSettingsServlet extends InitServlet implements Servlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		System.out.println("SERVLET GET");		
-
+		doPost(request, response);
 	}
 
 	/*
@@ -85,7 +85,7 @@ public class GetSettingsServlet extends InitServlet implements Servlet {
 	    try {
 	    	connectionMake();
 
-	    	String	sql = "select x_geo_fence, y_geo_fence, radius " +
+	    	String	sql = "select x_geo_fence, y_geo_fence, radius, active " +
 						"from users " +
 						"where name='"+user+"'";
 	    		
@@ -96,6 +96,7 @@ public class GetSettingsServlet extends InitServlet implements Servlet {
 	    		current.put("x_geo_fence", rs.getString("x_geo_fence"));
 	    		current.put("y_geo_fence", rs.getString("y_geo_fence"));
 	    		current.put("radius", rs.getString("radius"));
+	    		current.put("active", rs.getString("active"));
 	    	}
 	    	
 	    } catch (Exception theException) {

@@ -67,12 +67,20 @@
   </servlet-mapping>  
   
   <servlet>
+    <servlet-name>GetHistoryServlet</servlet-name>
+    <servlet-class>si.noemus.bilgeguard.GetHistoryServlet</servlet-class>
+  </servlet>  
+  <servlet-mapping>
+    <servlet-name>GetHistoryServlet</servlet-name>
+    <url-pattern>/GetHistoryServlet</url-pattern>
+  </servlet-mapping>    
+  
+  <servlet>
     <servlet-name>SetSettingsServlet</servlet-name>
     <servlet-class>si.noemus.bilgeguard.SetSettingsServlet</servlet-class>
   </servlet>  
   <servlet-mapping>
     <servlet-name>SetSettingsServlet</servlet-name>
     <url-pattern>/SetSettingsServlet</url-pattern>
-  </servlet-mapping>
-  
+  </servlet-mapping>  
 </web-app>
