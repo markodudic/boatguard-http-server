@@ -76,10 +76,5 @@ public class GetStateServlet extends InitServlet implements Servlet {
 		out.close();
 	
 	}	
-	
-
-	
-	
-	
 
 }

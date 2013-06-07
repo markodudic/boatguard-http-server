@@ -2,24 +2,22 @@ package si.noemus.bilgeguard;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.Locale;
-import java.util.Vector;
 
 import javax.servlet.Servlet;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 
 
-public class SetSettingsServlet extends InitServlet implements Servlet {
+public class GetHistoryServlet extends InitServlet implements Servlet {
 
 	Locale locale = Locale.getDefault();
 	
@@ -28,7 +26,7 @@ public class SetSettingsServlet extends InitServlet implements Servlet {
 	 * 
 	 * @see javax.servlet.http.HttpServlet#HttpServlet()
 	 */
-	public SetSettingsServlet() {
+	public GetHistoryServlet() {
 		super();
 	}
  
@@ -41,7 +39,7 @@ public class SetSettingsServlet extends InitServlet implements Servlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		System.out.println("SERVLET GET");		
-		doPost(request, response);
+
 	}
 
 	/*
@@ -52,7 +50,7 @@ public class SetSettingsServlet extends InitServlet implements Servlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		System.out.println("SERVLET POST");		
-
+    	
 		StringBuilder sb = new StringBuilder();
 	    BufferedReader br = request.getReader();
 	    String str;
@@ -64,51 +62,71 @@ public class SetSettingsServlet extends InitServlet implements Servlet {
 	    JSONObject jObj=(JSONObject)jArray.get(1);
 	    String user = (String) jObj.get("user");
 	    jObj=(JSONObject)jArray.get(2);
-	    String radius = (String) jObj.get("radius");
-	    jObj=(JSONObject)jArray.get(3);
-	    String active = (String) jObj.get("active");
-	    
-	    setSettings(user, radius, active);
-    	
-    	OutputStream out = null;
-    	response.setContentType("text/html");
-		response.setHeader("Content-disposition", null);
+	    String interval = (String) jObj.get("interval");
+
+		JSONArray result = getHistory(user, interval);
+		System.out.println("result="+result);
+		
+		PrintWriter  out = null;
+    	response.setContentType("application/json;charset=utf-8");
+		response.setHeader("cache-control", "no-cache");
 		response.setHeader("Access-Control-Allow-Origin", "*");
-		out = response.getOutputStream();
-		out.write("ok.".getBytes());
+		out = response.getWriter();
+		out.write(result.toString());
 		out.flush();
-		out.close();    	
+		out.close();
 	
 	}	
 	
 
-	private void setSettings(String user, String radius, String active) {
-    	Statement stmt = null;
-
+	private JSONArray getHistory(String user, String interval) {
+    	ResultSet rs = null;
+	    Statement stmt = null;
+    	//JSONArray results = new JSONArray();
+	    JSONArray history = new JSONArray();
 	    try {
-	    	JSONObject jObj = getLocation(user);
-	    	
 	    	connectionMake();
-			stmt = con.createStatement();   	
 
-	    	String	sql = "update users " +
-	    				  " set radius=" + radius + ", x_geo_fence=" + jObj.get("lon") + ",y_geo_fence=" + jObj.get("lat") + ",active=" + active +
-	    				  " where name = '" + user + "'";
+	    	String	sql = "select date_format(message_date, '%d.%m.%Y %k:%i:%s') as date, text " +
+						"from smsserver_in left join (select obu from users where name='"+user+"') as user on (originator = obu) " +
+						"where obu is not null and text like '#bg:%' and " +
+						"	message_date > now() - INTERVAL 1 " + interval +
+						" order by message_date desc " +
+						"limit 100";
 	    		
     		System.out.println("sql="+sql);
-	    	stmt.executeUpdate(sql);
+	    	stmt = con.createStatement();   	
+	    	rs = stmt.executeQuery(sql);
+	    	while (rs.next()) {
+	    	    JSONObject current = new JSONObject();
+	    		current.put("date", rs.getString("date"));
+
+	    		if (!rs.getString("text").split(":")[0].equalsIgnoreCase("#bg") || rs.getString("text").split(":").length == 1) continue;
+		    	String data = rs.getString("text").split(":")[1];
+	    		String[] dataA = data.split(",");
+	    		current.put("pumpa", dataA[0]);
+	    		current.put("baterija_as", dataA[1]);
+	    		current.put("baterija_napetost", dataA[2]);
+	    		current.put("baterija_tok", dataA[3]);
+	    		history.add(current);
+	    	}
+	    	
 	    } catch (Exception theException) {
 	    	theException.printStackTrace();
 	    } finally {
 	    	try {
+	    		if (rs != null) {
+	    			rs.close();
+	    		}
+
 	    		if (stmt != null) {
 	    			stmt.close();
 	    		}
 			} catch (Exception e) {
 			}
 	    }	
-		
-		return;
+
+	    return history;
 	}
 	
 	
