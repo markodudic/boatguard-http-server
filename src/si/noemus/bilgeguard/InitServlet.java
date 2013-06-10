@@ -157,8 +157,11 @@ public class InitServlet extends HttpServlet {
 	    try {
 	    	connectionMake();
 
-	    	String	sql = "select date_format(message_date, '%d.%m.%Y %k:%i:%s') as date, text " +
-						"from smsserver_in left join (select obu from users where name='"+user+"') as user on (originator = obu) " +
+	    	String	sql = "select date_format(message_date, '%d.%m.%Y %k:%i:%s') as date, text, x_geo_fence, y_geo_fence, radius, active " +
+						"from smsserver_in left join (select obu, x_geo_fence, y_geo_fence, radius, active " +
+						"								from users " +
+						"								where name='"+user+"') as user " +
+						"on (originator = obu) " +
 						"where obu is not null and text like '#bg:%' " +
 						"order by message_date desc " +
 						"limit 1";
@@ -188,6 +191,23 @@ public class InitServlet extends HttpServlet {
 	    		current.put("baterija_tok", dataA[3]);
 	    		current.put("lon", dataA[4]);
 	    		current.put("lat", dataA[5]);
+	    		
+	    		if (rs.getString("active").equals("1")) {
+		    		float lat1 = transform(Float.parseFloat(dataA[4]));
+		    		float lon1 = transform(Float.parseFloat(dataA[5]));
+		    		float lat2 = transform(Float.parseFloat(rs.getString("x_geo_fence")));
+		    		float lon2 = transform(Float.parseFloat(rs.getString("y_geo_fence")));
+		    		int radius = Integer.parseInt(rs.getString("radius"));
+		    		double distance = gps2m(lat1, lon1, lat2, lon2);
+		    		if (distance <= radius) {
+			    		current.put("geofence", "1"); //home
+		    		} else {
+			    		current.put("geofence", "2"); //alarm
+		    		}
+	    		} else {
+		    		current.put("geofence", "0"); //ni vklopljen
+	    		}
+	    		
 	    	}
 	    	
 	    } catch (Exception theException) {
@@ -208,5 +228,26 @@ public class InitServlet extends HttpServlet {
 	    return current;
 	}
 	
+	
+	private double gps2m(float lat_a, float lng_a, float lat_b, float lng_b) {
+		float pk = (float) (180/3.14169);
+		float a1 = lat_a / pk;
+		float a2 = lng_a / pk;
+		float b1 = lat_b / pk;
+		float b2 = lng_b / pk;
+		double t1 = Math.cos(a1) * Math.cos(a2) * Math.cos(b1) * Math.cos(b2);
+		double t2 = Math.cos(a1) * Math.sin(a2) * Math.cos(b1) * Math.sin(b2);
+		double t3 = Math.sin(a1) * Math.sin(b1);
+		double tt = Math.acos(t1 + t2 + t3);
+		System.out.println(6366000*tt);
+		return 6366000*tt;
+	}	
+	
+	private float transform(float x) {
+		double x_ = Math.floor(x/100);
+		double x__ = (x/100 - x_)/0.6;
+		x = (float) (x_ + x__);
+		return x;
+	}
 }
 
