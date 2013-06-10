@@ -38,7 +38,8 @@ public class GetStateServlet extends InitServlet implements Servlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		System.out.println("SERVLET GET");		
+		System.out.println("SERVLET GET");	
+		doPost(request, response);
 
 	}
 
@@ -57,13 +58,13 @@ public class GetStateServlet extends InitServlet implements Servlet {
 	    while( (str = br.readLine()) != null ){
 	        sb.append(str);
 	    }
-	    
+	    JSONObject result = getLocation("marko");
 	    JSONArray jArray = (JSONArray)JSONValue.parse(sb.toString());
 	    JSONObject jObj=(JSONObject)jArray.get(1);
 	    String user = (String) jObj.get("user");
 	    
 	    
-		JSONObject result = getLocation(user);
+		result = getLocation(user);
 		System.out.println("result="+result);
 		
 		PrintWriter  out = null;
