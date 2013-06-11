@@ -157,7 +157,7 @@ public class InitServlet extends HttpServlet {
 	    try {
 	    	connectionMake();
 
-	    	String	sql = "select date_format(message_date, '%d.%m.%Y %k:%i:%s') as date, text, x_geo_fence, y_geo_fence, radius, active " +
+	    	String	sql = "select date_format(message_date, '%d.%m.%Y %k:%i') as date, text, x_geo_fence, y_geo_fence, radius, active " +
 						"from smsserver_in left join (select obu, x_geo_fence, y_geo_fence, radius, active " +
 						"								from users " +
 						"								where name='"+user+"') as user " +
