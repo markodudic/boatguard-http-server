@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:javaee="http://java.sun.com/xml/ns/javaee" xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd" version="2.4">
-  <display-name>papirservis</display-name>
+  <display-name>bg</display-name>
   <description></description>
   <context-param>
     <param-name>webAppRootKey</param-name>
-    <param-value>papirservis</param-value>
+    <param-value>bg</param-value>
   </context-param>
 
 
@@ -83,4 +83,13 @@
     <servlet-name>SetSettingsServlet</servlet-name>
     <url-pattern>/SetSettingsServlet</url-pattern>
   </servlet-mapping>  
+  
+  <servlet>
+    <servlet-name>obu</servlet-name>
+    <servlet-class>si.noemus.bilgeguard.obu</servlet-class>
+  </servlet>  
+  <servlet-mapping>
+    <servlet-name>obu</servlet-name>
+    <url-pattern>/obu</url-pattern>
+  </servlet-mapping>    
 </web-app>
