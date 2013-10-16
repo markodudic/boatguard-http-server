@@ -3,7 +3,7 @@
     <wb-module deploy-name="BilgeGuardHTTPServer">
         <wb-resource deploy-path="/" source-path="/WebContent"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src"/>
-        <property name="context-root" value="BilgeGuardHTTPServer"/>
         <property name="java-output-path" value="/BilgeGuardHTTPServer/build/classes"/>
+        <property name="context-root" value="bg"/>
     </wb-module>
 </project-modules>

@@ -17,7 +17,7 @@ import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 
 
-public class GetStateServlet extends InitServlet implements Servlet {
+public class obu extends InitServlet implements Servlet {
 
 	Locale locale = Locale.getDefault();
 	
@@ -26,7 +26,7 @@ public class GetStateServlet extends InitServlet implements Servlet {
 	 * 
 	 * @see javax.servlet.http.HttpServlet#HttpServlet()
 	 */
-	public GetStateServlet() {
+	public obu() {
 		super();
 	}
  
@@ -50,30 +50,54 @@ public class GetStateServlet extends InitServlet implements Servlet {
 	 *      HttpServletResponse arg1)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		System.out.println("SERVLET POST");		
-    	
-		StringBuilder sb = new StringBuilder();
-	    BufferedReader br = request.getReader();
-	    String str;
-	    while( (str = br.readLine()) != null ){
-	        sb.append(str);
-	    }
-	    //JSONObject result = getLocation("marko");
-	    JSONArray jArray = (JSONArray)JSONValue.parse(sb.toString());
-	    JSONObject jObj=(JSONObject)jArray.get(1);
-	    String user = (String) jObj.get("user");
-	    
-	    JSONObject result = getLocation(user);
+		System.out.println("SERVLET POST="+request.getRemoteAddr()+";"+request.getRemoteHost());		
+		
+		String ac = request.getParameter("ac");
+		String or = request.getParameter("or");
+		String bg = request.getParameter("bg");
+
+		if ((or!=null) && (bg!=null)) {
+			setState(or, bg);
+		}
 		
 		PrintWriter  out = null;
-    	response.setContentType("application/json;charset=utf-8");
+    	response.setContentType("text/plain;charset=utf-8");
 		response.setHeader("cache-control", "no-cache");
 		response.setHeader("Access-Control-Allow-Origin", "*");
 		out = response.getWriter();
-		out.write(result.toString());
+		if ((ac!=null) && (ac.equals("1")))
+			out.write("#SRV");
+		else
+			out.write("OK");
 		out.flush();
 		out.close();
 	
+	}	
+	
+	private void setState(String or, String bg) {
+    	Statement stmt = null;
+
+	    try {
+	    	connectionMake();
+			stmt = con.createStatement();   	
+
+	    	String	sql = "insert into smsserver_in (originator, message_date, receive_date, text, gateway_id) " +
+	    				  " values ('" + or + "', now(), now(), '" + bg + "', 'gprs')";
+	    		
+    		System.out.println("sql="+sql);
+	    	stmt.executeUpdate(sql);
+	    } catch (Exception theException) {
+	    	theException.printStackTrace();
+	    } finally {
+	    	try {
+	    		if (stmt != null) {
+	    			stmt.close();
+	    		}
+			} catch (Exception e) {
+			}
+	    }	
+		
+		return;
 	}	
 
 }
