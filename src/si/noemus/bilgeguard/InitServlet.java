@@ -192,7 +192,9 @@ public class InitServlet extends HttpServlet {
 	    		current.put("lon", dataA[4]);
 	    		current.put("lat", dataA[5]);
 	    		
-	    		if (rs.getString("active").equals("1")) {
+	    		if (rs.getString("active").equals("1") && 
+	    			Math.round(Float.parseFloat(dataA[4]))!=0 && 
+	    			Math.round(Float.parseFloat(dataA[5]))!=0) {
 		    		float lat1 = transform(Float.parseFloat(dataA[4]));
 		    		float lon1 = transform(Float.parseFloat(dataA[5]));
 		    		float lat2 = transform(Float.parseFloat(rs.getString("x_geo_fence")));

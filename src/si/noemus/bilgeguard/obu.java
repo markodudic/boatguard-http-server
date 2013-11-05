@@ -65,10 +65,11 @@ public class obu extends InitServlet implements Servlet {
 		response.setHeader("cache-control", "no-cache");
 		response.setHeader("Access-Control-Allow-Origin", "*");
 		out = response.getWriter();
-		if ((ac!=null) && (ac.equals("1")))
+		if ((ac!=null) && (ac.equals("1"))) {
 			out.write("#SRV");
-		else
+		} else {
 			out.write("OK");
+		}
 		out.flush();
 		out.close();
 	
