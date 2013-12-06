@@ -92,7 +92,8 @@ public class SetSettingsServlet extends InitServlet implements Servlet {
 			stmt = con.createStatement();   	
 
 	    	String	sql = "update users " +
-	    				  " set radius=" + radius + ", x_geo_fence=" + jObj.get("lon") + ",y_geo_fence=" + jObj.get("lat") + ",active=" + active +
+	    				  //" set radius=" + radius + ", x_geo_fence=" + jObj.get("lon") + ",y_geo_fence=" + jObj.get("lat") + ",active=" + active +
+	    				  " set radius=" + radius + ",active=" + active +
 	    				  " where name = '" + user + "'";
 	    		
     		System.out.println("sql="+sql);
