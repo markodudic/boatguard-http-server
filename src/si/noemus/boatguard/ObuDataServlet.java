@@ -131,9 +131,12 @@ public class ObuDataServlet extends InitServlet implements Servlet {
 	    			}
 	    			if (state.getId() == Constant.STATE_ACCU_AH){
 	    				int stateAh = Integer.parseInt(stateValue, 16);
-	    				String raw_state_last = stateDataLast.get(Constant.STATE_ROW_STATE).getValue();
-	    				int stateAhLast = Integer.parseInt(raw_state_last.split(",")[1], 16);
-	    				//int stateAhLast = Integer.parseInt(stateDataLast.get(Constant.STATE_ACCU_AH).getValue());
+	    				int stateAhLast = Integer.parseInt(InitServlet.appSettings.get(Constant.NAPETOST_TOK_MAX).getValue());
+	    				if (stateDataLast.get(Constant.STATE_ROW_STATE) != null) {
+	    					String raw_state_last = stateDataLast.get(Constant.STATE_ROW_STATE).getValue();
+	    					stateAhLast = Integer.parseInt(raw_state_last.split(",")[1], 16);
+	    					//int stateAhLast = Integer.parseInt(stateDataLast.get(Constant.STATE_ACCU_AH).getValue());
+	    				}
 	    				int stateNapetost = Integer.parseInt(states[2], 16);
 	    				//System.out.println(stateAh+"-"+stateAhLast);
 	    				
@@ -206,7 +209,7 @@ public class ObuDataServlet extends InitServlet implements Servlet {
 	    		settings.clear();
     			
 	    		while (rs.next()) {
-	    			System.out.println(rs.getInt("id_setting")+":"+rs.getString("value"));
+	    			//System.out.println(rs.getInt("id_setting")+":"+rs.getString("value"));
 	    			settings.put(rs.getInt("id_setting"), rs.getString("value"));
 	    		}
     		}
