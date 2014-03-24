@@ -4,7 +4,10 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.sql.Timestamp;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
 import javax.servlet.Servlet;
 import javax.servlet.ServletException;
@@ -12,11 +15,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
 
 import si.noemus.bilgeguard.InitServlet;
 import si.noemus.boatguard.objects.Obu;
 import si.noemus.boatguard.objects.State;
+import si.noemus.boatguard.objects.StateData;
 import si.noemus.boatguard.util.Constant;
 
 
@@ -89,24 +92,57 @@ public class ObuDataServlet extends InitServlet implements Servlet {
     	Statement stmt = null;
     	
 	    try {
-	    	Obu obu = getObuId(gsmnum, serial);
+	    	Obu obu = getObu(gsmnum, serial);
 	    	String[] states = data.split(",");
 	    	String dateState = states[6];
+	    	Map<Integer, StateData> stateDataLast = getObuLast(obu.getId());
 	    	
 	    	connectionMake();
 			stmt = con.createStatement();   	
-
+ 
 	    	String	sql = "insert into states_data (id_state, id_obu, value, date_state) " + 
 	    				"values (" + Constant.STATE_ROW_STATE + ", " + obu.getId() + ", '" + data + "', " + dateState + ")";
 	    		
 	    	log.info(sql.replaceAll("'", ""));
 	    	stmt.executeUpdate(sql);
-
+	    	
 	    	for (int i=0;i<states.length;i++) {
 	    		if (statesByPosition.get(i) != null) {
 	    			String stateValue = states[i];
 	    			State state = statesByPosition.get(i);
-	    	    	sql = "insert into states_data (id_state, id_obu, value, date_state) " + 
+	    			if (state.getId() == Constant.STATE_ACCU_TOK){
+	    				int stateTok = Integer.parseInt(stateValue, 16);
+	    				if (stateTok <= Integer.parseInt(InitServlet.appSettings.get(Constant.APP_SETTING_TOK_MIN).getValue())) {
+	    					stateTok = 0;
+	    				} else {
+	    					stateTok = (3 / Integer.parseInt(InitServlet.appSettings.get(Constant.APP_SETTINGS_NAPETOST_TOK_MAX).getValue())) * stateTok;
+	    				}
+	    				stateValue = stateTok+"";	    				
+	    			}
+	    			if (state.getId() == Constant.STATE_ACCU_NAPETOST){
+	    				int stateNapetost = Integer.parseInt(stateValue, 16);
+	    				int stateTok = Integer.parseInt(states[3], 16);
+	    				//ce je tok<APP_SETTING_TOK_MIN je napetost zadnja od takrat ko je tok>APP_SETTING_TOK_MIN
+	    				if ((stateDataLast.get(Constant.STATE_ACCU_NAPETOST)!= null) && (stateTok <= Integer.parseInt(InitServlet.appSettings.get(Constant.APP_SETTING_TOK_MIN).getValue()))) {
+	    					stateValue = Integer.parseInt(stateDataLast.get(Constant.STATE_ACCU_NAPETOST).getValue()) + "";
+	    				} else {
+	    					stateValue = Math.round((stateNapetost / Double.parseDouble(InitServlet.appSettings.get(Constant.APP_SETTING_NAPETOST_KOEF1).getValue())) * Double.parseDouble(InitServlet.appSettings.get(Constant.APP_SETTING_NAPETOST_KOEF2).getValue()))+"";
+	    				}
+	    			}
+	    			if (state.getId() == Constant.STATE_ACCU_AH){
+	    				int stateAh = Integer.parseInt(stateValue, 16);
+	    				String raw_state_last = stateDataLast.get(Constant.STATE_ROW_STATE).getValue();
+	    				int stateAhLast = Integer.parseInt(raw_state_last.split(",")[1], 16);
+	    				//int stateAhLast = Integer.parseInt(stateDataLast.get(Constant.STATE_ACCU_AH).getValue());
+	    				int stateNapetost = Integer.parseInt(states[2], 16);
+	    				//System.out.println(stateAh+"-"+stateAhLast);
+	    				
+	    				int napetost_percent = (int) Math.round(stateNapetost * Double.parseDouble(InitServlet.appSettings.get(Constant.APP_SETTING_NAPETOST_KOEF2).getValue()));
+	    				Double energija = (double) ((napetost_percent/100) * Integer.parseInt(InitServlet.appSettings.get(Constant.APP_SETTING_ENERGIJA).getValue())) - ((0.01/10240)*(stateAh-stateAhLast));
+	    				
+	    				stateValue = energija + "";
+	    			}
+	    			sql = "insert into states_data (id_state, id_obu, value, date_state) " + 
 	    	    		"values ('" + state.getId() + "', " + obu.getId() + ", '" + stateValue + "', " + dateState + ")";
 		    		
 	    	    	stmt.executeUpdate(sql);
@@ -114,6 +150,17 @@ public class ObuDataServlet extends InitServlet implements Servlet {
 	    		}
 	    	}
 	    
+	    	Map<Integer, String> settings = obu.getSettings();
+    		float lat1 = transform(Float.parseFloat(states[4]));
+    		float lon1 = transform(Float.parseFloat(states[5]));
+    		float lat2 = transform(Float.parseFloat(settings.get(Constant.SETTINGS_LON)));
+    		float lon2 = transform(Float.parseFloat(settings.get(Constant.SETTINGS_LAT)));
+    		double distance = gps2m(lat1, lon1, lat2, lon2);
+	    	sql = "insert into states_data (id_state, id_obu, value, date_state) " + 
+    	    		"values ('" + Constant.STATE_GEO_DIST + "', " + obu.getId() + ", '" + distance + "', " + dateState + ")";
+	    		
+   	    	stmt.executeUpdate(sql);
+	    	
 	    } catch (Exception theException) {
 	    	theException.printStackTrace();
 	    } finally {
@@ -129,7 +176,8 @@ public class ObuDataServlet extends InitServlet implements Servlet {
 	}
 	
 	
-	private Obu getObuId(String gsmnum, String serial) {
+	//todo : cache obu
+	private Obu getObu(String gsmnum, String serial) {
     	ResultSet rs = null;
 	    Statement stmt = null;
     	Obu obu = new Obu();
@@ -138,8 +186,7 @@ public class ObuDataServlet extends InitServlet implements Servlet {
 
 	    	String	sql = "select * from obus where number = '" + gsmnum + "' or serial_number = '" + serial + "'";
 	    		
-    		System.out.println("sql="+sql);
-	    	stmt = con.createStatement();   	
+    		stmt = con.createStatement();   	
 	    	rs = stmt.executeQuery(sql);
     		
 	    	if (rs.next()) {
@@ -148,8 +195,22 @@ public class ObuDataServlet extends InitServlet implements Servlet {
 	    		obu.setPin(rs.getString("pin"));
 	    		obu.setPuk(rs.getString("puk"));
 	    		obu.setSerial_number(rs.getString("serial_number"));
-	    		obu.setActive(rs.getInt("active"));
+	    		obu.setActive(rs.getInt("active"));	    		
 	    	}
+	    	
+    		if (obu.getId() > 0) {
+		    	sql = "select * from obu_settings where id_obu = " + obu.getId() + "";
+	    		
+	    		rs = stmt.executeQuery(sql);
+	    		Map<Integer, String> settings = obu.getSettings();
+	    		settings.clear();
+    			
+	    		while (rs.next()) {
+	    			System.out.println(rs.getInt("id_setting")+":"+rs.getString("value"));
+	    			settings.put(rs.getInt("id_setting"), rs.getString("value"));
+	    		}
+    		}
+	    	
 	
 	    } catch (Exception theException) {
 	    	theException.printStackTrace();
@@ -169,4 +230,50 @@ public class ObuDataServlet extends InitServlet implements Servlet {
     	return obu;
 	}	
 
+	
+	private Map<Integer, StateData> getObuLast(int id) {
+    	ResultSet rs = null;
+	    Statement stmt = null;
+	    Map<Integer, StateData> statesData = new HashMap<Integer, StateData>();
+    	try {
+	    	connectionMake();
+
+	    	String	sql = "select * "
+	    			+ "from states_data,  (select max(date_state) as d from states_data where id_obu = 1) as max_date "
+	    			+ "where id_obu = " + id + "  and date_state = max_date.d";
+	    		
+    		stmt = con.createStatement();   	
+	    	rs = stmt.executeQuery(sql);
+	    	
+	    	
+	    	while (rs.next()) {
+	    		StateData stateData = new StateData();
+	    		stateData.setId_state(rs.getInt("id_state"));
+	    		stateData.setId_obu(rs.getInt("id_obu"));
+	    		stateData.setValue(rs.getString("value"));
+	    		stateData.setType(rs.getString("type"));
+	    		stateData.setDateState(rs.getTimestamp("date_state"));	
+	    		statesData.put(rs.getInt("id_state"), stateData);
+	    		
+	    		//System.out.println(rs.getInt("id_state")+"+"+rs.getString("value"));
+	    	}
+	
+	    } catch (Exception theException) {
+	    	theException.printStackTrace();
+	    } finally {
+	    	try {
+	    		if (rs != null) {
+	    			rs.close();
+	    		}
+
+	    		if (stmt != null) {
+	    			stmt.close();
+	    		}
+			} catch (Exception e) {
+			}
+	    }	
+		
+    	return statesData;
+	}	
+	
 }

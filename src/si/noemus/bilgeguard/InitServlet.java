@@ -21,18 +21,15 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
-import javax.servlet.ServletConfig;
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 
 import org.apache.log4j.PropertyConfigurator;
 import org.json.simple.JSONObject;
 
+import si.noemus.boatguard.objects.AppSetting;
 import si.noemus.boatguard.objects.State;
 
 public class InitServlet extends HttpServlet {
@@ -45,6 +42,7 @@ public class InitServlet extends HttpServlet {
   private String pass;
 
   public static Map<Integer, State> statesByPosition = new HashMap<Integer, State>();
+  public static Map<String, AppSetting> appSettings = new HashMap<String, AppSetting>();
 
 		
   public Connection connectionMake()
@@ -65,6 +63,7 @@ public class InitServlet extends HttpServlet {
 	        	con = DriverManager.getConnection(url,user,pass);
 				initServer();
 	        	cacheStates();
+	        	cacheAppSettings();
 	        }
 	        catch (Exception e) {
 	            System.out.println( "Napaka:" + e.toString());
@@ -208,7 +207,7 @@ public class InitServlet extends HttpServlet {
 	}
 	
 	
-	private double gps2m(float lat_a, float lng_a, float lat_b, float lng_b) {
+	public double gps2m(float lat_a, float lng_a, float lat_b, float lng_b) {
 		float pk = (float) (180/3.14169);
 		float a1 = lat_a / pk;
 		float a2 = lng_a / pk;
@@ -222,7 +221,7 @@ public class InitServlet extends HttpServlet {
 		return 6366000*tt;
 	}	
 	
-	private float transform(float x) {
+	public float transform(float x) {
 		double x_ = Math.floor(x/100);
 		double x__ = (x/100 - x_)/0.6;
 		x = (float) (x_ + x__);
@@ -269,6 +268,46 @@ public class InitServlet extends HttpServlet {
 	    }	
 		
 	}
+	
+	private void cacheAppSettings() {
+    	ResultSet rs = null;
+	    Statement stmt = null;
+    	try {
+	    	connectionMake();
+
+	    	String	sql = "select * from app_settings";
+	    		
+    		System.out.println("sql="+sql);
+	    	stmt = con.createStatement();   	
+	    	rs = stmt.executeQuery(sql);
+	    	appSettings.clear();	
+	    	
+	    	while (rs.next()) {
+	    		AppSetting appSetting = new AppSetting();
+	    		appSetting.setId(rs.getInt("id"));
+	    		appSetting.setName(rs.getString("name"));
+	    		appSetting.setValue(rs.getString("value"));
+	    		appSetting.setType(rs.getString("type"));
+	    		appSettings.put(rs.getString("name"), appSetting);
+	    	}
+	
+	    } catch (Exception theException) {
+	    	theException.printStackTrace();
+	    } finally {
+	    	try {
+	    		if (rs != null) {
+	    			rs.close();
+	    		}
+
+	    		if (stmt != null) {
+	    			stmt.close();
+	    		}
+			} catch (Exception e) {
+			}
+	    }	
+		
+	}
+
 	
 	private void initServer() {		
 		String realPath = getServletContext().getRealPath("/");

@@ -1,5 +1,8 @@
 package si.noemus.boatguard.objects;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class Obu {
 	
 	private int id;
@@ -8,6 +11,8 @@ public class Obu {
 	private String puk;
 	private String serial_number;
 	private int active;
+	public Map<Integer, String> settings = new HashMap<Integer, String>();
+	
 	public int getId() {
 		return id;
 	}
@@ -44,7 +49,32 @@ public class Obu {
 	public void setActive(int active) {
 		this.active = active;
 	}
-	
-	
+	public Map<Integer, String> getSettings() {
+		return settings;
+	}
+	public void setSettings(Map<Integer, String> settings) {
+		settings = settings;
+	}
 
+/*
+	public class Settings {
+		private int id_settings;
+		private String value;
+		
+		
+		public int getId_settings() {
+			return id_settings;
+		}
+		public void setId_settings(int id_settings) {
+			this.id_settings = id_settings;
+		}
+		public String getValue() {
+			return value;
+		}
+		public void setValue(String value) {
+			this.value = value;
+		}
+
+	}
+	*/
 }
