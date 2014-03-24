@@ -16,62 +16,37 @@ package si.noemus.bilgeguard;
  * TODO To change the template for this generated type comment go to
  * Window - Preferences - Java - Code Style - Code Templates
  */
+import java.io.File;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 
+import org.apache.log4j.PropertyConfigurator;
 import org.json.simple.JSONObject;
+
+import si.noemus.boatguard.objects.State;
 
 public class InitServlet extends HttpServlet {
 
-  static Connection con   = null;
+  public static Connection con   = null;
 
   private String driver;
   private String url;
   private String user;
   private String pass;
-/*
-  public void init(ServletConfig conf) throws ServletException {
-	  System.out.println("INIT servlet");
-		try {
-			super.init(conf);
-			// setting DB pooling manager
-			
-		    driver = getServletContext().getInitParameter("driver");
-		    url = getServletContext().getInitParameter("conn");
-		    user = getServletContext().getInitParameter("user");
-		    pass = getServletContext().getInitParameter("pass");
-			System.out.println("driver="+driver);
-			System.out.println("url="+url);
-			System.out.println("user="+user);
-			System.out.println("pass="+pass);
 
-			DbPoolingConfig cfg = new DbPoolingConfig();
-			cfg.driver=driver;
-			cfg.username=user;
-			cfg.password=pass;
-			cfg.url=url;
+  public static Map<Integer, State> statesByPosition = new HashMap<Integer, State>();
 
-			cfg.minPoolSize = "2";
-			cfg.acquireIncrement = "2";
-			cfg.maxPoolSize = "10";
-			cfg.preferredTestQuery = "select * from enote";
-			cfg.maxStatements = "100";
-
-			
-		    DbManager.init(cfg);
-
-		} catch (Exception e) {
-			e.printStackTrace();
-			destroy();
-		}
-	}
-	*/	
+		
   public Connection connectionMake()
   {
     driver = getServletContext().getInitParameter("driver");
@@ -88,6 +63,8 @@ public class InitServlet extends HttpServlet {
 	        try { 
 				Class.forName(driver);
 	        	con = DriverManager.getConnection(url,user,pass);
+				initServer();
+	        	cacheStates();
 	        }
 	        catch (Exception e) {
 	            System.out.println( "Napaka:" + e.toString());
@@ -250,6 +227,57 @@ public class InitServlet extends HttpServlet {
 		double x__ = (x/100 - x_)/0.6;
 		x = (float) (x_ + x__);
 		return x;
+	}
+	
+	private void cacheStates() {
+    	ResultSet rs = null;
+	    Statement stmt = null;
+    	try {
+	    	connectionMake();
+
+	    	String	sql = "select * from states";
+	    		
+    		System.out.println("sql="+sql);
+	    	stmt = con.createStatement();   	
+	    	rs = stmt.executeQuery(sql);
+	    	statesByPosition.clear();	
+	    	
+	    	while (rs.next()) {
+	    		State state = new State();
+	    		state.setId(rs.getInt("id"));
+	    		state.setId_component(rs.getInt("id_component"));
+	    		state.setName(rs.getString("name"));
+	    		state.setValues(rs.getString("values"));
+	    		state.setPosition(rs.getInt("position"));
+	    		state.setType(rs.getString("type"));
+	    		statesByPosition.put(rs.getInt("position"), state);
+	    	}
+	
+	    } catch (Exception theException) {
+	    	theException.printStackTrace();
+	    } finally {
+	    	try {
+	    		if (rs != null) {
+	    			rs.close();
+	    		}
+
+	    		if (stmt != null) {
+	    			stmt.close();
+	    		}
+			} catch (Exception e) {
+			}
+	    }	
+		
+	}
+	
+	private void initServer() {		
+		String realPath = getServletContext().getRealPath("/");
+		System.out.println("realPath="+realPath);
+		String pf = "WebContent/WEB-INF/";
+		if (!new File("WebContent/WEB-INF/log4j.properties").exists()) {
+			pf = realPath+"WEB-INF/";
+		}
+		PropertyConfigurator.configure(pf+"log4j.properties");
 	}
 }
 

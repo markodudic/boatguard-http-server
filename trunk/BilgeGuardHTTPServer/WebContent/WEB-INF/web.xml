@@ -91,5 +91,15 @@
   <servlet-mapping>
     <servlet-name>obu</servlet-name>
     <url-pattern>/obu</url-pattern>
-  </servlet-mapping>    
+  </servlet-mapping>  
+  
+  <!-- NEW BOAT GUARD -->
+  <servlet>
+    <servlet-name>ObuDataServlet</servlet-name>
+    <servlet-class>si.noemus.boatguard.ObuDataServlet</servlet-class>
+  </servlet>  
+  <servlet-mapping>
+    <servlet-name>ObuDataServlet</servlet-name>
+    <url-pattern>/data</url-pattern>
+  </servlet-mapping>   
 </web-app>
