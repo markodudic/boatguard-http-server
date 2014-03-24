@@ -18,5 +18,6 @@ public class Constant {
 	public static final String APP_SETTING_NAPETOST_KOEF1 = "STATE_NAPETOST_KOEF1";
 	public static final String APP_SETTING_NAPETOST_KOEF2 = "STATE_NAPETOST_KOEF2";
 	public static final String APP_SETTING_ENERGIJA = "ENERGIJA";
+	public static final String NAPETOST_TOK_MAX = "NAPETOST_TOK_MAX";
 
 }
