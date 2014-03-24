@@ -217,7 +217,7 @@ public class InitServlet extends HttpServlet {
 		double t2 = Math.cos(a1) * Math.sin(a2) * Math.cos(b1) * Math.sin(b2);
 		double t3 = Math.sin(a1) * Math.sin(b1);
 		double tt = Math.acos(t1 + t2 + t3);
-		System.out.println(6366000*tt);
+		//System.out.println(6366000*tt);
 		return 6366000*tt;
 	}	
 	

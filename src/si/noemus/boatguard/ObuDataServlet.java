@@ -158,7 +158,7 @@ public class ObuDataServlet extends InitServlet implements Servlet {
     		float lon1 = transform(Float.parseFloat(states[5]));
     		float lat2 = transform(Float.parseFloat(settings.get(Constant.SETTINGS_LON)));
     		float lon2 = transform(Float.parseFloat(settings.get(Constant.SETTINGS_LAT)));
-    		double distance = gps2m(lat1, lon1, lat2, lon2);
+    		int distance = (int) Math.round(gps2m(lat1, lon1, lat2, lon2));
 	    	sql = "insert into states_data (id_state, id_obu, value, date_state) " + 
     	    		"values ('" + Constant.STATE_GEO_DIST + "', " + obu.getId() + ", '" + distance + "', " + dateState + ")";
 	    		
