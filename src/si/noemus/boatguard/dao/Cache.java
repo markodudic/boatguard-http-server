@@ -29,7 +29,7 @@ public class Cache {
 		try {
 			cacheStates();
 			cacheAppSettings();
-			log.debug("-------- STOP RESET CACHE ");
+			log.debug("STOP RESET CACHE ");
 		} catch (Exception e) {
 			e.printStackTrace();
 			return false;

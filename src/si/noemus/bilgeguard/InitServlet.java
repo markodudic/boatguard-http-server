@@ -20,12 +20,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.Statement;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Properties;
 
 import javax.servlet.ServletConfig;
@@ -35,56 +29,40 @@ import javax.servlet.http.HttpServlet;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.log4j.PropertyConfigurator;
-import org.json.simple.JSONObject;
 
 import si.bisoft.commons.dbpool.DbManager;
 import si.bisoft.commons.dbpool.DbPoolingConfig;
-import si.noemus.boatguard.dao.AppSetting;
-import si.noemus.boatguard.dao.State;
-import si.noemus.boatguard.util.Util;
+import si.noemus.boatguard.dao.Cache;
 
 public class InitServlet extends HttpServlet implements javax.servlet.Servlet {
 
 	private static Log log = LogFactory.getLog(InitServlet.class);
   
-	public static InitServlet instance;
 	public static String realPath = "WebContent/";
 	public static Properties mainSettings;
 
-	public InitServlet() {
-		super();
-		instance = this;
-	}  
 	
 	public void init(ServletConfig conf) throws ServletException {
-		log.debug("!LOADING ConfigServlet");
 		try {
 			super.init(conf);
 			
 			String realPath = getServletContext().getRealPath("/");
-			System.out.println("realPath="+realPath);
-			String pf = "WebContent/WEB-INF/";
-			if (!new File("WebContent/WEB-INF/log4j.properties").exists()) {
-				pf = realPath+"WEB-INF/";
+			String pf = "WebContent/";
+			String log4jFile = getInitParameter("config-log4j-file");
+			if (!new File("WebContent/"+log4jFile).exists()) {
+				pf = realPath;
 			}
-			PropertyConfigurator.configure(pf+"log4j.properties");
+			PropertyConfigurator.configure(pf+log4jFile);
 			
 			
-			String df = "WebContent/WEB-INF/";
-			if (!new File("WebContent/WEB-INF/config.properties").exists()) {
-				df = realPath+"WEB-INF/";
+			String df = "WebContent/";
+			String configFile = getInitParameter("config-init-file");
+			if (!new File("WebContent/"+configFile).exists()) {
+				df = realPath;
 			}
 			Properties settings = new Properties();
-			settings.load(new FileInputStream(pf + "config.properties"));
+			settings.load(new FileInputStream(pf + configFile));
 			
-			/*realPath = getServletContext().getRealPath("/");
-			// STD db
-			String file = getInitParameter("config-init-file");
-			Properties settings = new Properties();
-			log.debug(realPath + file);
-			if (file != null) {
-				settings.load(new FileInputStream(realPath + file));
-			}*/
 			log.debug("INIT settings");
 			log.debug(settings);
 			
@@ -103,7 +81,7 @@ public class InitServlet extends HttpServlet implements javax.servlet.Servlet {
 			// setting DB pooling manager
 			DbManager.init("config",cfg);
 			
-			//Cache.initCache();				
+			Cache.initCache();				
 			
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
