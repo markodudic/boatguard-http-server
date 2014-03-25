@@ -3,12 +3,16 @@ package si.noemus.bilgeguard;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.Locale;
 
 import javax.servlet.Servlet;
+import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -16,8 +20,10 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 
+import si.bisoft.commons.dbpool.DbManager;
 
-public class obu extends InitServlet implements Servlet {
+
+public class obu implements Servlet {
 
 	Locale locale = Locale.getDefault();
 	
@@ -76,10 +82,11 @@ public class obu extends InitServlet implements Servlet {
 	}	
 	
 	private void setState(String or, String bg) {
-    	Statement stmt = null;
+		Connection con = null;
+		Statement stmt = null;
 
 	    try {
-	    	connectionMake();
+	    	con = DbManager.getConnection("config");
 			stmt = con.createStatement();   	
 
 	    	String	sql = "insert into smsserver_in (originator, message_date, receive_date, text, gateway_id) " +
@@ -99,6 +106,37 @@ public class obu extends InitServlet implements Servlet {
 	    }	
 		
 		return;
+	}
+
+	@Override
+	public void destroy() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public ServletConfig getServletConfig() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String getServletInfo() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void init(ServletConfig arg0) throws ServletException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void service(ServletRequest arg0, ServletResponse arg1)
+			throws ServletException, IOException {
+		// TODO Auto-generated method stub
+		
 	}	
 
 }

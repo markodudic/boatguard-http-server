@@ -8,37 +8,6 @@
   </context-param>
 
 
-  <context-param>
-    <param-name>driver</param-name>
-    <param-value>org.gjt.mm.mysql.Driver</param-value>
-  </context-param>
-  <context-param>
-    <param-name>conn</param-name>
-    <param-value>jdbc:mysql://93.103.12.155:3306/bilgeguard</param-value>
-  </context-param>
-  <context-param>
-    <param-name>user</param-name>
-    <param-value>root</param-value>
-  </context-param>
-  <context-param>
-    <param-name>pass</param-name>
-    <param-value>kuladmin</param-value>
-  </context-param>
-  <context-param>
-    <param-name>useUnicode</param-name>
-    <param-value>true</param-value>
-  </context-param>
-  <context-param>
-    <param-name>characterEncoding</param-name>
-    <param-value>UTF-8</param-value>
-  </context-param>
-  <context-param>
-    <param-name>characterSetResults</param-name>
-    <param-value>UTF-8</param-value>
-  </context-param>
-
-  
-  
   <servlet>
     <servlet-name>SendSMSServlet</servlet-name>
     <servlet-class>si.noemus.bilgeguard.SendSMSServlet</servlet-class>
@@ -101,5 +70,14 @@
   <servlet-mapping>
     <servlet-name>ObuDataServlet</servlet-name>
     <url-pattern>/data</url-pattern>
-  </servlet-mapping>   
+  </servlet-mapping>  
+  
+  <servlet>
+    <servlet-name>ObuSettingsServlet</servlet-name>
+    <servlet-class>si.noemus.boatguard.ObuSettingsServlet</servlet-class>
+  </servlet>  
+  <servlet-mapping>
+    <servlet-name>ObuSettingsServlet</servlet-name>
+    <url-pattern>/settings</url-pattern>
+  </servlet-mapping>    
 </web-app>

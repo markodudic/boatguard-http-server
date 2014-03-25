@@ -2,28 +2,35 @@ package si.noemus.boatguard;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
-import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
 import javax.servlet.Servlet;
+import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
 
+import si.bisoft.commons.dbpool.DbManager;
 import si.noemus.bilgeguard.InitServlet;
-import si.noemus.boatguard.objects.Obu;
-import si.noemus.boatguard.objects.State;
-import si.noemus.boatguard.objects.StateData;
+import si.noemus.boatguard.dao.Cache;
+import si.noemus.boatguard.dao.Obu;
+import si.noemus.boatguard.dao.State;
+import si.noemus.boatguard.dao.StateData;
 import si.noemus.boatguard.util.Constant;
+import si.noemus.boatguard.util.HttpLog;
+import si.noemus.boatguard.util.Util;
 
 
-public class ObuDataServlet extends InitServlet implements Servlet {
+public class ObuDataServlet implements Servlet {
 
 	Locale locale = Locale.getDefault();
 	
@@ -61,12 +68,14 @@ public class ObuDataServlet extends InitServlet implements Servlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		System.out.println("SERVLET POST");		
 
+		HttpLog.afterHttp(request, null);
+
 		String gsmnum = (String) request.getParameter("gsmnum");
 		String serial = (String) request.getParameter("serial");
 		String data = (String) request.getParameter("data");
-
-    	setObuData(gsmnum, serial, data);
-    	
+		
+		setObuData(gsmnum, serial, data);
+		
     	OutputStream out = null;
     	response.setContentType("text/plain");
 		response.setHeader("Content-disposition", null);
@@ -89,7 +98,8 @@ public class ObuDataServlet extends InitServlet implements Servlet {
 	6.-UTC TIME
 	*/
 	private void setObuData(String gsmnum, String serial, String data) {
-    	Statement stmt = null;
+		Connection con = null;
+		Statement stmt = null;
     	
 	    try {
 	    	Obu obu = getObu(gsmnum, serial);
@@ -97,7 +107,7 @@ public class ObuDataServlet extends InitServlet implements Servlet {
 	    	String dateState = states[6];
 	    	Map<Integer, StateData> stateDataLast = getObuLast(obu.getId());
 	    	
-	    	connectionMake();
+	    	con = DbManager.getConnection("config");
 			stmt = con.createStatement();   	
  
 	    	String	sql = "insert into states_data (id_state, id_obu, value, date_state) " + 
@@ -107,15 +117,15 @@ public class ObuDataServlet extends InitServlet implements Servlet {
 	    	stmt.executeUpdate(sql);
 	    	
 	    	for (int i=0;i<states.length;i++) {
-	    		if (statesByPosition.get(i) != null) {
+	    		if (Cache.states.get(i) != null) {
 	    			String stateValue = states[i];
-	    			State state = statesByPosition.get(i);
+	    			State state = Cache.states.get(i);
 	    			if (state.getId() == Constant.STATE_ACCU_TOK){
 	    				int stateTok = Integer.parseInt(stateValue, 16);
-	    				if (stateTok <= Integer.parseInt(InitServlet.appSettings.get(Constant.APP_SETTING_TOK_MIN).getValue())) {
+	    				if (stateTok <= Integer.parseInt(Cache.appSettings.get(Constant.APP_SETTING_TOK_MIN).getValue())) {
 	    					stateTok = 0;
 	    				} else {
-	    					stateTok = (3 / Integer.parseInt(InitServlet.appSettings.get(Constant.APP_SETTINGS_NAPETOST_TOK_MAX).getValue())) * stateTok;
+	    					stateTok = (3 / Integer.parseInt(Cache.appSettings.get(Constant.APP_SETTINGS_NAPETOST_TOK_MAX).getValue())) * stateTok;
 	    				}
 	    				stateValue = stateTok+"";	    				
 	    			}
@@ -123,15 +133,15 @@ public class ObuDataServlet extends InitServlet implements Servlet {
 	    				int stateNapetost = Integer.parseInt(stateValue, 16);
 	    				int stateTok = Integer.parseInt(states[3], 16);
 	    				//ce je tok<APP_SETTING_TOK_MIN je napetost zadnja od takrat ko je tok>APP_SETTING_TOK_MIN
-	    				if ((stateDataLast.get(Constant.STATE_ACCU_NAPETOST)!= null) && (stateTok <= Integer.parseInt(InitServlet.appSettings.get(Constant.APP_SETTING_TOK_MIN).getValue()))) {
+	    				if ((stateDataLast.get(Constant.STATE_ACCU_NAPETOST)!= null) && (stateTok <= Integer.parseInt(Cache.appSettings.get(Constant.APP_SETTING_TOK_MIN).getValue()))) {
 	    					stateValue = Integer.parseInt(stateDataLast.get(Constant.STATE_ACCU_NAPETOST).getValue()) + "";
 	    				} else {
-	    					stateValue = Math.round((stateNapetost / Double.parseDouble(InitServlet.appSettings.get(Constant.APP_SETTING_NAPETOST_KOEF1).getValue())) * Double.parseDouble(InitServlet.appSettings.get(Constant.APP_SETTING_NAPETOST_KOEF2).getValue()))+"";
+	    					stateValue = Math.round((stateNapetost / Double.parseDouble(Cache.appSettings.get(Constant.APP_SETTING_NAPETOST_KOEF1).getValue())) * Double.parseDouble(Cache.appSettings.get(Constant.APP_SETTING_NAPETOST_KOEF2).getValue()))+"";
 	    				}
 	    			}
 	    			if (state.getId() == Constant.STATE_ACCU_AH){
 	    				int stateAh = Integer.parseInt(stateValue, 16);
-	    				int stateAhLast = Integer.parseInt(InitServlet.appSettings.get(Constant.NAPETOST_TOK_MAX).getValue());
+	    				int stateAhLast = Integer.parseInt(Cache.appSettings.get(Constant.NAPETOST_TOK_MAX).getValue());
 	    				if (stateDataLast.get(Constant.STATE_ROW_STATE) != null) {
 	    					String raw_state_last = stateDataLast.get(Constant.STATE_ROW_STATE).getValue();
 	    					stateAhLast = Integer.parseInt(raw_state_last.split(",")[1], 16);
@@ -140,8 +150,8 @@ public class ObuDataServlet extends InitServlet implements Servlet {
 	    				int stateNapetost = Integer.parseInt(states[2], 16);
 	    				//System.out.println(stateAh+"-"+stateAhLast);
 	    				
-	    				int napetost_percent = (int) Math.round(stateNapetost * Double.parseDouble(InitServlet.appSettings.get(Constant.APP_SETTING_NAPETOST_KOEF2).getValue()));
-	    				Double energija = (double) ((napetost_percent/100) * Integer.parseInt(InitServlet.appSettings.get(Constant.APP_SETTING_ENERGIJA).getValue())) - ((0.01/10240)*(stateAh-stateAhLast));
+	    				int napetost_percent = (int) Math.round(stateNapetost * Double.parseDouble(Cache.appSettings.get(Constant.APP_SETTING_NAPETOST_KOEF2).getValue()));
+	    				Double energija = (double) ((napetost_percent/100) * Integer.parseInt(Cache.appSettings.get(Constant.APP_SETTING_ENERGIJA).getValue())) - ((0.01/10240)*(stateAh-stateAhLast));
 	    				
 	    				stateValue = energija + "";
 	    			}
@@ -154,11 +164,11 @@ public class ObuDataServlet extends InitServlet implements Servlet {
 	    	}
 	    
 	    	Map<Integer, String> settings = obu.getSettings();
-    		float lat1 = transform(Float.parseFloat(states[4]));
-    		float lon1 = transform(Float.parseFloat(states[5]));
-    		float lat2 = transform(Float.parseFloat(settings.get(Constant.SETTINGS_LON)));
-    		float lon2 = transform(Float.parseFloat(settings.get(Constant.SETTINGS_LAT)));
-    		int distance = (int) Math.round(gps2m(lat1, lon1, lat2, lon2));
+    		float lat1 = Util.transform(Float.parseFloat(states[4]));
+    		float lon1 = Util.transform(Float.parseFloat(states[5]));
+    		float lat2 = Util.transform(Float.parseFloat(settings.get(Constant.SETTINGS_LON)));
+    		float lon2 = Util.transform(Float.parseFloat(settings.get(Constant.SETTINGS_LAT)));
+    		int distance = (int) Math.round(Util.gps2m(lat1, lon1, lat2, lon2));
 	    	sql = "insert into states_data (id_state, id_obu, value, date_state) " + 
     	    		"values ('" + Constant.STATE_GEO_DIST + "', " + obu.getId() + ", '" + distance + "', " + dateState + ")";
 	    		
@@ -168,12 +178,9 @@ public class ObuDataServlet extends InitServlet implements Servlet {
 	    	theException.printStackTrace();
 	    } finally {
 	    	try {
-	    		if (stmt != null) {
-	    			stmt.close();
-	    		}
-			} catch (Exception e) {
-			}
-	    }	
+	    		if (stmt != null) stmt.close();
+			} catch (Exception e) {}
+	    }
 		
 		return;
 	}
@@ -181,11 +188,12 @@ public class ObuDataServlet extends InitServlet implements Servlet {
 	
 	//todo : cache obu
 	private Obu getObu(String gsmnum, String serial) {
-    	ResultSet rs = null;
+		Connection con = null;
+		ResultSet rs = null;
 	    Statement stmt = null;
     	Obu obu = new Obu();
     	try {
-	    	connectionMake();
+    		con = DbManager.getConnection("config");
 
 	    	String	sql = "select * from obus where number = '" + gsmnum + "' or serial_number = '" + serial + "'";
 	    		
@@ -219,15 +227,9 @@ public class ObuDataServlet extends InitServlet implements Servlet {
 	    	theException.printStackTrace();
 	    } finally {
 	    	try {
-	    		if (rs != null) {
-	    			rs.close();
-	    		}
-
-	    		if (stmt != null) {
-	    			stmt.close();
-	    		}
-			} catch (Exception e) {
-			}
+	    		if (rs != null) rs.close();
+	    		if (stmt != null) stmt.close();
+			} catch (Exception e) {}
 	    }	
 		
     	return obu;
@@ -235,11 +237,12 @@ public class ObuDataServlet extends InitServlet implements Servlet {
 
 	
 	private Map<Integer, StateData> getObuLast(int id) {
-    	ResultSet rs = null;
+		Connection con = null;
+		ResultSet rs = null;
 	    Statement stmt = null;
 	    Map<Integer, StateData> statesData = new HashMap<Integer, StateData>();
     	try {
-	    	connectionMake();
+    		con = DbManager.getConnection("config");
 
 	    	String	sql = "select * "
 	    			+ "from states_data,  (select max(date_state) as d from states_data where id_obu = 1) as max_date "
@@ -265,18 +268,43 @@ public class ObuDataServlet extends InitServlet implements Servlet {
 	    	theException.printStackTrace();
 	    } finally {
 	    	try {
-	    		if (rs != null) {
-	    			rs.close();
-	    		}
-
-	    		if (stmt != null) {
-	    			stmt.close();
-	    		}
-			} catch (Exception e) {
-			}
-	    }	
+	    		if (rs != null) rs.close();
+	    		if (stmt != null) stmt.close();
+			} catch (Exception e) {}
+	    }
 		
     	return statesData;
+	}
+
+	@Override
+	public void destroy() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public ServletConfig getServletConfig() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String getServletInfo() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void init(ServletConfig arg0) throws ServletException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void service(ServletRequest arg0, ServletResponse arg1)
+			throws ServletException, IOException {
+		// TODO Auto-generated method stub
+		
 	}	
 	
 }

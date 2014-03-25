@@ -17,306 +17,106 @@ package si.noemus.bilgeguard;
  * Window - Preferences - Java - Code Style - Code Templates
  */
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
 
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.log4j.PropertyConfigurator;
 import org.json.simple.JSONObject;
 
-import si.noemus.boatguard.objects.AppSetting;
-import si.noemus.boatguard.objects.State;
+import si.bisoft.commons.dbpool.DbManager;
+import si.bisoft.commons.dbpool.DbPoolingConfig;
+import si.noemus.boatguard.dao.AppSetting;
+import si.noemus.boatguard.dao.State;
+import si.noemus.boatguard.util.Util;
 
-public class InitServlet extends HttpServlet {
+public class InitServlet extends HttpServlet implements javax.servlet.Servlet {
 
-  public static Connection con   = null;
+	private static Log log = LogFactory.getLog(InitServlet.class);
+  
+	public static InitServlet instance;
+	public static String realPath = "WebContent/";
+	public static Properties mainSettings;
 
-  private String driver;
-  private String url;
-  private String user;
-  private String pass;
-
-  public static Map<Integer, State> statesByPosition = new HashMap<Integer, State>();
-  public static Map<String, AppSetting> appSettings = new HashMap<String, AppSetting>();
-
-		
-  public Connection connectionMake()
-  {
-    driver = getServletContext().getInitParameter("driver");
-    url = getServletContext().getInitParameter("conn");
-    user = getServletContext().getInitParameter("user");
-    pass = getServletContext().getInitParameter("pass");
-    
-    try
-    {
-        //System.out.println( "connectionMake:" + con);
-	    if ((con == null) || (con.isClosed()))
-	    {
-	        //System.out.println("INIT="+ url+" "+user+" "+pass);
-	        try { 
-				Class.forName(driver);
-	        	con = DriverManager.getConnection(url,user,pass);
-				initServer();
-	        	cacheStates();
-	        	cacheAppSettings();
-	        }
-	        catch (Exception e) {
-	            System.out.println( "Napaka:" + e.toString());
-	            e.printStackTrace();
-	        }
-	    }
-    } catch (Exception e)
-    {
-        System.out.println( "Napaka:" + e.toString());
-        e.printStackTrace();
-    }
-    
-    return con;
-  }
-
-	public void disableTriggers() {
-    	ResultSet rs = null;
-    	Statement stmt = null;
-
-	    try {
-	    	connectionMake();
-			stmt = con.createStatement();   	
-	    	rs = stmt.executeQuery("SET @disable_triggers = 1;");
-	    } catch (Exception theException) {
-	    	theException.printStackTrace();
-	    } finally {
-	    	try {
-	    		if (rs != null) {
-	    			rs.close();
-	    		}
-	    		if (stmt != null) {
-	    			stmt.close();
-	    		}
-			} catch (Exception e) {
+	public InitServlet() {
+		super();
+		instance = this;
+	}  
+	
+	public void init(ServletConfig conf) throws ServletException {
+		log.debug("!LOADING ConfigServlet");
+		try {
+			super.init(conf);
+			
+			String realPath = getServletContext().getRealPath("/");
+			System.out.println("realPath="+realPath);
+			String pf = "WebContent/WEB-INF/";
+			if (!new File("WebContent/WEB-INF/log4j.properties").exists()) {
+				pf = realPath+"WEB-INF/";
 			}
-	    }
-	}					
-
-	public void enableTriggers() {
-    	ResultSet rs = null;
-    	Statement stmt = null;
-
-	    try {
-	    	connectionMake();
-			stmt = con.createStatement();   	
-	    	rs = stmt.executeQuery("SET @disable_triggers = NULL;");
-	    } catch (Exception theException) {
-	    	theException.printStackTrace();
-	    } finally {
-	    	try {
-	    		if (rs != null) {
-	    			rs.close();
-	    		}
-	    		if (stmt != null) {
-	    			stmt.close();
-	    		}
-			} catch (Exception e) {
+			PropertyConfigurator.configure(pf+"log4j.properties");
+			
+			
+			String df = "WebContent/WEB-INF/";
+			if (!new File("WebContent/WEB-INF/config.properties").exists()) {
+				df = realPath+"WEB-INF/";
 			}
-	    }
-	}
-	
-	public JSONObject getLocation(String user) {
-    	ResultSet rs = null;
-	    Statement stmt = null;
-    	//JSONArray results = new JSONArray();
-	    JSONObject current = new JSONObject();
-	    try {
-	    	connectionMake();
-
-	    	String	sql = "select date_format(message_date, '%d.%m.%Y %k:%i') as date, text, x_geo_fence, y_geo_fence, radius, active " +
-						"from smsserver_in left join (select obu, x_geo_fence, y_geo_fence, radius, active " +
-						"								from users " +
-						"								where name='"+user+"') as user " +
-						"on (originator = obu) " +
-						"where obu is not null and text like '#bg:%' " +
-						"order by message_date desc " +
-						"limit 1";
-	    		
-    		System.out.println("sql="+sql);
-	    	stmt = con.createStatement();   	
-	    	rs = stmt.executeQuery(sql);
-	    	while (rs.next()) {
-	    		current.put("date", rs.getString("date"));
-	    	
-	    		/*
-	    		#BG:00,02F3,01F3,00E,15.1,46.5,20130523181121.000
-	    		1.-UVOD
-	    		2.-STANJE PUMPE (00-NE PUMPA, 01-PUMPA, 10-ZAMA�ENA)
-	    		3.-PRETE�ENE As
-	    		4.-STANJE NAPETOSTI
-	    		5.-TRENUTNI TOK( ENOTE �E NE VEM)
-	    		6.-LONGITUDE
-	    		7.-LATITUDE
-	    		8.-UTC TIME
-	    		*/
-	    		String data = rs.getString("text").split(":")[1];
-	    		String[] dataA = data.split(",");
-	    		current.put("pumpa", dataA[0]);
-	    		current.put("baterija_as", dataA[1]);
-	    		current.put("baterija_napetost", dataA[2]);
-	    		current.put("baterija_tok", dataA[3]);
-	    		current.put("lon", dataA[4]);
-	    		current.put("lat", dataA[5]);
-	    		
-	    		if (rs.getString("active").equals("1") && 
-	    			Math.round(Float.parseFloat(dataA[4]))!=0 && 
-	    			Math.round(Float.parseFloat(dataA[5]))!=0) {
-		    		float lat1 = transform(Float.parseFloat(dataA[4]));
-		    		float lon1 = transform(Float.parseFloat(dataA[5]));
-		    		float lat2 = transform(Float.parseFloat(rs.getString("x_geo_fence")));
-		    		float lon2 = transform(Float.parseFloat(rs.getString("y_geo_fence")));
-		    		int radius = Integer.parseInt(rs.getString("radius"));
-		    		double distance = gps2m(lat1, lon1, lat2, lon2);
-		    		if (distance <= radius) {
-			    		current.put("geofence", "1"); //home
-		    		} else {
-			    		current.put("geofence", "2"); //alarm
-		    		}
-	    		} else {
-		    		current.put("geofence", "0"); //ni vklopljen
-	    		}
-	    		
-	    	}
-	    	
-	    } catch (Exception theException) {
-	    	theException.printStackTrace();
-	    } finally {
-	    	try {
-	    		if (rs != null) {
-	    			rs.close();
-	    		}
-
-	    		if (stmt != null) {
-	    			stmt.close();
-	    		}
-			} catch (Exception e) {
-			}
-	    }	
-
-	    return current;
-	}
-	
-	
-	public double gps2m(float lat_a, float lng_a, float lat_b, float lng_b) {
-		float pk = (float) (180/3.14169);
-		float a1 = lat_a / pk;
-		float a2 = lng_a / pk;
-		float b1 = lat_b / pk;
-		float b2 = lng_b / pk;
-		double t1 = Math.cos(a1) * Math.cos(a2) * Math.cos(b1) * Math.cos(b2);
-		double t2 = Math.cos(a1) * Math.sin(a2) * Math.cos(b1) * Math.sin(b2);
-		double t3 = Math.sin(a1) * Math.sin(b1);
-		double tt = Math.acos(t1 + t2 + t3);
-		//System.out.println(6366000*tt);
-		return 6366000*tt;
-	}	
-	
-	public float transform(float x) {
-		double x_ = Math.floor(x/100);
-		double x__ = (x/100 - x_)/0.6;
-		x = (float) (x_ + x__);
-		return x;
-	}
-	
-	private void cacheStates() {
-    	ResultSet rs = null;
-	    Statement stmt = null;
-    	try {
-	    	connectionMake();
-
-	    	String	sql = "select * from states";
-	    		
-    		System.out.println("sql="+sql);
-	    	stmt = con.createStatement();   	
-	    	rs = stmt.executeQuery(sql);
-	    	statesByPosition.clear();	
-	    	
-	    	while (rs.next()) {
-	    		State state = new State();
-	    		state.setId(rs.getInt("id"));
-	    		state.setId_component(rs.getInt("id_component"));
-	    		state.setName(rs.getString("name"));
-	    		state.setValues(rs.getString("values"));
-	    		state.setPosition(rs.getInt("position"));
-	    		state.setType(rs.getString("type"));
-	    		statesByPosition.put(rs.getInt("position"), state);
-	    	}
-	
-	    } catch (Exception theException) {
-	    	theException.printStackTrace();
-	    } finally {
-	    	try {
-	    		if (rs != null) {
-	    			rs.close();
-	    		}
-
-	    		if (stmt != null) {
-	    			stmt.close();
-	    		}
-			} catch (Exception e) {
-			}
-	    }	
-		
-	}
-	
-	private void cacheAppSettings() {
-    	ResultSet rs = null;
-	    Statement stmt = null;
-    	try {
-	    	connectionMake();
-
-	    	String	sql = "select * from app_settings";
-	    		
-    		System.out.println("sql="+sql);
-	    	stmt = con.createStatement();   	
-	    	rs = stmt.executeQuery(sql);
-	    	appSettings.clear();	
-	    	
-	    	while (rs.next()) {
-	    		AppSetting appSetting = new AppSetting();
-	    		appSetting.setId(rs.getInt("id"));
-	    		appSetting.setName(rs.getString("name"));
-	    		appSetting.setValue(rs.getString("value"));
-	    		appSetting.setType(rs.getString("type"));
-	    		appSettings.put(rs.getString("name"), appSetting);
-	    	}
-	
-	    } catch (Exception theException) {
-	    	theException.printStackTrace();
-	    } finally {
-	    	try {
-	    		if (rs != null) {
-	    			rs.close();
-	    		}
-
-	    		if (stmt != null) {
-	    			stmt.close();
-	    		}
-			} catch (Exception e) {
-			}
-	    }	
-		
-	}
-
-	
-	private void initServer() {		
-		String realPath = getServletContext().getRealPath("/");
-		System.out.println("realPath="+realPath);
-		String pf = "WebContent/WEB-INF/";
-		if (!new File("WebContent/WEB-INF/log4j.properties").exists()) {
-			pf = realPath+"WEB-INF/";
+			Properties settings = new Properties();
+			settings.load(new FileInputStream(pf + "config.properties"));
+			
+			/*realPath = getServletContext().getRealPath("/");
+			// STD db
+			String file = getInitParameter("config-init-file");
+			Properties settings = new Properties();
+			log.debug(realPath + file);
+			if (file != null) {
+				settings.load(new FileInputStream(realPath + file));
+			}*/
+			log.debug("INIT settings");
+			log.debug(settings);
+			
+			DbPoolingConfig cfg = new DbPoolingConfig();
+			cfg.driver=settings.getProperty("db.jdbc.driver");
+			cfg.url=settings.getProperty("db.jdbc.url");
+			cfg.username=settings.getProperty("db.jdbc.username");
+			cfg.password=settings.getProperty("db.jdbc.password");
+			
+			cfg.minPoolSize=settings.getProperty("db.pool.minPoolSize");
+			cfg.acquireIncrement=settings.getProperty("db.pool.acquireIncrement");
+			cfg.maxPoolSize=settings.getProperty("db.pool.maxPoolSize");
+			cfg.maxStatements=settings.getProperty("db.pool.maxStatements");
+			
+			System.out.println(cfg);
+			// setting DB pooling manager
+			DbManager.init("config",cfg);
+			
+			//Cache.initCache();				
+			
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+			log.error("Config file ne obstaja!");
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-		PropertyConfigurator.configure(pf+"log4j.properties");
-	}
+	}     
+
+	
 }
 
