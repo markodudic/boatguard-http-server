@@ -2,16 +2,22 @@ package si.noemus.bilgeguard;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.sql.Connection;
 import java.sql.Statement;
 import java.util.Locale;
 
 import javax.servlet.Servlet;
+import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import si.bisoft.commons.dbpool.DbManager;
 
-public class SendSMSServlet extends InitServlet implements Servlet {
+
+public class SendSMSServlet implements Servlet {
 
 	Locale locale = Locale.getDefault();
 	
@@ -63,10 +69,11 @@ public class SendSMSServlet extends InitServlet implements Servlet {
 	
 
 	private void sendSMS(String user, String message) {
-    	Statement stmt = null;
+		Connection con = null;
+		Statement stmt = null;
 
 	    try {
-	    	connectionMake();
+	    	con = DbManager.getConnection("config");
 			stmt = con.createStatement();   	
 
 	    	String	sql = "insert into smsserver_out (recipient, text, create_date) " + 
@@ -86,6 +93,37 @@ public class SendSMSServlet extends InitServlet implements Servlet {
 	    }	
 		
 		return;
+	}
+
+	@Override
+	public void destroy() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public ServletConfig getServletConfig() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String getServletInfo() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void init(ServletConfig arg0) throws ServletException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void service(ServletRequest arg0, ServletResponse arg1)
+			throws ServletException, IOException {
+		// TODO Auto-generated method stub
+		
 	}
 	
 	
