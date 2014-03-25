@@ -1,31 +1,20 @@
-package si.noemus.boatguard;
+package si.noemus.boatguard.servlet;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.sql.ResultSet;
-import java.sql.Statement;
-import java.util.HashMap;
 import java.util.Locale;
-import java.util.Map;
 
-import javax.servlet.Servlet;
 import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import si.noemus.bilgeguard.InitServlet;
-import si.noemus.boatguard.dao.Obu;
-import si.noemus.boatguard.dao.State;
-import si.noemus.boatguard.dao.StateData;
-import si.noemus.boatguard.util.Constant;
-import si.noemus.boatguard.util.Util;
 
 
-
-public class ObuSettingsServlet extends InitServlet implements Servlet {
+public class ObuSettingsServlet extends HttpServlet {
 
 	Locale locale = Locale.getDefault();
 	

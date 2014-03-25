@@ -7,6 +7,19 @@
     <param-value>bg</param-value>
   </context-param>
 
+   <servlet>
+      <servlet-name>InitServlet</servlet-name> 
+      <servlet-class>si.noemus.bilgeguard.InitServlet</servlet-class> 
+      <init-param>
+         <param-name>config-init-file</param-name> 
+         <param-value>/WEB-INF/config.properties</param-value> 
+      </init-param>
+      <init-param>
+         <param-name>config-log4j-file</param-name> 
+         <param-value>/WEB-INF/log4j.properties</param-value> 
+      </init-param>
+      <load-on-startup>1</load-on-startup> 
+   </servlet>
 
   <servlet>
     <servlet-name>SendSMSServlet</servlet-name>
@@ -65,7 +78,8 @@
   <!-- NEW BOAT GUARD -->
   <servlet>
     <servlet-name>ObuDataServlet</servlet-name>
-    <servlet-class>si.noemus.boatguard.ObuDataServlet</servlet-class>
+    <servlet-class>si.noemus.boatguard.servlet.ObuDataServlet</servlet-class>
+	<load-on-startup>2</load-on-startup>
   </servlet>  
   <servlet-mapping>
     <servlet-name>ObuDataServlet</servlet-name>
@@ -74,10 +88,13 @@
   
   <servlet>
     <servlet-name>ObuSettingsServlet</servlet-name>
-    <servlet-class>si.noemus.boatguard.ObuSettingsServlet</servlet-class>
+    <servlet-class>si.noemus.boatguard.servlet.ObuSettingsServlet</servlet-class>
+	<load-on-startup>3</load-on-startup>
   </servlet>  
   <servlet-mapping>
     <servlet-name>ObuSettingsServlet</servlet-name>
-    <url-pattern>/settings</url-pattern>
+    <url-pattern>/settings</url-pattern>   
   </servlet-mapping>    
+  
+ 
 </web-app>

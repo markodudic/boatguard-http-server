@@ -1,4 +1,4 @@
-package si.noemus.boatguard;
+package si.noemus.boatguard.servlet;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -6,21 +6,15 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
+import java.util.logging.Logger;
 
-import javax.servlet.Servlet;
-import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.log4j.Logger;
-
 import si.bisoft.commons.dbpool.DbManager;
-import si.noemus.bilgeguard.InitServlet;
 import si.noemus.boatguard.dao.Cache;
 import si.noemus.boatguard.dao.Obu;
 import si.noemus.boatguard.dao.State;
@@ -30,28 +24,20 @@ import si.noemus.boatguard.util.HttpLog;
 import si.noemus.boatguard.util.Util;
 
 
-public class ObuDataServlet implements Servlet {
+public class ObuDataServlet extends HttpServlet {
 
-	Locale locale = Locale.getDefault();
-	
 	static Logger log = Logger.getLogger(ObuDataServlet.class.getName());
-	/*
-	 * (non-Java-doc)
-	 * 
-	 * @see javax.servlet.http.HttpServlet#HttpServlet()
-	 */
-	public ObuDataServlet() {
-		super();
+
+	public void init() throws ServletException
+	{
 	}
- 
 	/*
 	 * (non-Java-doc)
 	 * 
 	 * @see javax.servlet.http.HttpServlet#doGet(HttpServletRequest arg0,
 	 *      HttpServletResponse arg1)
 	 */
-	protected void doGet(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		System.out.println("SERVLET GET");		
 		doPost(request, response);
 	}
@@ -83,7 +69,7 @@ public class ObuDataServlet implements Servlet {
 		out = response.getOutputStream();
 		out.write("1".getBytes());
 		out.flush();
-		out.close();    	
+		out.close();    
 	
 	}	
 	
@@ -276,35 +262,6 @@ public class ObuDataServlet implements Servlet {
     	return statesData;
 	}
 
-	@Override
-	public void destroy() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public ServletConfig getServletConfig() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public String getServletInfo() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void init(ServletConfig arg0) throws ServletException {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void service(ServletRequest arg0, ServletResponse arg1)
-			throws ServletException, IOException {
-		// TODO Auto-generated method stub
-		
-	}	
+	
 	
 }
