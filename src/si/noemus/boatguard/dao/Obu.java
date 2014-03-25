@@ -6,6 +6,7 @@ import java.util.Map;
 public class Obu {
 	
 	private int id;
+	private String name;
 	private String number;
 	private String pin;
 	private String puk;
@@ -55,26 +56,11 @@ public class Obu {
 	public void setSettings(Map<Integer, String> settings) {
 		settings = settings;
 	}
-
-/*
-	public class Settings {
-		private int id_settings;
-		private String value;
-		
-		
-		public int getId_settings() {
-			return id_settings;
-		}
-		public void setId_settings(int id_settings) {
-			this.id_settings = id_settings;
-		}
-		public String getValue() {
-			return value;
-		}
-		public void setValue(String value) {
-			this.value = value;
-		}
-
+	public String getName() {
+		return name;
 	}
-	*/
+	public void setName(String name) {
+		this.name = name;
+	}
+
 }

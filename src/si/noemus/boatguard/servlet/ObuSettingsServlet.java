@@ -2,7 +2,9 @@ package si.noemus.boatguard.servlet;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Iterator;
 import java.util.Locale;
+import java.util.Map;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -12,6 +14,10 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import si.noemus.boatguard.dao.ObuData;
+import si.noemus.boatguard.dao.ObuSetting;
+import si.noemus.boatguard.util.HttpLog;
+
 
 
 public class ObuSettingsServlet extends HttpServlet {
@@ -20,13 +26,9 @@ public class ObuSettingsServlet extends HttpServlet {
 	
 	//static Logger log = Logger.getLogger(ObuSettingsServlet.class.getName());
 	private static Log log = LogFactory.getLog(ObuSettingsServlet.class);
-	/*
-	 * (non-Java-doc)
-	 * 
-	 * @see javax.servlet.http.HttpServlet#HttpServlet()
-	 */
-	public ObuSettingsServlet() {
-		super();
+
+	public void init() throws ServletException
+	{
 	}
  
 	/*
@@ -53,21 +55,28 @@ public class ObuSettingsServlet extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		System.out.println("SERVLET POST");		
 
+		HttpLog.afterHttp(request, null);
+
 		String gsmnum = (String) request.getParameter("gsmnum");
 		String serial = (String) request.getParameter("serial");
-		String data = (String) request.getParameter("data");
-
-
+		
+		Map<Integer, ObuSetting> obuSettings = ObuData.getObuSettings(-1, gsmnum, serial);
+		Iterator it = obuSettings.entrySet().iterator();
+		String settings = "";
+		while (it.hasNext()) {
+	        Map.Entry pairs = (Map.Entry)it.next();
+	        settings += ((ObuSetting)pairs.getValue()).getValue() + ";";
+		}
     	
     	OutputStream out = null;
     	response.setContentType("text/plain");
 		response.setHeader("Content-disposition", null);
 		response.setHeader("Access-Control-Allow-Origin", "*");
 		out = response.getOutputStream();
-		out.write("1".getBytes());
+		out.write(settings.getBytes());
 		out.flush();
 		out.close();    	
 	
-	}	
+	}
 	
 }
