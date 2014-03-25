@@ -77,23 +77,55 @@
   
   <!-- NEW BOAT GUARD -->
   <servlet>
-    <servlet-name>ObuDataServlet</servlet-name>
-    <servlet-class>si.noemus.boatguard.servlet.ObuDataServlet</servlet-class>
+    <servlet-name>SetObuDataServlet</servlet-name>
+    <servlet-class>si.noemus.boatguard.servlet.SetObuDataServlet</servlet-class>
 	<load-on-startup>2</load-on-startup>
   </servlet>  
   <servlet-mapping>
-    <servlet-name>ObuDataServlet</servlet-name>
-    <url-pattern>/data</url-pattern>
+    <servlet-name>SetObuDataServlet</servlet-name>
+    <url-pattern>/setdata</url-pattern>
   </servlet-mapping>  
+
+   <servlet>
+    <servlet-name>GetObuDataServlet</servlet-name>
+    <servlet-class>si.noemus.boatguard.servlet.GetObuDataServlet</servlet-class>
+	<load-on-startup>5</load-on-startup>
+  </servlet>  
+  <servlet-mapping>
+    <servlet-name>GetObuDataServlet</servlet-name>
+    <url-pattern>/getdata</url-pattern>
+  </servlet-mapping>
+
+  <servlet>
+    <servlet-name>GetObuAlarmsServlet</servlet-name>
+    <servlet-class>si.noemus.boatguard.servlet.GetObuAlarmsServlet</servlet-class>
+	<load-on-startup>6</load-on-startup>
+  </servlet>  
+  <servlet-mapping>
+    <servlet-name>GetObuAlarmsServlet</servlet-name>
+    <url-pattern>/getalarms</url-pattern>
+  </servlet-mapping>
+ 
   
   <servlet>
-    <servlet-name>ObuSettingsServlet</servlet-name>
-    <servlet-class>si.noemus.boatguard.servlet.ObuSettingsServlet</servlet-class>
+    <servlet-name>ConfirmObuAlarmServlet</servlet-name>
+    <servlet-class>si.noemus.boatguard.servlet.ConfirmObuAlarmServlet</servlet-class>
+	<load-on-startup>7</load-on-startup>
+  </servlet>  
+  <servlet-mapping>
+    <servlet-name>ConfirmObuAlarmServlet</servlet-name>
+    <url-pattern>/confirmalarm</url-pattern>
+  </servlet-mapping>
+  
+  
+  <servlet>
+    <servlet-name>GetObuSettingsServlet</servlet-name>
+    <servlet-class>si.noemus.boatguard.servlet.GetObuSettingsServlet</servlet-class>
 	<load-on-startup>3</load-on-startup>
   </servlet>  
   <servlet-mapping>
-    <servlet-name>ObuSettingsServlet</servlet-name>
-    <url-pattern>/settings</url-pattern>   
+    <servlet-name>GetObuSettingsServlet</servlet-name>
+    <url-pattern>/getsettings</url-pattern>   
   </servlet-mapping>    
   
   <servlet>

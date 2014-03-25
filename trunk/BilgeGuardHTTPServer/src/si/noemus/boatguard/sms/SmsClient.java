@@ -15,22 +15,11 @@ public class SmsClient {
 	    try {
 	    	con = DbManager.getConnection("config");
 			stmt = con.createStatement();   	
-			
-			String[] messageStr = message.split("%");
-			String msg = "";
-			if (messageStr.length > 1) {
-				for (int i=0; i<messageStr.length; i++) {
-					msg += messageStr[i];
-					i++;
-				}
-			} else {
-				msg = messageStr[0];
-			}
 
 	    	String	sql = "insert into smsserver_out (recipient, text, create_date) " + 
-    				"select customers.number, '" + msg + "', now() "
-    				+ "from obus left join customers on (obus.id = customers.id_obu)" +
-    				" where obus.id = " + obuId;
+    				"select customers.number, '" + message + "', now() "
+    				+ "from customers " +
+    				"where customers.id_obu = " + obuId;
 	    		
     		System.out.println("sql="+sql);
 	    	stmt.executeUpdate(sql);
@@ -59,7 +48,7 @@ public class SmsClient {
 	    	String	sql = "insert into smsserver_out (recipient, text, create_date) " + 
 	    				"select friends.number, '" + message + "', now() "
 	    				+ "from customers left join friends on (friends.id_customer = customers.id) " +
-	    				" where customers.id_obu = " + obuId;
+	    				"where customers.id_obu = " + obuId;
 	    		
     		System.out.println("sql="+sql);
 	    	stmt.executeUpdate(sql);
