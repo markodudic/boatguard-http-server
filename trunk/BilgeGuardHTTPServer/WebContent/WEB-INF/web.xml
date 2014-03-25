@@ -96,5 +96,13 @@
     <url-pattern>/settings</url-pattern>   
   </servlet-mapping>    
   
- 
+  <servlet>
+    <servlet-name>RpcServlet</servlet-name>
+    <servlet-class>si.noemus.boatguard.servlet.RpcServlet</servlet-class>
+	<load-on-startup>4</load-on-startup>
+  </servlet>  
+  <servlet-mapping>
+    <servlet-name>RpcServlet</servlet-name>
+    <url-pattern>/rpc</url-pattern>   
+  </servlet-mapping>  
 </web-app>

@@ -9,9 +9,11 @@ public class Constant {
 	public static final Integer STATE_ACCU_TOK = 31;
 	public static final Integer STATE_ACCU_NAPETOST = 30;
 	public static final Integer STATE_ACCU_AH = 32;
+	public static final Integer STATE_GEO_DIST = 13;
+
+	public static final Integer SETTINGS_GEO_FENCE = 10;
 	public static final Integer SETTINGS_LON = 11;
 	public static final Integer SETTINGS_LAT = 12;
-	public static final Integer STATE_GEO_DIST = 13;
 
 	public static final String APP_SETTING_TOK_MIN = "TOK_MIN";
 	public static final String APP_SETTINGS_NAPETOST_TOK_MAX = "APP_SETTINGS_NAPETOST_TOK_MAX";
