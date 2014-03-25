@@ -20,12 +20,12 @@ import si.noemus.boatguard.util.HttpLog;
 
 
 
-public class ObuSettingsServlet extends HttpServlet {
+public class GetObuSettingsServlet extends HttpServlet {
 
 	Locale locale = Locale.getDefault();
 	
 	//static Logger log = Logger.getLogger(ObuSettingsServlet.class.getName());
-	private static Log log = LogFactory.getLog(ObuSettingsServlet.class);
+	private static Log log = LogFactory.getLog(GetObuSettingsServlet.class);
 
 	public void init() throws ServletException
 	{
@@ -60,7 +60,7 @@ public class ObuSettingsServlet extends HttpServlet {
 		String gsmnum = (String) request.getParameter("gsmnum");
 		String serial = (String) request.getParameter("serial");
 		
-		Map<Integer, ObuSetting> obuSettings = ObuData.getObuSettings(-1, gsmnum, serial);
+		Map<Integer, ObuSetting> obuSettings = ObuData.getSettings(-1, gsmnum, serial);
 		Iterator it = obuSettings.entrySet().iterator();
 		String settings = "";
 		while (it.hasNext()) {

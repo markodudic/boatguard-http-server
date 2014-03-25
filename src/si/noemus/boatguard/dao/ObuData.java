@@ -4,8 +4,10 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import si.bisoft.commons.dbpool.DbManager;
@@ -15,7 +17,7 @@ import si.noemus.boatguard.util.Util;
 
 public class ObuData {
 
-	public static Map<Integer, ObuSetting> getObuSettings(int obuId, String gsmnum, String serial) {
+	public static Map<Integer, ObuSetting> getSettings(int obuId, String gsmnum, String serial) {
 		Connection con = null;
 		ResultSet rs = null;
 	    Statement stmt = null;
@@ -61,7 +63,7 @@ public class ObuData {
 	5.-LATITUDE
 	6.-UTC TIME
 	*/
-	public static int setObuData(String gsmnum, String serial, String data) {
+	public static int setData(String gsmnum, String serial, String data) {
 		Connection con = null;
 		Statement stmt = null;
 		Obu obu = getObu(gsmnum, serial);
@@ -69,7 +71,7 @@ public class ObuData {
 	    try {
 	    	String[] states = data.split(",");
 	    	String dateState = states[6];
-	    	Map<Integer, StateData> stateDataLast = getObuLast(obu.getId());
+	    	Map<Integer, StateData> stateDataLast = getStateData(obu.getId());
 	    	
 	    	con = DbManager.getConnection("config");
 			stmt = con.createStatement();   	
@@ -200,7 +202,7 @@ public class ObuData {
 	}	
 
 	
-	public static Map<Integer, StateData> getObuLast(int id) {
+	public static Map<Integer, StateData> getStateData(int id) {
 		Connection con = null;
 		ResultSet rs = null;
 	    Statement stmt = null;
@@ -244,7 +246,7 @@ public class ObuData {
 	public static void calculateAlarms(int obuId) {
 		Map<Integer, Alarm> alarms = Cache.alarms;
 		
-		Map<Integer, StateData> obuLast = getObuLast(obuId);
+		Map<Integer, StateData> obuLast = getStateData(obuId);
 		Iterator it = obuLast.entrySet().iterator();
 		while (it.hasNext()) {
 	        Map.Entry pairs = (Map.Entry)it.next();
@@ -258,7 +260,7 @@ public class ObuData {
 		        if (stateData.getId_state() == alarm.getId_state()) {
 		        	int alarmValue;
 	        		if (alarm.getValue().equals("obu_settings")) {
-	        			Map<Integer, ObuSetting> obuSettings = ObuData.getObuSettings(obuId, null, null);
+	        			Map<Integer, ObuSetting> obuSettings = ObuData.getSettings(obuId, null, null);
 	        			if (Integer.parseInt(((ObuSetting)obuSettings.get(Constant.SETTINGS_GEO_FENCE)).getValue()) == 0){
 	        					continue;
 	        			}
@@ -296,11 +298,13 @@ public class ObuData {
 	    	con = DbManager.getConnection("config");
 			stmt = con.createStatement();   	
  
-	    	SmsClient.sendSMSCustomer(obuId, message);
-	    	SmsClient.sendSMSFriends(obuId, message);
+			String msg = getMessage(message, obuId);
+			
+			SmsClient.sendSMSCustomer(obuId, msg);
+	    	SmsClient.sendSMSFriends(obuId, msg);
 
 	    	String	sql = "insert into alarm_data (id_alarm, id_obu, value, message, date_alarm, send_customer, send_friends) " + 
-	    				"select " + alarmId + ", " + obuId + ", '" + stateValue + "', '" + message + "', '" + date_alarm + "', 1, 1 from dual " +
+	    				"select " + alarmId + ", " + obuId + ", '" + stateValue + "', '" + msg + "', '" + date_alarm + "', 1, 1 from dual " +
 	    				"where not exists (select * from alarm_data where id_alarm = " + alarmId + " and id_obu = " + obuId + " and confirmed=0) limit 1";
 	    		
 	    	stmt.executeUpdate(sql);
@@ -313,5 +317,109 @@ public class ObuData {
 	    		if (stmt != null) stmt.close();
 			} catch (Exception e) {}
 	    }
-	}	    	
+	}	
+	
+	public static String getMessage(String message, int obuId) {
+		Connection con = null;
+		Statement stmt = null;
+		ResultSet rs = null;
+		
+	    try {
+	    	con = DbManager.getConnection("config");
+			stmt = con.createStatement();   	
+
+	    	String	sql = "select obus.name obus_name, customers.name customers_name, customers.surname customers_surname, customers.number customers_number "
+    				+ "from obus left join customers on (obus.id = customers.id_obu)" +
+    				" where obus.id = " + obuId;
+	    		
+    		System.out.println("sql="+sql);
+    		stmt = con.createStatement();   	
+	    	rs = stmt.executeQuery(sql);
+	    	
+	    	
+	    	if (rs.next()) {
+	    		String[] messageStr = message.split("%");
+	    		if (messageStr.length > 1) {
+	    			for (int i=1; i<messageStr.length; i++) {
+	    				String par = messageStr[i];
+	    				message = message.replaceAll("%"+par+"%", rs.getString(par));
+	    				i++;
+	    			}
+	    		}
+	    		
+	    	}
+	    } catch (Exception theException) {
+	    	theException.printStackTrace();
+	    } finally {
+	    	try {
+	    		if (rs != null) rs.close();
+	    		if (stmt != null) stmt.close();
+			} catch (Exception e) {}
+	    }
+	    
+		return message;
+	}
+	
+	public static List<AlarmData> getAlarms(int obuId) {
+		Connection con = null;
+		ResultSet rs = null;
+	    Statement stmt = null;
+	    List<AlarmData> alarms = new ArrayList<AlarmData>();
+    	try {
+    		con = DbManager.getConnection("config");
+
+	    	String	sql = "select * "
+	    			+ "from alarm_data "
+	    			+ "where id_obu = " + obuId + " and confirmed = 0";
+	    		
+    		stmt = con.createStatement();   	
+	    	rs = stmt.executeQuery(sql);
+    		
+	    	while (rs.next()) {
+	    		AlarmData alarm = new AlarmData();
+	    		alarm.setId_alarm(rs.getInt("id_alarm"));
+	    		alarm.setId_obu(rs.getInt("id_obu"));
+	    		alarm.setValue(rs.getString("value"));
+	    		alarm.setMessage(rs.getString("message"));
+	    		alarm.setType(rs.getString("type"));
+	    		alarm.setDate_alarm(rs.getTimestamp("date_alarm"));
+	    		alarm.setConfirmed(rs.getInt("confirmed"));
+	    		alarms.add(alarm);
+	    	}
+	
+	    } catch (Exception theException) {
+	    	theException.printStackTrace();
+	    } finally {
+	    	try {
+	    		if (rs != null) rs.close();
+	    		if (stmt != null) stmt.close();
+			} catch (Exception e) {}
+	    }	
+		
+    	return alarms;
+	}		
+	
+	public static void confirmAlarm(int alarmId, int obuId) {
+		Connection con = null;
+		Statement stmt = null;
+		
+		try {
+	    	con = DbManager.getConnection("config");
+			stmt = con.createStatement();   	
+ 
+			String	sql = "update alarm_data " + 
+	    				"set confirmed = 1 " +
+	    				"where id_alarm = " + alarmId + " and id_obu = " + obuId;
+	    		
+	    	stmt.executeUpdate(sql);
+	    	
+	    	
+	    } catch (Exception theException) {
+	    	theException.printStackTrace();
+	    } finally {
+	    	try {
+	    		if (stmt != null) stmt.close();
+			} catch (Exception e) {}
+	    }
+	}		
 }
