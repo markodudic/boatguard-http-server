@@ -126,6 +126,7 @@ public class HttpLog {
 		EXCL_HEADERS.add("referer");
 		EXCL_HEADERS.add("user-agent");
 	}
+	
 	private static HttpParameters parseHttpParameters(HttpServletRequest request) {
 		String enn;
 		Properties props = new Properties();
