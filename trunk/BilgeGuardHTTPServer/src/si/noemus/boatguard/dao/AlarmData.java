@@ -11,6 +11,7 @@ public class AlarmData {
 	private String type;
 	private Timestamp date_alarm;
 	private int confirmed;
+	private int active;
 	
 	public int getId_alarm() {
 		return id_alarm;
@@ -54,6 +55,10 @@ public class AlarmData {
 	public void setConfirmed(int confirmed) {
 		this.confirmed = confirmed;
 	}
-	
-
+	public int getActive() {
+		return active;
+	}
+	public void setActive(int active) {
+		this.active = active;
+	}
 }
