@@ -64,6 +64,7 @@ public class Cache {
 	    		alarm.setOperand(rs.getString("operand"));
 	    		alarm.setMessage(rs.getString("message"));
 	    		alarm.setType(rs.getString("type"));
+	    		alarm.setActive(rs.getInt("active"));
 	    		alarms.put(rs.getInt("id"), alarm);
 	    	}
 	

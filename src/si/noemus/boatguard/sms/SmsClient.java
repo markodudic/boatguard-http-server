@@ -22,7 +22,7 @@ public class SmsClient {
     				"where customers.id_obu = " + obuId +
     	    		"	and customers.active = 1";
 	    		
-    		System.out.println("sql="+sql);
+    		//System.out.println("sql="+sql);
 	    	stmt.executeUpdate(sql);
 	    } catch (Exception theException) {
 	    	theException.printStackTrace();
@@ -52,7 +52,7 @@ public class SmsClient {
 	    				"where customers.id_obu = " + obuId +
 	    				"	and friends.active = 1";
 	    		
-    		System.out.println("sql="+sql);
+    		//System.out.println("sql="+sql);
 	    	stmt.executeUpdate(sql);
 	    } catch (Exception theException) {
 	    	theException.printStackTrace();

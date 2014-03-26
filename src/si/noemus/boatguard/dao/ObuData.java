@@ -133,7 +133,6 @@ public class ObuData {
     		float lon1 = Util.transform(Float.parseFloat(states[Constant.OBU_LON_VALUE]));
     		float lat2 = Util.transform(Float.parseFloat(settings.get(Constant.OBU_SETTINGS_LAT_VALUE)));
     		float lon2 = Util.transform(Float.parseFloat(settings.get(Constant.OBU_SETTINGS_LON_VALUE)));
-    		System.out.println(lat1+":"+lon1+":"+lat2+":"+lon2);
     		int distance = (int) Math.round(Util.gps2m(lat1, lon1, lat2, lon2));
 	    	sql = "insert into states_data (id_state, id_obu, value, date_state) " + 
     	    		"values (" + Cache.appSettings.get(Constant.STATE_GEO_DIST).getValue() + ", " + obu.getId() + ", '" + distance + "', " + dateState + ")";
@@ -245,7 +244,7 @@ public class ObuData {
 
 	
 	public static void calculateAlarms(int obuId) {
-		Map<Integer, Alarm> alarms = Cache.alarms;
+		List<ObuAlarm> obuAlarms = getAlarms(obuId);
 		
 		Map<Integer, StateData> obuLast = getStateData(obuId);
 		Iterator it = obuLast.entrySet().iterator();
@@ -253,11 +252,15 @@ public class ObuData {
 	        Map.Entry pairs = (Map.Entry)it.next();
 	        StateData stateData = (StateData)pairs.getValue();
 	        
-	        Iterator ita = Cache.alarms.entrySet().iterator();
+	        /*Iterator ita = Cache.alarms.entrySet().iterator();
 	        while (ita.hasNext()) {
 		        Map.Entry pairsa = (Map.Entry)ita.next();
-		        Alarm alarm = (Alarm)pairsa.getValue();
-		        
+		        Alarm alarm = (Alarm)pairsa.getValue();*/
+		    
+		    for (int i=0; i< obuAlarms.size(); i++) {    
+		        ObuAlarm obuAlarm = obuAlarms.get(i);
+		        Alarm alarm = Cache.alarms.get(obuAlarm.getId_alarm());
+		        		
 		        if (stateData.getId_state() == alarm.getId_state()) {
 		        	int alarmValue;
 	        		if (alarm.getValue().equals("obu_settings")) {
@@ -271,18 +274,22 @@ public class ObuData {
 	        		}
 		        	
 		        	if (alarm.getType().equals("N")) {
+		        		boolean setAlarm = false;
 			        	if (alarm.getOperand().equals("=")){
 		            		if (Integer.parseInt(stateData.getValue()) == alarmValue) {
-		            			setAlarm(alarm.getId(), obuId, stateData.getValue(), alarm.getMessage(), stateData.getDateState());
+		            			setAlarm = true;
 		            		}
 			        	} else if (alarm.getOperand().equals(">")){
 		            		if (Integer.parseInt(stateData.getValue()) > alarmValue) {
-		            			setAlarm(alarm.getId(), obuId, stateData.getValue(), alarm.getMessage(), stateData.getDateState());
+		            			setAlarm = true;
 		            		}
 			        	} else if (alarm.getOperand().equals("<")){
 			            	if (Integer.parseInt(stateData.getValue()) < alarmValue) {
-		            			setAlarm(alarm.getId(), obuId, stateData.getValue(), alarm.getMessage(), stateData.getDateState());
+		            			setAlarm = true;
 		            		}
+			        	}
+			        	if (setAlarm) {
+	            			setAlarm(alarm.getId(), obuId, stateData.getValue(), alarm.getMessage(), stateData.getDateState(), obuAlarm.getSend_customer(), obuAlarm.getSend_friends(), obuAlarm.getActive());
 			        	}
 		        	}
 		        }
@@ -291,30 +298,44 @@ public class ObuData {
 	}
 
 	
-	public static void setAlarm(int alarmId, int obuId, String stateValue, String message, Timestamp date_alarm) {
+	public static void setAlarm(int alarmId, int obuId, String stateValue, String message, Timestamp date_alarm, int sendCustomer, int sendFriends, int active) {
 		Connection con = null;
 		Statement stmt = null;
+		ResultSet rs = null;
 		
 		try {
 	    	con = DbManager.getConnection("config");
 			stmt = con.createStatement();   	
- 
-			String msg = getMessage(message, obuId);
-			
-			SmsClient.sendSMSCustomer(obuId, msg);
-	    	SmsClient.sendSMSFriends(obuId, msg);
 
-	    	String	sql = "insert into alarm_data (id_alarm, id_obu, value, message, date_alarm, send_customer, send_friends) " + 
-	    				"select " + alarmId + ", " + obuId + ", '" + stateValue + "', '" + msg + "', '" + date_alarm + "', 1, 1 from dual " +
-	    				"where not exists (select * from alarm_data where id_alarm = " + alarmId + " and id_obu = " + obuId + " and confirmed=0) limit 1";
+	    	String	sql = "select * "
+	    				+ "from alarm_data "
+	    				+ "where id_alarm = " + alarmId + " and id_obu = " + obuId + " and confirmed=0";
 	    		
-	    	stmt.executeUpdate(sql);
+    		stmt = con.createStatement();   	
+	    	rs = stmt.executeQuery(sql);
 	    	
+	    	if (rs.next()) {
+	    	} else {
+				String msg = getMessage(message, obuId);
+				
+				if ((sendCustomer == 1) && (active == 1)) {
+					SmsClient.sendSMSCustomer(obuId, msg);
+				}
+				if ((sendFriends == 1) && (active == 1)) {
+					SmsClient.sendSMSFriends(obuId, msg);
+				}
+	
+		    	sql = "insert into alarm_data (id_alarm, id_obu, value, message, date_alarm, send_customer, send_friends, active) " + 
+		    			"values (" + alarmId + ", " + obuId + ", '" + stateValue + "', '" + msg + "', '" + date_alarm + "', " + sendCustomer + ", " + sendFriends + ", " + active + ")";
+		    		
+		    	stmt.executeUpdate(sql);
+	    	}
 	    	
 	    } catch (Exception theException) {
 	    	theException.printStackTrace();
 	    } finally {
 	    	try {
+	    		if (rs != null) rs.close();
 	    		if (stmt != null) stmt.close();
 			} catch (Exception e) {}
 	    }
@@ -333,7 +354,6 @@ public class ObuData {
     				+ "from obus left join customers on (obus.id = customers.id_obu)" +
     				" where obus.id = " + obuId;
 	    		
-    		System.out.println("sql="+sql);
     		stmt = con.createStatement();   	
 	    	rs = stmt.executeQuery(sql);
 	    	
@@ -360,12 +380,12 @@ public class ObuData {
 	    
 		return message;
 	}
-	
-	public static List<AlarmData> getAlarms(int obuId) {
+
+	public static List<AlarmData> getAlarmData(int obuId) {
 		Connection con = null;
 		ResultSet rs = null;
 	    Statement stmt = null;
-	    List<AlarmData> alarms = new ArrayList<AlarmData>();
+	    List<AlarmData> alarmData = new ArrayList<AlarmData>();
     	try {
     		con = DbManager.getConnection("config");
 
@@ -385,7 +405,8 @@ public class ObuData {
 	    		alarm.setType(rs.getString("type"));
 	    		alarm.setDate_alarm(rs.getTimestamp("date_alarm"));
 	    		alarm.setConfirmed(rs.getInt("confirmed"));
-	    		alarms.add(alarm);
+	    		alarm.setActive(rs.getInt("active"));
+	    		alarmData.add(alarm);
 	    	}
 	
 	    } catch (Exception theException) {
@@ -397,7 +418,44 @@ public class ObuData {
 			} catch (Exception e) {}
 	    }	
 		
-    	return alarms;
+    	return alarmData;
+	}	
+	
+	public static List<ObuAlarm> getAlarms(int obuId) {
+		Connection con = null;
+		ResultSet rs = null;
+	    Statement stmt = null;
+	    List<ObuAlarm> obuAlarms = new ArrayList<ObuAlarm>();
+    	try {
+    		con = DbManager.getConnection("config");
+
+	    	String	sql = "select * "
+	    			+ "from obu_alarms "
+	    			+ "where id_obu = " + obuId;
+	    		
+    		stmt = con.createStatement();   	
+	    	rs = stmt.executeQuery(sql);
+    		
+	    	while (rs.next()) {
+	    		ObuAlarm obuAlarm = new ObuAlarm();
+	    		obuAlarm.setId_obu(rs.getInt("id_obu"));
+	    		obuAlarm.setId_alarm(rs.getInt("id_alarm"));
+	    		obuAlarm.setSend_customer(rs.getInt("send_customer"));
+	    		obuAlarm.setSend_friends(rs.getInt("send_friends"));
+	    		obuAlarm.setActive(rs.getInt("active"));
+	    		obuAlarms.add(obuAlarm);
+	    	}
+	
+	    } catch (Exception theException) {
+	    	theException.printStackTrace();
+	    } finally {
+	    	try {
+	    		if (rs != null) rs.close();
+	    		if (stmt != null) stmt.close();
+			} catch (Exception e) {}
+	    }	
+		
+    	return obuAlarms;
 	}		
 	
 	public static void confirmAlarm(int alarmId, int obuId) {

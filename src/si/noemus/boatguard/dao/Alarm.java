@@ -9,6 +9,7 @@ public class Alarm {
 	private String operand;
 	private String message;
 	private String type;
+	private int active;
 	
 	public int getId() {
 		return id;
@@ -52,4 +53,11 @@ public class Alarm {
 	public void setValue(String value) {
 		this.value = value;
 	}
+	public int getActive() {
+		return active;
+	}
+	public void setActive(int active) {
+		this.active = active;
+	}
+	
 }
