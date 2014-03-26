@@ -10,6 +10,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import si.bisoft.commons.dbpool.DbManager;
+import si.noemus.boatguard.util.Constant;
 
 public class Cache {
 	private static Log log = LogFactory.getLog(Cache.class); 
@@ -133,6 +134,31 @@ public class Cache {
 	    		appSetting.setType(rs.getString("type"));
 	    		appSettings.put(rs.getString("name"), appSetting);
 	    	}
+	    	
+	    	Constant.STATE_ROW_STATE_VALUE = Integer.parseInt(Cache.appSettings.get(Constant.STATE_ROW_STATE).getValue());
+	    	Constant.STATE_PUMP_STATE_VALUE = Integer.parseInt(Cache.appSettings.get(Constant.STATE_PUMP_STATE).getValue());
+	    	Constant.STATE_ACCU_TOK_VALUE = Integer.parseInt(Cache.appSettings.get(Constant.STATE_ACCU_TOK).getValue());
+	    	Constant.STATE_ACCU_NAPETOST_VALUE = Integer.parseInt(Cache.appSettings.get(Constant.STATE_ACCU_NAPETOST).getValue());
+	    	Constant.STATE_ACCU_AH_VALUE = Integer.parseInt(Cache.appSettings.get(Constant.STATE_ACCU_AH).getValue());
+	    	Constant.STATE_GEO_DIST_VALUE = Integer.parseInt(Cache.appSettings.get(Constant.STATE_GEO_DIST).getValue());
+	    	Constant.OBU_SETTINGS_GEO_FENCE_VALUE = Integer.parseInt(Cache.appSettings.get(Constant.OBU_SETTINGS_GEO_FENCE).getValue());
+	    	Constant.OBU_SETTINGS_LON_VALUE = Integer.parseInt(Cache.appSettings.get(Constant.OBU_SETTINGS_LON).getValue());
+	    	Constant.OBU_SETTINGS_LAT_VALUE = Integer.parseInt(Cache.appSettings.get(Constant.OBU_SETTINGS_LAT).getValue());
+	    	Constant.OBU_SETTINGS_GEO_DISTANCE_VALUE = Integer.parseInt(Cache.appSettings.get(Constant.OBU_SETTINGS_GEO_DISTANCE).getValue());
+	    	Constant.APP_SETTINGS_NAPETOST_TOK_MAX_VALUE = Integer.parseInt(Cache.appSettings.get(Constant.APP_SETTINGS_NAPETOST_TOK_MAX).getValue());
+	    	Constant.APP_SETTINGS_NAPETOST_TOK_MIN_VALUE = Integer.parseInt(Cache.appSettings.get(Constant.APP_SETTINGS_NAPETOST_TOK_MIN).getValue());
+	    	Constant.APP_SETTINGS_ENERGIJA_VALUE = Integer.parseInt(Cache.appSettings.get(Constant.APP_SETTINGS_ENERGIJA).getValue());
+	    	Constant.APP_SETTINGS_NAPETOST_KOEF1_VALUE = Double.parseDouble(Cache.appSettings.get(Constant.APP_SETTINGS_NAPETOST_KOEF1).getValue());
+	    	Constant.APP_SETTINGS_NAPETOST_KOEF2_VALUE = Double.parseDouble(Cache.appSettings.get(Constant.APP_SETTINGS_NAPETOST_KOEF2).getValue());
+	    	Constant.OBU_PUMP_STATE_VALUE = Integer.parseInt(Cache.appSettings.get(Constant.OBU_PUMP_STATE).getValue());
+	    	Constant.OBU_ACCU_NAPETOST_VALUE = Integer.parseInt(Cache.appSettings.get(Constant.OBU_ACCU_NAPETOST).getValue());
+	    	Constant.OBU_ACCU_TOK_VALUE = Integer.parseInt(Cache.appSettings.get(Constant.OBU_ACCU_TOK).getValue());
+	    	Constant.OBU_ACCU_AH_VALUE = Integer.parseInt(Cache.appSettings.get(Constant.OBU_ACCU_AH).getValue());
+	    	Constant.OBU_LAT_VALUE = Integer.parseInt(Cache.appSettings.get(Constant.OBU_LAT).getValue());
+	    	Constant.OBU_LON_VALUE = Integer.parseInt(Cache.appSettings.get(Constant.OBU_LON).getValue());
+	    	Constant.OBU_DATE_VALUE = Integer.parseInt(Cache.appSettings.get(Constant.OBU_DATE).getValue());
+
+
 	
 	    } catch (Exception theException) {
 	    	theException.printStackTrace();
