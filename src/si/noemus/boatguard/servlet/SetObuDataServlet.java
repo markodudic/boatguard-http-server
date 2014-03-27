@@ -49,8 +49,8 @@ public class SetObuDataServlet extends HttpServlet {
 		String serial = (String) request.getParameter("serial");
 		String data = (String) request.getParameter("data");
 		
-		int obuId = ObuData.setData(gsmnum, serial, data);
-		ObuData.calculateAlarms(obuId);
+		int obuid = ObuData.setData(gsmnum, serial, data);
+		ObuData.calculateAlarms(obuid);
 		
     	OutputStream out = null;
     	response.setContentType("text/plain");

@@ -19,7 +19,7 @@ public class ObuData {
 	
 	private static Map<Integer, StateData> obuPrevious = new HashMap<Integer, StateData>();
 	
-	public static Map<Integer, ObuSetting> getSettings(int obuId, String gsmnum, String serial) {
+	public static Map<Integer, ObuSetting> getSettings(int obuid, String gsmnum, String serial) {
 		Connection con = null;
 		ResultSet rs = null;
 	    Statement stmt = null;
@@ -29,7 +29,7 @@ public class ObuData {
 
 	    	String	sql = "select obu_settings.* "
 	    			+ "from obus left join obu_settings on (obus.id = obu_settings.id_obu) "
-	    			+ "where number = '" + gsmnum + "' or serial_number = '" + serial + "' or id = " + obuId + " "
+	    			+ "where number = '" + gsmnum + "' or serial_number = '" + serial + "' or id = " + obuid + " "
 	    			+ "order by id_setting";
 	    		
     		stmt = con.createStatement();   	
@@ -108,11 +108,6 @@ public class ObuData {
 	    					stateValue = Math.round((stateNapetost / Constant.APP_SETTINGS_NAPETOST_KOEF1_VALUE) * Constant.APP_SETTINGS_NAPETOST_KOEF2_VALUE)+"";
 	    				}
 	    			}
-	    			
-	    			
-	    			//var energija = (napetost_percent/100) * ENERGIJA - ((0.01/10240)*(baterija_as-baterija_as_last));
-	    			//var napetost_percent = Math.round(napetost * 12.5);
-	    			
 	    			if (state.getId() == Constant.STATE_ACCU_AH_VALUE){
 	    				int stateAh = Integer.parseInt(stateValue, 16);
 	    				int stateAhLast = Constant.APP_SETTINGS_NAPETOST_TOK_MAX_VALUE;
@@ -125,8 +120,11 @@ public class ObuData {
 	    				
 	    				int napetost_percent = (int) Math.round(stateNapetost * Constant.APP_SETTINGS_NAPETOST_KOEF2_VALUE);
 	    				Double energija = (double) ((napetost_percent/100) * Constant.APP_SETTINGS_ENERGIJA_VALUE) - ((0.01/10240)*(stateAh-stateAhLast));
-	    				
-	    				stateValue = energija + "";
+	    				if (energija<0) {
+	    					stateValue = "0";
+	    				} else {
+	    					stateValue = energija + "";
+	    				}
 	    			}
 	    			sql = "insert into states_data (id_state, id_obu, value, date_state) " + 
 	    	    		"values ('" + state.getId() + "', " + obu.getId() + ", '" + stateValue + "', " + dateState + ")";
@@ -255,10 +253,10 @@ public class ObuData {
 	}
 
 	
-	public static void calculateAlarms(int obuId) {
-		List<ObuAlarm> obuAlarms = getAlarms(obuId);
+	public static void calculateAlarms(int obuid) {
+		List<ObuAlarm> obuAlarms = getAlarms(obuid);
 		
-		Map<Integer, StateData> obuLast = getStateData(obuId);
+		Map<Integer, StateData> obuLast = getStateData(obuid);
 		Iterator it = obuLast.entrySet().iterator();
 		while (it.hasNext()) {
 	        Map.Entry pairs = (Map.Entry)it.next();
@@ -278,7 +276,7 @@ public class ObuData {
 		        if (stateData.getId_state() == alarm.getId_state()) {
 		        	int alarmValue;
 		        	if (alarm.getValue().equals("obu_settings")) {
-	        			Map<Integer, ObuSetting> obuSettings = ObuData.getSettings(obuId, null, null);
+	        			Map<Integer, ObuSetting> obuSettings = ObuData.getSettings(obuid, null, null);
 	        			state = ((ObuSetting)obuSettings.get(Constant.OBU_SETTINGS_GEO_FENCE_VALUE)).getValue();
 	        			if (Integer.parseInt(state) == Constant.GEO_FENCE_DISABLED_VALUE){
         					continue;
@@ -334,7 +332,7 @@ public class ObuData {
 				        	if (alarm.getValue().equals("obu_settings") && setAlarm) {
 				        		state = Constant.GEO_FENCE_ALARM_VALUE+"";
 				        	}
-	            			setAlarm(alarm.getId(), obuId, state, alarm.getMessage(), alarm.getMessage_short(), alarm.getTitle(), alarm.getAction(), obuAlarm.getSound(), obuAlarm.getVibrate(), obuAlarm.getSend_customer(), obuAlarm.getSend_friends(), stateData.getDateState(), obuAlarm.getActive());
+	            			setAlarm(alarm.getId(), obuid, state, alarm.getMessage(), alarm.getMessage_short(), alarm.getTitle(), alarm.getAction(), obuAlarm.getSound(), obuAlarm.getVibrate(), obuAlarm.getSend_customer(), obuAlarm.getSend_friends(), stateData.getDateState(), obuAlarm.getActive());
 			        	}
 		        	}
 		        }
@@ -343,7 +341,7 @@ public class ObuData {
 	}
 
 	
-	public static void setAlarm(int alarmId, int obuId, String stateValue, String message, String messageShort, String title, String action, int sound, int vibrate, int sendCustomer, int sendFriends, Timestamp date_alarm, int active) {
+	public static void setAlarm(int alarmid, int obuid, String stateValue, String message, String messageShort, String title, String action, int sound, int vibrate, int sendCustomer, int sendFriends, Timestamp date_alarm, int active) {
 		Connection con = null;
 		Statement stmt = null;
 		ResultSet rs = null;
@@ -354,24 +352,24 @@ public class ObuData {
 
 	    	String	sql = "select * "
 	    				+ "from alarm_data "
-	    				+ "where id_alarm = " + alarmId + " and id_obu = " + obuId + " and confirmed=0";
+	    				+ "where id_alarm = " + alarmid + " and id_obu = " + obuid + " and confirmed=0";
 	    		
     		stmt = con.createStatement();   	
 	    	rs = stmt.executeQuery(sql);
 	    	
 	    	if (rs.next()) {
 	    	} else {
-				String msg = getMessage(message, obuId);
+				String msg = getMessage(message, obuid);
 				
 				if ((sendCustomer == 1) && (active == 1)) {
-					SmsClient.sendSMSCustomer(obuId, msg);
+					SmsClient.sendSMSCustomer(obuid, msg);
 				}
 				if ((sendFriends == 1) && (active == 1)) {
-					SmsClient.sendSMSFriends(obuId, msg);
+					SmsClient.sendSMSFriends(obuid, msg);
 				}
 	
 		    	sql = "insert into alarm_data (id_alarm, id_obu, value, message, message_short, title, action, sound, vibrate, send_customer, send_friends, date_alarm, active) " + 
-		    			"values (" + alarmId + ", " + obuId + ", '" + stateValue + "', '" + msg + "', '" + messageShort + "', '" + title + "', '" + action + "', " + sound + ", " + vibrate + ", " + sendCustomer + ", " + sendFriends + ", '" + date_alarm + "', " + active + ")";
+		    			"values (" + alarmid + ", " + obuid + ", '" + stateValue + "', '" + msg + "', '" + messageShort + "', '" + title + "', '" + action + "', " + sound + ", " + vibrate + ", " + sendCustomer + ", " + sendFriends + ", '" + date_alarm + "', " + active + ")";
 		    		
 		    	stmt.executeUpdate(sql);
 	    	}
@@ -386,7 +384,7 @@ public class ObuData {
 	    }
 	}	
 	
-	public static String getMessage(String message, int obuId) {
+	public static String getMessage(String message, int obuid) {
 		Connection con = null;
 		Statement stmt = null;
 		ResultSet rs = null;
@@ -397,7 +395,7 @@ public class ObuData {
 
 	    	String	sql = "select obus.name obus_name, customers.name customers_name, customers.surname customers_surname, customers.number customers_number "
     				+ "from obus left join customers on (obus.id = customers.id_obu)" +
-    				" where obus.id = " + obuId;
+    				" where obus.id = " + obuid;
 	    		
     		stmt = con.createStatement();   	
 	    	rs = stmt.executeQuery(sql);
@@ -426,7 +424,7 @@ public class ObuData {
 		return message;
 	}
 
-	public static List<AlarmData> getAlarmData(int obuId) {
+	public static List<AlarmData> getAlarmData(int obuid) {
 		Connection con = null;
 		ResultSet rs = null;
 	    Statement stmt = null;
@@ -436,7 +434,7 @@ public class ObuData {
 
 	    	String	sql = "select * "
 	    			+ "from alarm_data "
-	    			+ "where id_obu = " + obuId + " and confirmed = 0";
+	    			+ "where id_obu = " + obuid + " and confirmed = 0";
 	    		
     		stmt = con.createStatement();   	
 	    	rs = stmt.executeQuery(sql);
@@ -471,7 +469,7 @@ public class ObuData {
     	return alarmData;
 	}	
 	
-	public static List<ObuAlarm> getAlarms(int obuId) {
+	public static List<ObuAlarm> getAlarms(int obuid) {
 		Connection con = null;
 		ResultSet rs = null;
 	    Statement stmt = null;
@@ -481,7 +479,7 @@ public class ObuData {
 
 	    	String	sql = "select * "
 	    			+ "from obu_alarms "
-	    			+ "where id_obu = " + obuId;
+	    			+ "where id_obu = " + obuid;
 	    		
     		stmt = con.createStatement();   	
 	    	rs = stmt.executeQuery(sql);
@@ -510,7 +508,7 @@ public class ObuData {
     	return obuAlarms;
 	}		
 
-	public static Map<Integer, State> getStates(int obuId) {
+	public static Map<Integer, State> getStates(int obuid) {
 		Connection con = null;
 		ResultSet rs = null;
 	    Statement stmt = null;
@@ -520,7 +518,7 @@ public class ObuData {
 
 	    	String	sql = "select states.* "
 	    			+ "from obu_states left join states on (obu_states.id_state = states.id) "
-	    			+ "where id_obu = " + obuId + " and obu_states.active = 1";
+	    			+ "where id_obu = " + obuid + " and obu_states.active = 1";
 	    		
     		stmt = con.createStatement();   	
 	    	rs = stmt.executeQuery(sql);
@@ -549,7 +547,7 @@ public class ObuData {
     	return states;
 	}		
 	
-	public static void confirmAlarm(int alarmId, int obuId) {
+	public static void confirmAlarm(int alarmid, int obuid) {
 		Connection con = null;
 		Statement stmt = null;
 		
@@ -559,7 +557,7 @@ public class ObuData {
  
 			String	sql = "update alarm_data " + 
 	    				"set confirmed = 1 " +
-	    				"where id_alarm = " + alarmId + " and id_obu = " + obuId;
+	    				"where id_alarm = " + alarmid + " and id_obu = " + obuid;
 	    		
 	    	stmt.executeUpdate(sql);
 	    	
