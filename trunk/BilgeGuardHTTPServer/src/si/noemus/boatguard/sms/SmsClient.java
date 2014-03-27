@@ -8,7 +8,7 @@ import si.bisoft.commons.dbpool.DbManager;
 public class SmsClient {
 
 	
-	public static void sendSMSCustomer(int obuId, String message) {
+	public static void sendSMSCustomer(int obuid, String message) {
 		Connection con = null;
 		Statement stmt = null;
 
@@ -19,7 +19,7 @@ public class SmsClient {
 	    	String	sql = "insert into smsserver_out (recipient, text, create_date) " + 
     				"select customers.number, '" + message + "', now() "
     				+ "from customers " +
-    				"where customers.id_obu = " + obuId +
+    				"where customers.id_obu = " + obuid +
     	    		"	and customers.active = 1";
 	    		
     		//System.out.println("sql="+sql);
@@ -38,7 +38,7 @@ public class SmsClient {
 		return;
 	}
 	
-	public static void sendSMSFriends(int obuId, String message) {
+	public static void sendSMSFriends(int obuid, String message) {
 		Connection con = null;
 		Statement stmt = null;
 
@@ -49,7 +49,7 @@ public class SmsClient {
 	    	String	sql = "insert into smsserver_out (recipient, text, create_date) " + 
 	    				"select friends.number, '" + message + "', now() "
 	    				+ "from customers left join friends on (friends.id_customer = customers.id) " +
-	    				"where customers.id_obu = " + obuId +
+	    				"where customers.id_obu = " + obuid +
 	    				"	and friends.active = 1";
 	    		
     		//System.out.println("sql="+sql);
