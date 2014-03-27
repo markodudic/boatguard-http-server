@@ -7,7 +7,11 @@ public class Alarm {
 	private String name;
 	private String value;
 	private String operand;
+	private String previous;
 	private String message;
+	private String message_short;
+	private String title;
+	private String action;
 	private String type;
 	private int active;
 	
@@ -58,6 +62,30 @@ public class Alarm {
 	}
 	public void setActive(int active) {
 		this.active = active;
+	}
+	public String getTitle() {
+		return title;
+	}
+	public void setTitle(String title) {
+		this.title = title;
+	}
+	public String getAction() {
+		return action;
+	}
+	public void setAction(String action) {
+		this.action = action;
+	}
+	public String getMessage_short() {
+		return message_short;
+	}
+	public void setMessage_short(String message_short) {
+		this.message_short = message_short;
+	}
+	public String getPrevious() {
+		return previous;
+	}
+	public void setPrevious(String previous) {
+		this.previous = previous;
 	}
 	
 }

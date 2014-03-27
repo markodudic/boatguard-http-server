@@ -16,7 +16,9 @@ import si.noemus.boatguard.util.Constant;
 import si.noemus.boatguard.util.Util;
 
 public class ObuData {
-
+	
+	private static Map<Integer, StateData> obuPrevious = new HashMap<Integer, StateData>();
+	
 	public static Map<Integer, ObuSetting> getSettings(int obuId, String gsmnum, String serial) {
 		Connection con = null;
 		ResultSet rs = null;
@@ -67,6 +69,8 @@ public class ObuData {
 		Connection con = null;
 		Statement stmt = null;
 		Obu obu = getObu(gsmnum, serial);
+		Map<Integer, State> obuStates = getStates(obu.getId());
+		obuPrevious = getStateData(obu.getId());
     	
 	    try {
 	    	String[] states = data.split(",");
@@ -84,13 +88,13 @@ public class ObuData {
 	    	for (int i=0;i<states.length;i++) {
 	    		if (Cache.states.get(i) != null) {
 	    			String stateValue = states[i];
-	    			State state = Cache.states.get(i);
+	    			State state = obuStates.get(Cache.states.get(i).getId());
 		    		if (state.getId() == Constant.STATE_ACCU_TOK_VALUE){
-	    				int stateTok = Integer.parseInt(stateValue, 16);
-	    				if (stateTok <= Constant.APP_SETTINGS_NAPETOST_TOK_MIN_VALUE) {
-	    					stateTok = 0;
+		    			Double stateTok = Double.parseDouble(Integer.parseInt(stateValue, 16)+"");
+		    			if (stateTok <= Constant.APP_SETTINGS_NAPETOST_TOK_MIN_VALUE) {
+	    					stateTok = 0.0;
 	    				} else {
-	    					stateTok = (3 / Constant.APP_SETTINGS_NAPETOST_TOK_MAX_VALUE) * stateTok;
+	    					stateTok = (3.0 / Constant.APP_SETTINGS_NAPETOST_TOK_MAX_VALUE) * stateTok;
 	    				}
 	    				stateValue = stateTok+"";	    				
 	    			}
@@ -104,6 +108,11 @@ public class ObuData {
 	    					stateValue = Math.round((stateNapetost / Constant.APP_SETTINGS_NAPETOST_KOEF1_VALUE) * Constant.APP_SETTINGS_NAPETOST_KOEF2_VALUE)+"";
 	    				}
 	    			}
+	    			
+	    			
+	    			//var energija = (napetost_percent/100) * ENERGIJA - ((0.01/10240)*(baterija_as-baterija_as_last));
+	    			//var napetost_percent = Math.round(napetost * 12.5);
+	    			
 	    			if (state.getId() == Constant.STATE_ACCU_AH_VALUE){
 	    				int stateAh = Integer.parseInt(stateValue, 16);
 	    				int stateAhLast = Constant.APP_SETTINGS_NAPETOST_TOK_MAX_VALUE;
@@ -112,8 +121,7 @@ public class ObuData {
 	    					stateAhLast = Integer.parseInt(raw_state_last.split(",")[1], 16);
 	    					//int stateAhLast = Integer.parseInt(stateDataLast.get(Constant.STATE_ACCU_AH_VALUE;
 	    				}
-	    				int stateNapetost = Integer.parseInt(states[Constant.OBU_ACCU_TOK_VALUE], 16);
-	    				//System.out.println(stateAh+"-"+stateAhLast);
+	    				double stateNapetost = Integer.parseInt(states[Constant.OBU_ACCU_TOK_VALUE], 16) / Constant.APP_SETTINGS_NAPETOST_KOEF1_VALUE;
 	    				
 	    				int napetost_percent = (int) Math.round(stateNapetost * Constant.APP_SETTINGS_NAPETOST_KOEF2_VALUE);
 	    				Double energija = (double) ((napetost_percent/100) * Constant.APP_SETTINGS_ENERGIJA_VALUE) - ((0.01/10240)*(stateAh-stateAhLast));
@@ -122,23 +130,27 @@ public class ObuData {
 	    			}
 	    			sql = "insert into states_data (id_state, id_obu, value, date_state) " + 
 	    	    		"values ('" + state.getId() + "', " + obu.getId() + ", '" + stateValue + "', " + dateState + ")";
-		    		
 	    	    	stmt.executeUpdate(sql);
 		    			
 	    		}
 	    	}
 	    
-	    	Map<Integer, String> settings = obu.getSettings();
+	    	//geo fence
+	    	Map<Integer, String> obuSettings = obu.getSettings();
     		float lat1 = Util.transform(Float.parseFloat(states[Constant.OBU_LAT_VALUE]));
     		float lon1 = Util.transform(Float.parseFloat(states[Constant.OBU_LON_VALUE]));
-    		float lat2 = Util.transform(Float.parseFloat(settings.get(Constant.OBU_SETTINGS_LAT_VALUE)));
-    		float lon2 = Util.transform(Float.parseFloat(settings.get(Constant.OBU_SETTINGS_LON_VALUE)));
+    		float lat2 = Util.transform(Float.parseFloat(obuSettings.get(Constant.OBU_SETTINGS_LAT_VALUE)));
+    		float lon2 = Util.transform(Float.parseFloat(obuSettings.get(Constant.OBU_SETTINGS_LON_VALUE)));
     		int distance = (int) Math.round(Util.gps2m(lat1, lon1, lat2, lon2));
 	    	sql = "insert into states_data (id_state, id_obu, value, date_state) " + 
-    	    		"values (" + Cache.appSettings.get(Constant.STATE_GEO_DIST).getValue() + ", " + obu.getId() + ", '" + distance + "', " + dateState + ")";
+    	    		"values (" + Cache.appSettings.get(Constant.OBU_SETTINGS_GEO_DISTANCE).getValue() + ", " + obu.getId() + ", '" + distance + "', " + dateState + ")";
 	    		
    	    	stmt.executeUpdate(sql);
 	    	
+	    	sql = "insert into states_data (id_state, id_obu, value, date_state) " + 
+    	    		"values (" + Cache.appSettings.get(Constant.OBU_SETTINGS_GEO_FENCE).getValue() + ", " + obu.getId() + ", '" + Integer.parseInt(obuSettings.get(Constant.OBU_SETTINGS_GEO_FENCE_VALUE)) + "', " + dateState + ")";
+	    		
+   	    	stmt.executeUpdate(sql);
 	    } catch (Exception theException) {
 	    	theException.printStackTrace();
 	    } finally {
@@ -251,6 +263,7 @@ public class ObuData {
 		while (it.hasNext()) {
 	        Map.Entry pairs = (Map.Entry)it.next();
 	        StateData stateData = (StateData)pairs.getValue();
+	        Integer stateId = (Integer)pairs.getKey();
 	        
 	        /*Iterator ita = Cache.alarms.entrySet().iterator();
 	        while (ita.hasNext()) {
@@ -260,13 +273,15 @@ public class ObuData {
 		    for (int i=0; i< obuAlarms.size(); i++) {    
 		        ObuAlarm obuAlarm = obuAlarms.get(i);
 		        Alarm alarm = Cache.alarms.get(obuAlarm.getId_alarm());
+		        String state = stateData.getValue();
 		        		
 		        if (stateData.getId_state() == alarm.getId_state()) {
 		        	int alarmValue;
-	        		if (alarm.getValue().equals("obu_settings")) {
+		        	if (alarm.getValue().equals("obu_settings")) {
 	        			Map<Integer, ObuSetting> obuSettings = ObuData.getSettings(obuId, null, null);
-	        			if (Integer.parseInt(((ObuSetting)obuSettings.get(Constant.OBU_SETTINGS_GEO_FENCE_VALUE)).getValue()) == 0){
-	        					continue;
+	        			state = ((ObuSetting)obuSettings.get(Constant.OBU_SETTINGS_GEO_FENCE_VALUE)).getValue();
+	        			if (Integer.parseInt(state) == Constant.GEO_FENCE_DISABLED_VALUE){
+        					continue;
 	        			}
 	        			alarmValue = Integer.parseInt(((ObuSetting)obuSettings.get(Constant.OBU_SETTINGS_GEO_DISTANCE_VALUE)).getValue());
 	        		} else {
@@ -279,6 +294,10 @@ public class ObuData {
 		            		if (Integer.parseInt(stateData.getValue()) == alarmValue) {
 		            			setAlarm = true;
 		            		}
+			        	} else if (alarm.getOperand().equals("!=")){
+		            		if (Integer.parseInt(stateData.getValue()) != alarmValue) {
+		            			setAlarm = true;
+		            		}
 			        	} else if (alarm.getOperand().equals(">")){
 		            		if (Integer.parseInt(stateData.getValue()) > alarmValue) {
 		            			setAlarm = true;
@@ -288,8 +307,34 @@ public class ObuData {
 		            			setAlarm = true;
 		            		}
 			        	}
+			        	//check previous
+			        	if (setAlarm && (alarm.getPrevious()!=null)) {
+			        		StateData stateDataPrevious = obuPrevious.get(stateId);
+			        		if (stateDataPrevious != null) {
+				        		if (alarm.getPrevious().equals("=")){
+				            		if (Integer.parseInt(stateDataPrevious.getValue()) != alarmValue) {
+				            			setAlarm = false;
+				            		}
+					        	} else if (alarm.getPrevious().equals("!=")){
+				            		if (Integer.parseInt(stateDataPrevious.getValue()) == alarmValue) {
+				            			setAlarm = false;
+				            		}
+					        	} else if (alarm.getPrevious().equals(">")){
+				            		if (Integer.parseInt(stateDataPrevious.getValue()) < alarmValue) {
+				            			setAlarm = false;
+				            		}
+					        	} else if (alarm.getPrevious().equals("<")){
+					            	if (Integer.parseInt(stateDataPrevious.getValue()) > alarmValue) {
+				            			setAlarm = false;
+				            		}
+					        	}
+			        		}
+			        	}
 			        	if (setAlarm) {
-	            			setAlarm(alarm.getId(), obuId, stateData.getValue(), alarm.getMessage(), stateData.getDateState(), obuAlarm.getSend_customer(), obuAlarm.getSend_friends(), obuAlarm.getActive());
+				        	if (alarm.getValue().equals("obu_settings") && setAlarm) {
+				        		state = Constant.GEO_FENCE_ALARM_VALUE+"";
+				        	}
+	            			setAlarm(alarm.getId(), obuId, state, alarm.getMessage(), alarm.getMessage_short(), alarm.getTitle(), alarm.getAction(), obuAlarm.getSound(), obuAlarm.getVibrate(), obuAlarm.getSend_customer(), obuAlarm.getSend_friends(), stateData.getDateState(), obuAlarm.getActive());
 			        	}
 		        	}
 		        }
@@ -298,7 +343,7 @@ public class ObuData {
 	}
 
 	
-	public static void setAlarm(int alarmId, int obuId, String stateValue, String message, Timestamp date_alarm, int sendCustomer, int sendFriends, int active) {
+	public static void setAlarm(int alarmId, int obuId, String stateValue, String message, String messageShort, String title, String action, int sound, int vibrate, int sendCustomer, int sendFriends, Timestamp date_alarm, int active) {
 		Connection con = null;
 		Statement stmt = null;
 		ResultSet rs = null;
@@ -325,8 +370,8 @@ public class ObuData {
 					SmsClient.sendSMSFriends(obuId, msg);
 				}
 	
-		    	sql = "insert into alarm_data (id_alarm, id_obu, value, message, date_alarm, send_customer, send_friends, active) " + 
-		    			"values (" + alarmId + ", " + obuId + ", '" + stateValue + "', '" + msg + "', '" + date_alarm + "', " + sendCustomer + ", " + sendFriends + ", " + active + ")";
+		    	sql = "insert into alarm_data (id_alarm, id_obu, value, message, message_short, title, action, sound, vibrate, send_customer, send_friends, date_alarm, active) " + 
+		    			"values (" + alarmId + ", " + obuId + ", '" + stateValue + "', '" + msg + "', '" + messageShort + "', '" + title + "', '" + action + "', " + sound + ", " + vibrate + ", " + sendCustomer + ", " + sendFriends + ", '" + date_alarm + "', " + active + ")";
 		    		
 		    	stmt.executeUpdate(sql);
 	    	}
@@ -402,6 +447,11 @@ public class ObuData {
 	    		alarm.setId_obu(rs.getInt("id_obu"));
 	    		alarm.setValue(rs.getString("value"));
 	    		alarm.setMessage(rs.getString("message"));
+	    		alarm.setMessage_short(rs.getString("message_short"));
+	    		alarm.setTitle(rs.getString("title"));
+	    		alarm.setAction(rs.getString("action"));
+	    		alarm.setSound(rs.getInt("sound"));
+	    		alarm.setVibrate(rs.getInt("vibrate"));
 	    		alarm.setType(rs.getString("type"));
 	    		alarm.setDate_alarm(rs.getTimestamp("date_alarm"));
 	    		alarm.setConfirmed(rs.getInt("confirmed"));
@@ -440,6 +490,8 @@ public class ObuData {
 	    		ObuAlarm obuAlarm = new ObuAlarm();
 	    		obuAlarm.setId_obu(rs.getInt("id_obu"));
 	    		obuAlarm.setId_alarm(rs.getInt("id_alarm"));
+	    		obuAlarm.setSound(rs.getInt("sound"));
+	    		obuAlarm.setVibrate(rs.getInt("vibrate"));
 	    		obuAlarm.setSend_customer(rs.getInt("send_customer"));
 	    		obuAlarm.setSend_friends(rs.getInt("send_friends"));
 	    		obuAlarm.setActive(rs.getInt("active"));
@@ -456,6 +508,45 @@ public class ObuData {
 	    }	
 		
     	return obuAlarms;
+	}		
+
+	public static Map<Integer, State> getStates(int obuId) {
+		Connection con = null;
+		ResultSet rs = null;
+	    Statement stmt = null;
+	    Map<Integer, State> states = new HashMap<Integer, State>();
+    	try {
+    		con = DbManager.getConnection("config");
+
+	    	String	sql = "select states.* "
+	    			+ "from obu_states left join states on (obu_states.id_state = states.id) "
+	    			+ "where id_obu = " + obuId + " and obu_states.active = 1";
+	    		
+    		stmt = con.createStatement();   	
+	    	rs = stmt.executeQuery(sql);
+    		
+	    	while (rs.next()) {
+	    		State state = new State();
+	    		state.setId(rs.getInt("id"));
+	    		state.setId_component(rs.getInt("id_component"));
+	    		state.setName(rs.getString("name"));
+	    		state.setValues(rs.getString("values"));
+	    		state.setPosition(rs.getInt("position"));
+	    		state.setType(rs.getString("type"));
+	    		state.setActive(rs.getInt("active"));
+	    		states.put(rs.getInt("id"), state);
+	    	}
+	
+	    } catch (Exception theException) {
+	    	theException.printStackTrace();
+	    } finally {
+	    	try {
+	    		if (rs != null) rs.close();
+	    		if (stmt != null) stmt.close();
+			} catch (Exception e) {}
+	    }	
+		
+    	return states;
 	}		
 	
 	public static void confirmAlarm(int alarmId, int obuId) {

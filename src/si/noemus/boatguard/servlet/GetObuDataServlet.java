@@ -16,6 +16,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import si.noemus.boatguard.dao.AlarmData;
 import si.noemus.boatguard.dao.ObuData;
 import si.noemus.boatguard.dao.StateData;
 import si.noemus.boatguard.util.HttpLog;
@@ -69,7 +70,12 @@ public class GetObuDataServlet extends HttpServlet {
 	        stateDataList.add((StateData)pairs.getValue());
 		}
 		Gson gson = new Gson();
-		String data = gson.toJson(stateDataList);
+		String states = gson.toJson(stateDataList);
+		
+		List<AlarmData> alarmData = ObuData.getAlarmData(Integer.parseInt(obuId));
+		String alarms = gson.toJson(alarmData);
+		
+		String data = "{\"states\":"+states+",\"alarms\":"+alarms+"}";
 		
     	OutputStream out = null;
     	response.setContentType("text/plain");

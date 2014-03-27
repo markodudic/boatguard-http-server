@@ -62,7 +62,11 @@ public class Cache {
 	    		alarm.setName(rs.getString("name"));
 	    		alarm.setValue(rs.getString("value"));
 	    		alarm.setOperand(rs.getString("operand"));
+	    		alarm.setPrevious(rs.getString("previous"));
 	    		alarm.setMessage(rs.getString("message"));
+	    		alarm.setMessage_short(rs.getString("message_short"));
+	    		alarm.setTitle(rs.getString("title"));
+	    		alarm.setAction(rs.getString("action"));
 	    		alarm.setType(rs.getString("type"));
 	    		alarm.setActive(rs.getInt("active"));
 	    		alarms.put(rs.getInt("id"), alarm);
@@ -100,6 +104,7 @@ public class Cache {
 	    		state.setValues(rs.getString("values"));
 	    		state.setPosition(rs.getInt("position"));
 	    		state.setType(rs.getString("type"));
+	    		state.setActive(rs.getInt("active"));
 	    		states.put(rs.getInt("position"), state);
 	    	}
 	
@@ -141,7 +146,6 @@ public class Cache {
 	    	Constant.STATE_ACCU_TOK_VALUE = Integer.parseInt(Cache.appSettings.get(Constant.STATE_ACCU_TOK).getValue());
 	    	Constant.STATE_ACCU_NAPETOST_VALUE = Integer.parseInt(Cache.appSettings.get(Constant.STATE_ACCU_NAPETOST).getValue());
 	    	Constant.STATE_ACCU_AH_VALUE = Integer.parseInt(Cache.appSettings.get(Constant.STATE_ACCU_AH).getValue());
-	    	Constant.STATE_GEO_DIST_VALUE = Integer.parseInt(Cache.appSettings.get(Constant.STATE_GEO_DIST).getValue());
 	    	Constant.OBU_SETTINGS_GEO_FENCE_VALUE = Integer.parseInt(Cache.appSettings.get(Constant.OBU_SETTINGS_GEO_FENCE).getValue());
 	    	Constant.OBU_SETTINGS_LON_VALUE = Integer.parseInt(Cache.appSettings.get(Constant.OBU_SETTINGS_LON).getValue());
 	    	Constant.OBU_SETTINGS_LAT_VALUE = Integer.parseInt(Cache.appSettings.get(Constant.OBU_SETTINGS_LAT).getValue());
@@ -158,6 +162,9 @@ public class Cache {
 	    	Constant.OBU_LAT_VALUE = Integer.parseInt(Cache.appSettings.get(Constant.OBU_LAT).getValue());
 	    	Constant.OBU_LON_VALUE = Integer.parseInt(Cache.appSettings.get(Constant.OBU_LON).getValue());
 	    	Constant.OBU_DATE_VALUE = Integer.parseInt(Cache.appSettings.get(Constant.OBU_DATE).getValue());
+	    	Constant.GEO_FENCE_DISABLED_VALUE = Integer.parseInt(Cache.appSettings.get(Constant.GEO_FENCE_DISABLED).getValue());
+	    	Constant.GEO_FENCE_ALARM_VALUE = Integer.parseInt(Cache.appSettings.get(Constant.GEO_FENCE_ALARM).getValue());
+	    	Constant.GEO_FENCE_ENABLED_VALUE = Integer.parseInt(Cache.appSettings.get(Constant.GEO_FENCE_ENABLED).getValue());
 
 
 	
