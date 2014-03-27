@@ -8,6 +8,8 @@ public class State {
 	private String values;
 	private int position;
 	private String type;
+	private int active;
+	
 	public int getId() {
 		return id;
 	}
@@ -43,6 +45,12 @@ public class State {
 	}
 	public void setType(String type) {
 		this.type = type;
+	}
+	public int getActive() {
+		return active;
+	}
+	public void setActive(int active) {
+		this.active = active;
 	}
 	
 	

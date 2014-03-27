@@ -8,6 +8,11 @@ public class AlarmData {
 	private int id_obu;
 	private String value;
 	private String message;
+	private String message_short;
+	private String title;
+	private String action;
+	private int sound;
+	private int vibrate;
 	private String type;
 	private Timestamp date_alarm;
 	private int confirmed;
@@ -61,4 +66,35 @@ public class AlarmData {
 	public void setActive(int active) {
 		this.active = active;
 	}
+	public String getTitle() {
+		return title;
+	}
+	public void setTitle(String title) {
+		this.title = title;
+	}
+	public int getSound() {
+		return sound;
+	}
+	public void setSound(int sound) {
+		this.sound = sound;
+	}
+	public int getVibrate() {
+		return vibrate;
+	}
+	public void setVibrate(int vibrate) {
+		this.vibrate = vibrate;
+	}
+	public String getAction() {
+		return action;
+	}
+	public void setAction(String action) {
+		this.action = action;
+	}
+	public String getMessage_short() {
+		return message_short;
+	}
+	public void setMessage_short(String message_short) {
+		this.message_short = message_short;
+	}
+	
 }

@@ -4,6 +4,8 @@ public class ObuAlarm {
 	
 	private int id_obu;
 	private int id_alarm;
+	private int sound;
+	private int vibrate;
 	private int send_customer;
 	private int send_friends;
 	private int active;
@@ -38,4 +40,17 @@ public class ObuAlarm {
 	public void setActive(int active) {
 		this.active = active;
 	}
+	public int getSound() {
+		return sound;
+	}
+	public void setSound(int sound) {
+		this.sound = sound;
+	}
+	public int getVibrate() {
+		return vibrate;
+	}
+	public void setVibrate(int vibrate) {
+		this.vibrate = vibrate;
+	}
+	
 }
