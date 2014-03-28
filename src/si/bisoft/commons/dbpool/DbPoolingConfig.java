@@ -18,7 +18,8 @@ public class DbPoolingConfig {
 	public String maxPoolSize;
 	public String preferredTestQuery;
 	public String maxStatements;
-    
+
+	
 	/**
 	 * @param args
 	 */
@@ -43,7 +44,7 @@ public class DbPoolingConfig {
 		cfg.acquireIncrement="5";
 		cfg.maxPoolSize="50";
 		cfg.maxStatements="180";
-		
+
 		///System.out.println(cfg);
 		// setting DB pooling manager
 		DbManager.init("config",cfg);
@@ -65,7 +66,7 @@ public class DbPoolingConfig {
 		cfg.maxPoolSize=settings.getProperty("db.pool.maxPoolSize");
 		cfg.preferredTestQuery=settings.getProperty("db.pool.preferredTestQuery");
 		cfg.maxStatements=settings.getProperty("db.pool.maxStatements");
-		
+
 		//System.out.println(cfg);
 		// setting DB pooling manager
 		DbManager.init("config",cfg);
