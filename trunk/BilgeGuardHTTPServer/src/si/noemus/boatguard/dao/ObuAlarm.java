@@ -52,5 +52,6 @@ public class ObuAlarm {
 	public void setVibrate(int vibrate) {
 		this.vibrate = vibrate;
 	}
+
 	
 }

@@ -33,6 +33,7 @@ import org.apache.log4j.PropertyConfigurator;
 import si.bisoft.commons.dbpool.DbManager;
 import si.bisoft.commons.dbpool.DbPoolingConfig;
 import si.noemus.boatguard.dao.Cache;
+import si.noemus.boatguard.sms.MailClient;
 
 public class InitServlet extends HttpServlet implements javax.servlet.Servlet {
 
@@ -40,6 +41,7 @@ public class InitServlet extends HttpServlet implements javax.servlet.Servlet {
   
 	public static String realPath = "WebContent/";
 	public static Properties mainSettings;
+	public static MailClient mailClient;
 
 	
 	public void init(ServletConfig conf) throws ServletException {
@@ -76,7 +78,19 @@ public class InitServlet extends HttpServlet implements javax.servlet.Servlet {
 			cfg.acquireIncrement=settings.getProperty("db.pool.acquireIncrement");
 			cfg.maxPoolSize=settings.getProperty("db.pool.maxPoolSize");
 			cfg.maxStatements=settings.getProperty("db.pool.maxStatements");
+
+			MailClient mailClient = new MailClient();
+			mailClient.smtpServer=settings.getProperty("mail.smtpServer");
+			mailClient.user=settings.getProperty("mail.user");
+			mailClient.pass=settings.getProperty("mail.pass");
+			mailClient.smtp_auth=settings.getProperty("mail.smtp_auth");
+			mailClient.smtp_port=settings.getProperty("mail.smtp_port");
+			mailClient.smtp_socketFactory_port=settings.getProperty("mail.smtp_socketFactory_port");
+			mailClient.smtp_starttls_enable=settings.getProperty("mail.smtp_starttls_enable");
+			mailClient.transport_protocol=settings.getProperty("mail.transport_protocol");
+			mailClient.use_ssl=settings.getProperty("mail.use_ssl");
 			
+					
 			System.out.println(cfg);
 			// setting DB pooling manager
 			DbManager.init("config",cfg);

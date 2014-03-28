@@ -146,15 +146,18 @@ public class Cache {
 	    	Constant.STATE_ACCU_TOK_VALUE = Integer.parseInt(Cache.appSettings.get(Constant.STATE_ACCU_TOK).getValue());
 	    	Constant.STATE_ACCU_NAPETOST_VALUE = Integer.parseInt(Cache.appSettings.get(Constant.STATE_ACCU_NAPETOST).getValue());
 	    	Constant.STATE_ACCU_AH_VALUE = Integer.parseInt(Cache.appSettings.get(Constant.STATE_ACCU_AH).getValue());
+	    	
 	    	Constant.OBU_SETTINGS_GEO_FENCE_VALUE = Integer.parseInt(Cache.appSettings.get(Constant.OBU_SETTINGS_GEO_FENCE).getValue());
 	    	Constant.OBU_SETTINGS_LON_VALUE = Integer.parseInt(Cache.appSettings.get(Constant.OBU_SETTINGS_LON).getValue());
 	    	Constant.OBU_SETTINGS_LAT_VALUE = Integer.parseInt(Cache.appSettings.get(Constant.OBU_SETTINGS_LAT).getValue());
 	    	Constant.OBU_SETTINGS_GEO_DISTANCE_VALUE = Integer.parseInt(Cache.appSettings.get(Constant.OBU_SETTINGS_GEO_DISTANCE).getValue());
+	    	
 	    	Constant.APP_SETTINGS_NAPETOST_TOK_MAX_VALUE = Integer.parseInt(Cache.appSettings.get(Constant.APP_SETTINGS_NAPETOST_TOK_MAX).getValue());
 	    	Constant.APP_SETTINGS_NAPETOST_TOK_MIN_VALUE = Integer.parseInt(Cache.appSettings.get(Constant.APP_SETTINGS_NAPETOST_TOK_MIN).getValue());
 	    	Constant.APP_SETTINGS_ENERGIJA_VALUE = Integer.parseInt(Cache.appSettings.get(Constant.APP_SETTINGS_ENERGIJA).getValue());
 	    	Constant.APP_SETTINGS_NAPETOST_KOEF1_VALUE = Double.parseDouble(Cache.appSettings.get(Constant.APP_SETTINGS_NAPETOST_KOEF1).getValue());
 	    	Constant.APP_SETTINGS_NAPETOST_KOEF2_VALUE = Double.parseDouble(Cache.appSettings.get(Constant.APP_SETTINGS_NAPETOST_KOEF2).getValue());
+	    	
 	    	Constant.OBU_PUMP_STATE_VALUE = Integer.parseInt(Cache.appSettings.get(Constant.OBU_PUMP_STATE).getValue());
 	    	Constant.OBU_ACCU_NAPETOST_VALUE = Integer.parseInt(Cache.appSettings.get(Constant.OBU_ACCU_NAPETOST).getValue());
 	    	Constant.OBU_ACCU_TOK_VALUE = Integer.parseInt(Cache.appSettings.get(Constant.OBU_ACCU_TOK).getValue());
@@ -162,6 +165,7 @@ public class Cache {
 	    	Constant.OBU_LAT_VALUE = Integer.parseInt(Cache.appSettings.get(Constant.OBU_LAT).getValue());
 	    	Constant.OBU_LON_VALUE = Integer.parseInt(Cache.appSettings.get(Constant.OBU_LON).getValue());
 	    	Constant.OBU_DATE_VALUE = Integer.parseInt(Cache.appSettings.get(Constant.OBU_DATE).getValue());
+	    	
 	    	Constant.GEO_FENCE_DISABLED_VALUE = Integer.parseInt(Cache.appSettings.get(Constant.GEO_FENCE_DISABLED).getValue());
 	    	Constant.GEO_FENCE_ALARM_VALUE = Integer.parseInt(Cache.appSettings.get(Constant.GEO_FENCE_ALARM).getValue());
 	    	Constant.GEO_FENCE_ENABLED_VALUE = Integer.parseInt(Cache.appSettings.get(Constant.GEO_FENCE_ENABLED).getValue());

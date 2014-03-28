@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 import si.bisoft.commons.dbpool.DbManager;
+import si.noemus.boatguard.sms.MailClient;
 import si.noemus.boatguard.sms.SmsClient;
 import si.noemus.boatguard.util.Constant;
 import si.noemus.boatguard.util.Util;
@@ -367,7 +368,8 @@ public class ObuData {
 				if ((sendFriends == 1) && (active == 1)) {
 					SmsClient.sendSMSFriends(obuid, msg);
 				}
-	
+				MailClient.sendMail("marko.dudic@gmail.com", title, msg);
+				
 		    	sql = "insert into alarm_data (id_alarm, id_obu, value, message, message_short, title, action, sound, vibrate, send_customer, send_friends, date_alarm, active) " + 
 		    			"values (" + alarmid + ", " + obuid + ", '" + stateValue + "', '" + msg + "', '" + messageShort + "', '" + title + "', '" + action + "', " + sound + ", " + vibrate + ", " + sendCustomer + ", " + sendFriends + ", '" + date_alarm + "', " + active + ")";
 		    		
