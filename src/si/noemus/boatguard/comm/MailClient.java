@@ -1,4 +1,4 @@
-package si.noemus.boatguard.sms;
+package si.noemus.boatguard.comm;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Date;
@@ -35,8 +35,7 @@ public class MailClient {
 
 	public static void sendMail(String to, String subject, String body)
     {
-		System.out.println(to+":"+subject+":"+body+":"+user);
-        try
+		try
         {
           Properties props = System.getProperties();
           //props.setProperty("mail.transport.protocol", transport_protocol);

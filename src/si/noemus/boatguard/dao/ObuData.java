@@ -11,8 +11,8 @@ import java.util.List;
 import java.util.Map;
 
 import si.bisoft.commons.dbpool.DbManager;
-import si.noemus.boatguard.sms.MailClient;
-import si.noemus.boatguard.sms.SmsClient;
+import si.noemus.boatguard.comm.MailClient;
+import si.noemus.boatguard.comm.SmsClient;
 import si.noemus.boatguard.util.Constant;
 import si.noemus.boatguard.util.Util;
 
@@ -258,6 +258,8 @@ public class ObuData {
 		List<ObuAlarm> obuAlarms = getAlarms(obuid);
 		
 		Map<Integer, StateData> obuLast = getStateData(obuid);
+		Customer customer = getCustomer(obuid);
+		
 		Iterator it = obuLast.entrySet().iterator();
 		while (it.hasNext()) {
 	        Map.Entry pairs = (Map.Entry)it.next();
@@ -333,7 +335,7 @@ public class ObuData {
 				        	if (alarm.getValue().equals("obu_settings") && setAlarm) {
 				        		state = Constant.GEO_FENCE_ALARM_VALUE+"";
 				        	}
-	            			setAlarm(alarm.getId(), obuid, state, alarm.getMessage(), alarm.getMessage_short(), alarm.getTitle(), alarm.getAction(), obuAlarm.getSound(), obuAlarm.getVibrate(), obuAlarm.getSend_customer(), obuAlarm.getSend_friends(), stateData.getDateState(), obuAlarm.getActive());
+	            			setAlarm(alarm.getId(), obuid, state, alarm.getMessage(), alarm.getMessage_short(), alarm.getTitle(), alarm.getAction(), obuAlarm.getSound(), obuAlarm.getVibrate(), obuAlarm.getSend_email(), obuAlarm.getSend_customer(), obuAlarm.getSend_friends(), stateData.getDateState(), obuAlarm.getActive(), customer.getEmail());
 			        	}
 		        	}
 		        }
@@ -342,7 +344,7 @@ public class ObuData {
 	}
 
 	
-	public static void setAlarm(int alarmid, int obuid, String stateValue, String message, String messageShort, String title, String action, int sound, int vibrate, int sendCustomer, int sendFriends, Timestamp date_alarm, int active) {
+	public static void setAlarm(int alarmid, int obuid, String stateValue, String message, String messageShort, String title, String action, int sound, int vibrate, int sendEmail, int sendCustomer, int sendFriends, Timestamp date_alarm, int active, String email_to) {
 		Connection con = null;
 		Statement stmt = null;
 		ResultSet rs = null;
@@ -368,7 +370,9 @@ public class ObuData {
 				if ((sendFriends == 1) && (active == 1)) {
 					SmsClient.sendSMSFriends(obuid, msg);
 				}
-				MailClient.sendMail("marko.dudic@gmail.com", title, msg);
+				if ((sendEmail == 1) && (active == 1)) {
+					MailClient.sendMail(email_to, title, msg);
+				}	
 				
 		    	sql = "insert into alarm_data (id_alarm, id_obu, value, message, message_short, title, action, sound, vibrate, send_customer, send_friends, date_alarm, active) " + 
 		    			"values (" + alarmid + ", " + obuid + ", '" + stateValue + "', '" + msg + "', '" + messageShort + "', '" + title + "', '" + action + "', " + sound + ", " + vibrate + ", " + sendCustomer + ", " + sendFriends + ", '" + date_alarm + "', " + active + ")";
@@ -492,6 +496,7 @@ public class ObuData {
 	    		obuAlarm.setId_alarm(rs.getInt("id_alarm"));
 	    		obuAlarm.setSound(rs.getInt("sound"));
 	    		obuAlarm.setVibrate(rs.getInt("vibrate"));
+	    		obuAlarm.setSend_email(rs.getInt("send_email"));
 	    		obuAlarm.setSend_customer(rs.getInt("send_customer"));
 	    		obuAlarm.setSend_friends(rs.getInt("send_friends"));
 	    		obuAlarm.setActive(rs.getInt("active"));
@@ -548,6 +553,51 @@ public class ObuData {
 		
     	return states;
 	}		
+
+	public static Customer getCustomer(int obuid) {
+		Connection con = null;
+		ResultSet rs = null;
+	    Statement stmt = null;
+	    Customer customer = new Customer();
+    	try {
+    		con = DbManager.getConnection("config");
+
+	    	String	sql = "select * "
+	    			+ "from customers "
+	    			+ "where id_obu = " + obuid;
+	    		
+    		stmt = con.createStatement();   	
+	    	rs = stmt.executeQuery(sql);
+    		
+	    	while (rs.next()) {
+	    		customer.setId(rs.getInt("id"));
+	    		customer.setId_obu(rs.getInt("id_obu"));
+	    		customer.setName(rs.getString("name"));
+	    		customer.setSurname(rs.getString("surname"));
+	    		customer.setUsername(rs.getString("username"));
+	    		customer.setPassword(rs.getString("password"));
+	    		customer.setNumber(rs.getString("number"));
+	    		customer.setEmail(rs.getString("email"));
+	    		customer.setRegister_date(rs.getTimestamp("register_date"));
+	    		customer.setLast_visited(rs.getTimestamp("last_visited"));
+	    		customer.setApp_version(rs.getString("app_version"));
+	    		customer.setPhone_model(rs.getString("phone_model"));
+	    		customer.setPhone_platform(rs.getString("phone_platform"));
+	    		customer.setHome_network(rs.getString("home_network"));
+	    		customer.setActive(rs.getString("active"));
+	    	}
+	
+	    } catch (Exception theException) {
+	    	theException.printStackTrace();
+	    } finally {
+	    	try {
+	    		if (rs != null) rs.close();
+	    		if (stmt != null) stmt.close();
+			} catch (Exception e) {}
+	    }	
+		
+    	return customer;
+	}	
 	
 	public static void confirmAlarm(int alarmid, int obuid) {
 		Connection con = null;

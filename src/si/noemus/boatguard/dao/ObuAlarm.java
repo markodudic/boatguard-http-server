@@ -6,6 +6,7 @@ public class ObuAlarm {
 	private int id_alarm;
 	private int sound;
 	private int vibrate;
+	private int send_email;
 	private int send_customer;
 	private int send_friends;
 	private int active;
@@ -52,6 +53,10 @@ public class ObuAlarm {
 	public void setVibrate(int vibrate) {
 		this.vibrate = vibrate;
 	}
-
-	
+	public int getSend_email() {
+		return send_email;
+	}
+	public void setSend_email(int send_email) {
+		this.send_email = send_email;
+	}
 }

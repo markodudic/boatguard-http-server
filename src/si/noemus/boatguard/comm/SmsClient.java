@@ -1,4 +1,4 @@
-package si.noemus.boatguard.sms;
+package si.noemus.boatguard.comm;
 
 import java.sql.Connection;
 import java.sql.Statement;
