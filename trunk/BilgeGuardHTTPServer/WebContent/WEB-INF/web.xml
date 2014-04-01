@@ -1,140 +1,76 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:javaee="http://java.sun.com/xml/ns/javaee" xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd" version="2.4">
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:javaee="http://xmlns.jcp.org/xml/ns/javaee" xmlns:web="http://xmlns.jcp.org/xml/ns/javaee" xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd http://xmlns.jcp.org/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.4">
   <display-name>bg</display-name>
   <description></description>
   <context-param>
     <param-name>webAppRootKey</param-name>
     <param-value>bg</param-value>
   </context-param>
-
-   <servlet>
-      <servlet-name>InitServlet</servlet-name> 
-      <servlet-class>si.noemus.bilgeguard.InitServlet</servlet-class> 
-      <init-param>
-         <param-name>config-init-file</param-name> 
-         <param-value>/WEB-INF/config.properties</param-value> 
-      </init-param>
-      <init-param>
-         <param-name>config-log4j-file</param-name> 
-         <param-value>/WEB-INF/log4j.properties</param-value> 
-      </init-param>
-      <load-on-startup>1</load-on-startup> 
-   </servlet>
-
   <servlet>
-    <servlet-name>SendSMSServlet</servlet-name>
-    <servlet-class>si.noemus.bilgeguard.SendSMSServlet</servlet-class>
-  </servlet>  
-  <servlet-mapping>
-    <servlet-name>SendSMSServlet</servlet-name>
-    <url-pattern>/SendSMSServlet</url-pattern>
-  </servlet-mapping>
-  
-  <servlet>
-    <servlet-name>GetStateServlet</servlet-name>
-    <servlet-class>si.noemus.bilgeguard.GetStateServlet</servlet-class>
-  </servlet>  
-  <servlet-mapping>
-    <servlet-name>GetStateServlet</servlet-name>
-    <url-pattern>/GetStateServlet</url-pattern>
-  </servlet-mapping>  
-  
-  <servlet>
-    <servlet-name>GetSettingsServlet</servlet-name>
-    <servlet-class>si.noemus.bilgeguard.GetSettingsServlet</servlet-class>
-  </servlet>  
-  <servlet-mapping>
-    <servlet-name>GetSettingsServlet</servlet-name>
-    <url-pattern>/GetSettingsServlet</url-pattern>
-  </servlet-mapping>  
-  
-  <servlet>
-    <servlet-name>GetHistoryServlet</servlet-name>
-    <servlet-class>si.noemus.bilgeguard.GetHistoryServlet</servlet-class>
-  </servlet>  
-  <servlet-mapping>
-    <servlet-name>GetHistoryServlet</servlet-name>
-    <url-pattern>/GetHistoryServlet</url-pattern>
-  </servlet-mapping>    
-  
-  <servlet>
-    <servlet-name>SetSettingsServlet</servlet-name>
-    <servlet-class>si.noemus.bilgeguard.SetSettingsServlet</servlet-class>
-  </servlet>  
-  <servlet-mapping>
-    <servlet-name>SetSettingsServlet</servlet-name>
-    <url-pattern>/SetSettingsServlet</url-pattern>
-  </servlet-mapping>  
-  
-  <servlet>
-    <servlet-name>obu</servlet-name>
-    <servlet-class>si.noemus.bilgeguard.obu</servlet-class>
-  </servlet>  
-  <servlet-mapping>
-    <servlet-name>obu</servlet-name>
-    <url-pattern>/obu</url-pattern>
-  </servlet-mapping>  
-  
-  <!-- NEW BOAT GUARD -->
+    <servlet-name>InitServlet</servlet-name>
+    <servlet-class>si.noemus.boatguard.servlet.InitServlet</servlet-class>
+    <init-param>
+      <param-name>config-init-file</param-name>
+      <param-value>/WEB-INF/config.properties</param-value>
+    </init-param>
+    <init-param>
+      <param-name>config-log4j-file</param-name>
+      <param-value>/WEB-INF/log4j.properties</param-value>
+    </init-param>
+    <load-on-startup>1</load-on-startup>
+  </servlet>
   <servlet>
     <servlet-name>SetObuDataServlet</servlet-name>
     <servlet-class>si.noemus.boatguard.servlet.SetObuDataServlet</servlet-class>
-	<load-on-startup>2</load-on-startup>
-  </servlet>  
+    <load-on-startup>2</load-on-startup>
+  </servlet>
   <servlet-mapping>
     <servlet-name>SetObuDataServlet</servlet-name>
     <url-pattern>/setdata</url-pattern>
-  </servlet-mapping>  
-
-   <servlet>
+  </servlet-mapping>
+  <servlet>
     <servlet-name>GetObuDataServlet</servlet-name>
     <servlet-class>si.noemus.boatguard.servlet.GetObuDataServlet</servlet-class>
-	<load-on-startup>5</load-on-startup>
-  </servlet>  
+    <load-on-startup>5</load-on-startup>
+  </servlet>
   <servlet-mapping>
     <servlet-name>GetObuDataServlet</servlet-name>
     <url-pattern>/getdata</url-pattern>
   </servlet-mapping>
-
   <servlet>
     <servlet-name>GetObuAlarmsServlet</servlet-name>
     <servlet-class>si.noemus.boatguard.servlet.GetObuAlarmsServlet</servlet-class>
-	<load-on-startup>6</load-on-startup>
-  </servlet>  
+    <load-on-startup>6</load-on-startup>
+  </servlet>
   <servlet-mapping>
     <servlet-name>GetObuAlarmsServlet</servlet-name>
     <url-pattern>/getalarms</url-pattern>
   </servlet-mapping>
- 
-  
   <servlet>
     <servlet-name>ConfirmObuAlarmServlet</servlet-name>
     <servlet-class>si.noemus.boatguard.servlet.ConfirmObuAlarmServlet</servlet-class>
-	<load-on-startup>7</load-on-startup>
-  </servlet>  
+    <load-on-startup>7</load-on-startup>
+  </servlet>
   <servlet-mapping>
     <servlet-name>ConfirmObuAlarmServlet</servlet-name>
     <url-pattern>/confirmalarm</url-pattern>
   </servlet-mapping>
-  
-  
   <servlet>
     <servlet-name>GetObuSettingsServlet</servlet-name>
     <servlet-class>si.noemus.boatguard.servlet.GetObuSettingsServlet</servlet-class>
-	<load-on-startup>3</load-on-startup>
-  </servlet>  
+    <load-on-startup>3</load-on-startup>
+  </servlet>
   <servlet-mapping>
     <servlet-name>GetObuSettingsServlet</servlet-name>
-    <url-pattern>/getsettings</url-pattern>   
-  </servlet-mapping>    
-  
+    <url-pattern>/getsettings</url-pattern>
+  </servlet-mapping>
   <servlet>
     <servlet-name>RpcServlet</servlet-name>
     <servlet-class>si.noemus.boatguard.servlet.RpcServlet</servlet-class>
-	<load-on-startup>4</load-on-startup>
-  </servlet>  
+    <load-on-startup>4</load-on-startup>
+  </servlet>
   <servlet-mapping>
     <servlet-name>RpcServlet</servlet-name>
-    <url-pattern>/rpc</url-pattern>   
-  </servlet-mapping>  
+    <url-pattern>/rpc</url-pattern>
+  </servlet-mapping>
 </web-app>

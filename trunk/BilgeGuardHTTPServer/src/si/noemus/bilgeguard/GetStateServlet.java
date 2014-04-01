@@ -18,6 +18,7 @@ import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 
 import si.bisoft.commons.dbpool.DbManager;
+import si.noemus.boatguard.servlet.InitServlet;
 import si.noemus.boatguard.util.Util;
 
 
