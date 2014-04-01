@@ -1,7 +1,7 @@
 //TMS-SW: Traffic Management System - Software
 //Copyright (C) 2004-2005, Asobi d.o.o. (www.asobi.si).
 //All rights reserved.
-package si.noemus.bilgeguard;
+package si.noemus.boatguard.servlet;
 
 /*
  * Created on 2004.11.12
