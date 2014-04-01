@@ -59,7 +59,8 @@ public class ConfirmObuAlarmServlet extends HttpServlet {
 		String obuid = (String) request.getParameter("obuid");
 		String alarmid = (String) request.getParameter("alarmid");
 		
-		ObuData.confirmAlarm(Integer.parseInt(alarmid), Integer.parseInt(obuid));
+		ObuData obuData = new ObuData();
+		obuData.confirmAlarm(Integer.parseInt(alarmid), Integer.parseInt(obuid));
 
 		OutputStream out = null;
     	response.setContentType("text/plain");

@@ -60,7 +60,8 @@ public class GetObuSettingsServlet extends HttpServlet {
 		String gsmnum = (String) request.getParameter("gsmnum");
 		String serial = (String) request.getParameter("serial");
 		
-		Map<Integer, ObuSetting> obuSettings = ObuData.getSettings(-1, gsmnum, serial);
+		ObuData obuData = new ObuData();
+		Map<Integer, ObuSetting> obuSettings = obuData.getSettings(-1, gsmnum, serial);
 		Iterator it = obuSettings.entrySet().iterator();
 		String settings = "";
 		while (it.hasNext()) {

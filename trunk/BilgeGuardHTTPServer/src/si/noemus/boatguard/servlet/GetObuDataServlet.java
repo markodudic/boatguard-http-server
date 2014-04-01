@@ -62,7 +62,8 @@ public class GetObuDataServlet extends HttpServlet {
 
 		String obuid = (String) request.getParameter("obuid");
 		
-		Map<Integer, StateData> stateData = ObuData.getStateData(Integer.parseInt(obuid));
+		ObuData obuData = new ObuData();
+		Map<Integer, StateData> stateData = obuData.getStateData(Integer.parseInt(obuid));
 		Iterator it = stateData.entrySet().iterator();
 		List<StateData> stateDataList = new ArrayList<StateData>();
 		while (it.hasNext()) {
@@ -72,7 +73,7 @@ public class GetObuDataServlet extends HttpServlet {
 		Gson gson = new Gson();
 		String states = gson.toJson(stateDataList);
 		
-		List<AlarmData> alarmData = ObuData.getAlarmData(Integer.parseInt(obuid));
+		List<AlarmData> alarmData = obuData.getAlarmData(Integer.parseInt(obuid));
 		String alarms = gson.toJson(alarmData);
 		
 		String data = "{\"states\":"+states+",\"alarms\":"+alarms+"}";
