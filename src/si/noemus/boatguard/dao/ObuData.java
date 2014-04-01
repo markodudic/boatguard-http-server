@@ -4,7 +4,9 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -18,9 +20,12 @@ import si.noemus.boatguard.util.Util;
 
 public class ObuData {
 	
-	private static Map<Integer, StateData> obuPrevious = new HashMap<Integer, StateData>();
+	private static Map<Integer, StateData> lastStateData = new HashMap<Integer, StateData>();
 	
-	public static Map<Integer, ObuSetting> getSettings(int obuid, String gsmnum, String serial) {
+	public ObuData(){
+	}
+	
+	public Map<Integer, ObuSetting> getSettings(int obuid, String gsmnum, String serial) {
 		Connection con = null;
 		ResultSet rs = null;
 	    Statement stmt = null;
@@ -66,90 +71,100 @@ public class ObuData {
 	5.-LATITUDE
 	6.-UTC TIME
 	*/
-	public static int setData(String gsmnum, String serial, String data) {
+	public int setData(String gsmnum, String serial, String data) {
+		System.out.println("1");
 		Connection con = null;
 		Statement stmt = null;
 		Obu obu = getObu(gsmnum, serial);
+		System.out.println("2");
 		Map<Integer, State> obuStates = getStates(obu.getId());
-		obuPrevious = getStateData(obu.getId());
+		System.out.println("3");
+		lastStateData = getStateData(obu.getId());
+		System.out.println("4");
     	
 	    try {
 	    	String[] states = data.split(",");
 	    	String dateState = states[Constant.OBU_DATE_VALUE];
-	    	Map<Integer, StateData> stateDataLast = getStateData(obu.getId());
+	    	SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMddhhmmss");
+	        Date parsedDate = dateFormat.parse(dateState);
+	        Timestamp tsDS = new java.sql.Timestamp(parsedDate.getTime());
 	    	
-	    	con = DbManager.getConnection("config");
-			stmt = con.createStatement();   	
- 
-	    	String	sql = "insert into states_data (id_state, id_obu, value, date_state) " + 
-	    				"values (" + Constant.STATE_ROW_STATE_VALUE + ", " + obu.getId() + ", '" + data + "', " + dateState + ")";
-	    		
-	    	stmt.executeUpdate(sql);
-	    	
-	    	for (int i=0;i<states.length;i++) {
-	    		if (Cache.states.get(i) != null) {
-	    			String stateValue = states[i];
-	    			State state = obuStates.get(Cache.states.get(i).getId());
-		    		if (state.getId() == Constant.STATE_ACCU_TOK_VALUE){
-		    			Double stateTok = Double.parseDouble(Integer.parseInt(stateValue, 16)+"");
-		    			if (stateTok <= Constant.APP_SETTINGS_NAPETOST_TOK_MIN_VALUE) {
-	    					stateTok = 0.0;
-	    				} else {
-	    					stateTok = (3.0 / Constant.APP_SETTINGS_NAPETOST_TOK_MAX_VALUE) * stateTok;
-	    				}
-	    				stateValue = stateTok+"";	    				
-	    			}
-	    			if (state.getId() == Constant.STATE_ACCU_NAPETOST_VALUE){
-	    				int stateNapetost = Integer.parseInt(stateValue, 16);
-	    				int stateTok = Integer.parseInt(states[Constant.OBU_ACCU_AH_VALUE], 16);
-	    				//ce je tok<APP_SETTING_TOK_MIN je napetost zadnja od takrat ko je tok>APP_SETTING_TOK_MIN
-	    				if ((stateDataLast.get(Constant.STATE_ACCU_NAPETOST)!= null) && (stateTok <= Constant.APP_SETTINGS_NAPETOST_TOK_MIN_VALUE)) {
-	    					stateValue = Integer.parseInt(stateDataLast.get(Constant.STATE_ACCU_NAPETOST_VALUE).getValue()) + "";
-	    				} else {
-	    					stateValue = Math.round((stateNapetost / Constant.APP_SETTINGS_NAPETOST_KOEF1_VALUE) * Constant.APP_SETTINGS_NAPETOST_KOEF2_VALUE)+"";
-	    				}
-	    			}
-	    			if (state.getId() == Constant.STATE_ACCU_AH_VALUE){
-	    				int stateAh = Integer.parseInt(stateValue, 16);
-	    				int stateAhLast = Constant.APP_SETTINGS_NAPETOST_TOK_MAX_VALUE;
-	    				if (stateDataLast.get(Constant.STATE_ROW_STATE) != null) {
-	    					String raw_state_last = stateDataLast.get(Constant.STATE_ROW_STATE).getValue();
-	    					stateAhLast = Integer.parseInt(raw_state_last.split(",")[1], 16);
-	    					//int stateAhLast = Integer.parseInt(stateDataLast.get(Constant.STATE_ACCU_AH_VALUE;
-	    				}
-	    				double stateNapetost = Integer.parseInt(states[Constant.OBU_ACCU_TOK_VALUE], 16) / Constant.APP_SETTINGS_NAPETOST_KOEF1_VALUE;
-	    				
-	    				int napetost_percent = (int) Math.round(stateNapetost * Constant.APP_SETTINGS_NAPETOST_KOEF2_VALUE);
-	    				Double energija = (double) ((napetost_percent/100) * Constant.APP_SETTINGS_ENERGIJA_VALUE) - ((0.01/10240)*(stateAh-stateAhLast));
-	    				if (energija<0) {
-	    					stateValue = "0";
-	    				} else {
-	    					stateValue = energija + "";
-	    				}
-	    			}
-	    			sql = "insert into states_data (id_state, id_obu, value, date_state) " + 
-	    	    		"values ('" + state.getId() + "', " + obu.getId() + ", '" + stateValue + "', " + dateState + ")";
-	    	    	stmt.executeUpdate(sql);
-		    			
-	    		}
+	    	if (lastStateData.get(Constant.STATE_ROW_STATE_VALUE)==null || tsDS.after(lastStateData.get(Constant.STATE_ROW_STATE_VALUE).getDateState())) {
+	    		//Map<Integer, StateData> stateDataLast = getStateData(obu.getId());
+		    	
+		    	con = DbManager.getConnection("config");
+				stmt = con.createStatement();   	
+	 
+		    	String	sql = "insert into states_data (id_state, id_obu, value, date_state) " + 
+		    				"values (" + Constant.STATE_ROW_STATE_VALUE + ", " + obu.getId() + ", '" + data + "', " + dateState + ")";
+		    		
+		    	stmt.executeUpdate(sql);
+		    	
+		    	for (int i=0;i<states.length;i++) {
+		    		if (Cache.states.get(i) != null) {
+		    			String stateValue = states[i];
+		    			State state = obuStates.get(Cache.states.get(i).getId());
+			    		if (state.getId() == Constant.STATE_ACCU_TOK_VALUE){
+			    			Double stateTok = Double.parseDouble(Integer.parseInt(stateValue, 16)+"");
+			    			if (stateTok <= Constant.APP_SETTINGS_NAPETOST_TOK_MIN_VALUE) {
+		    					stateTok = 0.0;
+		    				} else {
+		    					stateTok = (3.0 / Constant.APP_SETTINGS_NAPETOST_TOK_MAX_VALUE) * stateTok;
+		    				}
+		    				stateValue = stateTok+"";	    				
+		    			}
+		    			if (state.getId() == Constant.STATE_ACCU_NAPETOST_VALUE){
+		    				int stateNapetost = Integer.parseInt(stateValue, 16);
+		    				int stateTok = Integer.parseInt(states[Constant.OBU_ACCU_AH_VALUE], 16);
+		    				//ce je tok<APP_SETTING_TOK_MIN je napetost zadnja od takrat ko je tok>APP_SETTING_TOK_MIN
+		    				if ((lastStateData.get(Constant.STATE_ACCU_NAPETOST)!= null) && (stateTok <= Constant.APP_SETTINGS_NAPETOST_TOK_MIN_VALUE)) {
+		    					stateValue = Integer.parseInt(lastStateData.get(Constant.STATE_ACCU_NAPETOST_VALUE).getValue()) + "";
+		    				} else {
+		    					stateValue = Math.round((stateNapetost / Constant.APP_SETTINGS_NAPETOST_KOEF1_VALUE) * Constant.APP_SETTINGS_NAPETOST_KOEF2_VALUE)+"";
+		    				}
+		    			}
+		    			if (state.getId() == Constant.STATE_ACCU_AH_VALUE){
+		    				int stateAh = Integer.parseInt(stateValue, 16);
+		    				int stateAhLast = Constant.APP_SETTINGS_NAPETOST_TOK_MAX_VALUE;
+		    				if (lastStateData.get(Constant.STATE_ROW_STATE) != null) {
+		    					String raw_state_last = lastStateData.get(Constant.STATE_ROW_STATE_VALUE).getValue();
+		    					stateAhLast = Integer.parseInt(raw_state_last.split(",")[1], 16);
+		    					//int stateAhLast = Integer.parseInt(stateDataLast.get(Constant.STATE_ACCU_AH_VALUE;
+		    				}
+		    				double stateNapetost = Integer.parseInt(states[Constant.OBU_ACCU_TOK_VALUE], 16) / Constant.APP_SETTINGS_NAPETOST_KOEF1_VALUE;
+		    				
+		    				int napetost_percent = (int) Math.round(stateNapetost * Constant.APP_SETTINGS_NAPETOST_KOEF2_VALUE);
+		    				Double energija = (double) ((napetost_percent/100) * Constant.APP_SETTINGS_ENERGIJA_VALUE) - ((0.01/10240)*(stateAh-stateAhLast));
+		    				if (energija<0) {
+		    					stateValue = "0";
+		    				} else {
+		    					stateValue = energija + "";
+		    				}
+		    			}
+		    			sql = "insert into states_data (id_state, id_obu, value, date_state) " + 
+		    	    		"values ('" + state.getId() + "', " + obu.getId() + ", '" + stateValue + "', " + dateState + ")";
+		    	    	stmt.executeUpdate(sql);
+			    			
+		    		}
+		    	}
+		    
+		    	//geo fence
+		    	Map<Integer, String> obuSettings = obu.getSettings();
+	    		float lat1 = Util.transform(Float.parseFloat(states[Constant.OBU_LAT_VALUE]));
+	    		float lon1 = Util.transform(Float.parseFloat(states[Constant.OBU_LON_VALUE]));
+	    		float lat2 = Util.transform(Float.parseFloat(obuSettings.get(Constant.OBU_SETTINGS_LAT_VALUE)));
+	    		float lon2 = Util.transform(Float.parseFloat(obuSettings.get(Constant.OBU_SETTINGS_LON_VALUE)));
+	    		int distance = (int) Math.round(Util.gps2m(lat1, lon1, lat2, lon2));
+		    	sql = "insert into states_data (id_state, id_obu, value, date_state) " + 
+	    	    		"values (" + Cache.appSettings.get(Constant.OBU_SETTINGS_GEO_DISTANCE).getValue() + ", " + obu.getId() + ", '" + distance + "', " + dateState + ")";
+		    		
+	   	    	stmt.executeUpdate(sql);
+		    	
+		    	sql = "insert into states_data (id_state, id_obu, value, date_state) " + 
+	    	    		"values (" + Cache.appSettings.get(Constant.OBU_SETTINGS_GEO_FENCE).getValue() + ", " + obu.getId() + ", '" + Integer.parseInt(obuSettings.get(Constant.OBU_SETTINGS_GEO_FENCE_VALUE)) + "', " + dateState + ")";
+		    		
+	   	    	stmt.executeUpdate(sql);
 	    	}
-	    
-	    	//geo fence
-	    	Map<Integer, String> obuSettings = obu.getSettings();
-    		float lat1 = Util.transform(Float.parseFloat(states[Constant.OBU_LAT_VALUE]));
-    		float lon1 = Util.transform(Float.parseFloat(states[Constant.OBU_LON_VALUE]));
-    		float lat2 = Util.transform(Float.parseFloat(obuSettings.get(Constant.OBU_SETTINGS_LAT_VALUE)));
-    		float lon2 = Util.transform(Float.parseFloat(obuSettings.get(Constant.OBU_SETTINGS_LON_VALUE)));
-    		int distance = (int) Math.round(Util.gps2m(lat1, lon1, lat2, lon2));
-	    	sql = "insert into states_data (id_state, id_obu, value, date_state) " + 
-    	    		"values (" + Cache.appSettings.get(Constant.OBU_SETTINGS_GEO_DISTANCE).getValue() + ", " + obu.getId() + ", '" + distance + "', " + dateState + ")";
-	    		
-   	    	stmt.executeUpdate(sql);
-	    	
-	    	sql = "insert into states_data (id_state, id_obu, value, date_state) " + 
-    	    		"values (" + Cache.appSettings.get(Constant.OBU_SETTINGS_GEO_FENCE).getValue() + ", " + obu.getId() + ", '" + Integer.parseInt(obuSettings.get(Constant.OBU_SETTINGS_GEO_FENCE_VALUE)) + "', " + dateState + ")";
-	    		
-   	    	stmt.executeUpdate(sql);
 	    } catch (Exception theException) {
 	    	theException.printStackTrace();
 	    } finally {
@@ -163,7 +178,7 @@ public class ObuData {
 	
 	
 	//todo : cache obu
-	public static Obu getObu(String gsmnum, String serial) {
+	public Obu getObu(String gsmnum, String serial) {
 		Connection con = null;
 		ResultSet rs = null;
 	    Statement stmt = null;
@@ -213,12 +228,12 @@ public class ObuData {
 	}	
 
 	
-	public static Map<Integer, StateData> getStateData(int id) {
+	public Map<Integer, StateData> getStateData(int id) {
 		Connection con = null;
 		ResultSet rs = null;
 	    Statement stmt = null;
 	    Map<Integer, StateData> statesData = new HashMap<Integer, StateData>();
-    	try {
+	    try {
     		con = DbManager.getConnection("config");
 
 	    	String	sql = "select * "
@@ -254,7 +269,7 @@ public class ObuData {
 	}
 
 	
-	public static void calculateAlarms(int obuid) {
+	public void calculateAlarms(int obuid) {
 		List<ObuAlarm> obuAlarms = getAlarms(obuid);
 		
 		Map<Integer, StateData> obuLast = getStateData(obuid);
@@ -266,11 +281,6 @@ public class ObuData {
 	        StateData stateData = (StateData)pairs.getValue();
 	        Integer stateId = (Integer)pairs.getKey();
 	        
-	        /*Iterator ita = Cache.alarms.entrySet().iterator();
-	        while (ita.hasNext()) {
-		        Map.Entry pairsa = (Map.Entry)ita.next();
-		        Alarm alarm = (Alarm)pairsa.getValue();*/
-		    
 		    for (int i=0; i< obuAlarms.size(); i++) {    
 		        ObuAlarm obuAlarm = obuAlarms.get(i);
 		        Alarm alarm = Cache.alarms.get(obuAlarm.getId_alarm());
@@ -279,7 +289,8 @@ public class ObuData {
 		        if (stateData.getId_state() == alarm.getId_state()) {
 		        	int alarmValue;
 		        	if (alarm.getValue().equals("obu_settings")) {
-	        			Map<Integer, ObuSetting> obuSettings = ObuData.getSettings(obuid, null, null);
+		        		ObuData obuData = new ObuData();
+		        		Map<Integer, ObuSetting> obuSettings = obuData.getSettings(obuid, null, null);
 	        			state = ((ObuSetting)obuSettings.get(Constant.OBU_SETTINGS_GEO_FENCE_VALUE)).getValue();
 	        			if (Integer.parseInt(state) == Constant.GEO_FENCE_DISABLED_VALUE){
         					continue;
@@ -310,7 +321,7 @@ public class ObuData {
 			        	}
 			        	//check previous
 			        	if (setAlarm && (alarm.getPrevious()!=null)) {
-			        		StateData stateDataPrevious = obuPrevious.get(stateId);
+			        		StateData stateDataPrevious = lastStateData.get(stateId);
 			        		if (stateDataPrevious != null) {
 				        		if (alarm.getPrevious().equals("=")){
 				            		if (Integer.parseInt(stateDataPrevious.getValue()) != alarmValue) {
@@ -344,7 +355,7 @@ public class ObuData {
 	}
 
 	
-	public static void setAlarm(int alarmid, int obuid, String stateValue, String message, String messageShort, String title, String action, int sound, int vibrate, int sendEmail, int sendCustomer, int sendFriends, Timestamp date_alarm, int active, String email_to) {
+	public void setAlarm(int alarmid, int obuid, String stateValue, String message, String messageShort, String title, String action, int sound, int vibrate, int sendEmail, int sendCustomer, int sendFriends, Timestamp date_alarm, int active, String email_to) {
 		Connection con = null;
 		Statement stmt = null;
 		ResultSet rs = null;
@@ -390,7 +401,7 @@ public class ObuData {
 	    }
 	}	
 	
-	public static String getMessage(String message, int obuid) {
+	public String getMessage(String message, int obuid) {
 		Connection con = null;
 		Statement stmt = null;
 		ResultSet rs = null;
@@ -430,7 +441,7 @@ public class ObuData {
 		return message;
 	}
 
-	public static List<AlarmData> getAlarmData(int obuid) {
+	public List<AlarmData> getAlarmData(int obuid) {
 		Connection con = null;
 		ResultSet rs = null;
 	    Statement stmt = null;
@@ -475,7 +486,7 @@ public class ObuData {
     	return alarmData;
 	}	
 	
-	public static List<ObuAlarm> getAlarms(int obuid) {
+	public List<ObuAlarm> getAlarms(int obuid) {
 		Connection con = null;
 		ResultSet rs = null;
 	    Statement stmt = null;
@@ -515,7 +526,7 @@ public class ObuData {
     	return obuAlarms;
 	}		
 
-	public static Map<Integer, State> getStates(int obuid) {
+	public Map<Integer, State> getStates(int obuid) {
 		Connection con = null;
 		ResultSet rs = null;
 	    Statement stmt = null;
@@ -554,7 +565,7 @@ public class ObuData {
     	return states;
 	}		
 
-	public static Customer getCustomer(int obuid) {
+	public Customer getCustomer(int obuid) {
 		Connection con = null;
 		ResultSet rs = null;
 	    Statement stmt = null;
@@ -599,7 +610,7 @@ public class ObuData {
     	return customer;
 	}	
 	
-	public static void confirmAlarm(int alarmid, int obuid) {
+	public void confirmAlarm(int alarmid, int obuid) {
 		Connection con = null;
 		Statement stmt = null;
 		
