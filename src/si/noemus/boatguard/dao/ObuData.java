@@ -55,7 +55,7 @@ public class ObuData {
 		
     	return obuSettings;
 	}	
-	
+	 
 	/*
 	0,02F3,01F3,00E,15.1,46.5,20130523181121.000
 	0.-STANJE PUMPE (0-NE PUMPA, 2-PUMPA, 3-ZAMA�ENA)
