@@ -60,6 +60,7 @@ public class Cache {
 	    		alarm.setId(rs.getInt("id"));
 	    		alarm.setId_state(rs.getInt("id_state"));
 	    		alarm.setName(rs.getString("name"));
+	    		alarm.setCode(rs.getString("code"));
 	    		alarm.setValue(rs.getString("value"));
 	    		alarm.setOperand(rs.getString("operand"));
 	    		alarm.setPrevious(rs.getString("previous"));

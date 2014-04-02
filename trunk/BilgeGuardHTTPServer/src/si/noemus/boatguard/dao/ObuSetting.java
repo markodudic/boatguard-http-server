@@ -5,8 +5,15 @@ public class ObuSetting {
 	private int id_setting;
 	private String value;
 	private String type;
+	private String code;
 
 
+	public String getCode() {
+		return code;
+	}
+	public void setCode(String code) {
+		this.code = code;
+	}
 	public int getId_setting() {
 		return id_setting;
 	}

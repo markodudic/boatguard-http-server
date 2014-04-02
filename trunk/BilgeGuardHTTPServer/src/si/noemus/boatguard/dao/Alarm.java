@@ -5,6 +5,7 @@ public class Alarm {
 	private int id;
 	private int id_state;
 	private String name;
+	private String code;
 	private String value;
 	private String operand;
 	private String previous;
@@ -86,6 +87,12 @@ public class Alarm {
 	}
 	public void setPrevious(String previous) {
 		this.previous = previous;
+	}
+	public String getCode() {
+		return code;
+	}
+	public void setCode(String code) {
+		this.code = code;
 	}
 	
 }
