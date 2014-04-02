@@ -25,7 +25,7 @@ public class ObuData {
 	public ObuData(){
 	}
 	
-	public Map<Integer, ObuSetting> getSettings(int obuid, String gsmnum, String serial) {
+	public Map<Integer, ObuSetting> getSettings(String obuid, String gsmnum, String serial) {
 		Connection con = null;
 		ResultSet rs = null;
 	    Statement stmt = null;
@@ -33,9 +33,11 @@ public class ObuData {
     	try {
     		con = DbManager.getConnection("config");
 
-	    	String	sql = "select obu_settings.* "
-	    			+ "from obus left join obu_settings on (obus.id = obu_settings.id_obu) "
-	    			+ "where number = '" + gsmnum + "' or serial_number = '" + serial + "' or id = " + obuid + " "
+	    	String	sql = "select obu_settings.*, settings.code "
+	    			+ "from obus left join "
+	    			+ "		obu_settings on (obus.id = obu_settings.id_obu) left join "
+	    			+ "		settings on (obu_settings.id_setting = settings.id) "
+	    			+ "where number = '" + gsmnum + "' or serial_number = '" + serial + "' or obus.id = " + obuid + " "
 	    			+ "order by id_setting";
 	    		
     		stmt = con.createStatement();   	
@@ -46,6 +48,7 @@ public class ObuData {
 	    		obuSetting.setId_setting(rs.getInt("id_setting"));
 	    		obuSetting.setValue(rs.getString("value"));
 	    		obuSetting.setType(rs.getString("type"));
+	    		obuSetting.setCode(rs.getString("code"));
 	    		obuSettings.put(rs.getInt("id_setting"), obuSetting);
 	    	}
 	
@@ -290,7 +293,7 @@ public class ObuData {
 		        	int alarmValue;
 		        	if (alarm.getValue().equals("obu_settings")) {
 		        		ObuData obuData = new ObuData();
-		        		Map<Integer, ObuSetting> obuSettings = obuData.getSettings(obuid, null, null);
+		        		Map<Integer, ObuSetting> obuSettings = obuData.getSettings(obuid+"", null, null);
 	        			state = ((ObuSetting)obuSettings.get(Constant.OBU_SETTINGS_GEO_FENCE_VALUE)).getValue();
 	        			if (Integer.parseInt(state) == Constant.GEO_FENCE_DISABLED_VALUE){
         					continue;

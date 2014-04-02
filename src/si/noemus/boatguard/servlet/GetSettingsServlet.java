@@ -3,6 +3,7 @@ package si.noemus.boatguard.servlet;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -16,21 +17,24 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import com.google.gson.Gson;
-
 import si.noemus.boatguard.dao.Alarm;
+import si.noemus.boatguard.dao.AlarmData;
+import si.noemus.boatguard.dao.AppSetting;
+import si.noemus.boatguard.dao.Cache;
 import si.noemus.boatguard.dao.ObuData;
-import si.noemus.boatguard.dao.ObuSetting;
+import si.noemus.boatguard.dao.StateData;
 import si.noemus.boatguard.util.HttpLog;
 
+import com.google.gson.Gson;
 
 
-public class GetObuSettingsServlet extends HttpServlet {
+
+public class GetSettingsServlet extends HttpServlet {
 
 	Locale locale = Locale.getDefault();
 	
 	//static Logger log = Logger.getLogger(ObuSettingsServlet.class.getName());
-	private static Log log = LogFactory.getLog(GetObuSettingsServlet.class);
+	private static Log log = LogFactory.getLog(GetSettingsServlet.class);
 
 	public void init() throws ServletException
 	{
@@ -54,45 +58,39 @@ public class GetObuSettingsServlet extends HttpServlet {
 	 * @see javax.servlet.http.HttpServlet#doPost(HttpServletRequest arg0,
 	 *      HttpServletResponse arg1)
 	 *      
-	 *      http://localhost:8080/bg/data?gsmnum=&serial=123456&data=0,150031,2D0,00B,1403.452026,4626.050656,20140321093336
-
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		System.out.println("SERVLET POST");		
 
 		HttpLog.afterHttp(request, null);
-
-		String gsmnum = (String) request.getParameter("gsmnum");
-		String serial = (String) request.getParameter("serial");
-		String obuid = (String) request.getParameter("obuid");
-		String format = (String) request.getParameter("format");
-		
-		ObuData obuData = new ObuData();
-		Map<Integer, ObuSetting> obuSettings = obuData.getSettings(obuid, gsmnum, serial);
-		List<ObuSetting> obuSettingsList = new ArrayList<ObuSetting>();
-		
-		Iterator it = obuSettings.entrySet().iterator();
-		String settings = "";
+		Gson gson = new Gson();
+		 
+		Map<Integer, Alarm> alarms = Cache.alarms;
+		Iterator it = alarms.entrySet().iterator();
+		List<Alarm> alarmsList = new ArrayList<Alarm>();
 		while (it.hasNext()) {
 	        Map.Entry pairs = (Map.Entry)it.next();
-	        if (format==null || !format.equals("json")) {
-	        	settings += ((ObuSetting)pairs.getValue()).getValue() + ";";
-	        } else {
-	        	obuSettingsList.add((ObuSetting)pairs.getValue());
-	        }
+	        alarmsList.add((Alarm)pairs.getValue());
 		}
-			
-		if (format!=null && format.equals("json")) {
-			Gson gson = new Gson();
-			settings = gson.toJson(obuSettingsList);			
+		String alarmsJson = gson.toJson(alarmsList);
+		
+		Map<String, AppSetting> appSettings = Cache.appSettings;
+		it = appSettings.entrySet().iterator();
+		List<AppSetting> appSettingsList = new ArrayList<AppSetting>();
+		while (it.hasNext()) {
+	        Map.Entry pairs = (Map.Entry)it.next();
+	        appSettingsList.add((AppSetting)pairs.getValue());
 		}
-    	
+		String appSettingsJson = gson.toJson(appSettingsList);
+		
+		String data = "{\"alarms\":"+alarmsJson+",\"app_settings\":"+appSettingsJson+"}";
+		
     	OutputStream out = null;
     	response.setContentType("text/plain");
 		response.setHeader("Content-disposition", null);
 		response.setHeader("Access-Control-Allow-Origin", "*");
 		out = response.getOutputStream();
-		out.write(settings.getBytes());
+		out.write(data.getBytes());
 		out.flush();
 		out.close();    	
 	
