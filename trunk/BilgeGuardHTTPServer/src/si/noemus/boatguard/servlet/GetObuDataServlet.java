@@ -2,6 +2,7 @@ package si.noemus.boatguard.servlet;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -19,6 +20,7 @@ import org.apache.commons.logging.LogFactory;
 import si.noemus.boatguard.dao.AlarmData;
 import si.noemus.boatguard.dao.ObuData;
 import si.noemus.boatguard.dao.StateData;
+import si.noemus.boatguard.util.Constant;
 import si.noemus.boatguard.util.HttpLog;
 
 import com.google.gson.Gson;

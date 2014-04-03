@@ -40,8 +40,8 @@ public class InitServlet extends HttpServlet implements javax.servlet.Servlet {
 	private static Log log = LogFactory.getLog(InitServlet.class);
   
 	public static String realPath = "WebContent/";
-	public static Properties mainSettings;
-	public static MailClient mailClient;
+	//public static Properties mainSettings;
+	//public static MailClient mailClient;
 
 	
 	public void init(ServletConfig conf) throws ServletException {
