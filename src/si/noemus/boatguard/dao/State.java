@@ -5,6 +5,7 @@ public class State {
 	private int id;
 	private int id_component;
 	private String name;
+	private String code;
 	private String values;
 	private int position;
 	private String type;
@@ -52,7 +53,10 @@ public class State {
 	public void setActive(int active) {
 		this.active = active;
 	}
-	
-	
-
+	public String getCode() {
+		return code;
+	}
+	public void setCode(String code) {
+		this.code = code;
+	}
 }

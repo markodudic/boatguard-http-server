@@ -3,7 +3,6 @@ package si.noemus.boatguard.servlet;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -18,11 +17,9 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import si.noemus.boatguard.dao.Alarm;
-import si.noemus.boatguard.dao.AlarmData;
 import si.noemus.boatguard.dao.AppSetting;
 import si.noemus.boatguard.dao.Cache;
-import si.noemus.boatguard.dao.ObuData;
-import si.noemus.boatguard.dao.StateData;
+import si.noemus.boatguard.dao.State;
 import si.noemus.boatguard.util.HttpLog;
 
 import com.google.gson.Gson;
@@ -83,7 +80,16 @@ public class GetSettingsServlet extends HttpServlet {
 		}
 		String appSettingsJson = gson.toJson(appSettingsList);
 		
-		String data = "{\"alarms\":"+alarmsJson+",\"app_settings\":"+appSettingsJson+"}";
+		Map<String, State> states = Cache.statesByCode;
+		it = states.entrySet().iterator();
+		List<State> statesList = new ArrayList<State>();
+		while (it.hasNext()) {
+	        Map.Entry pairs = (Map.Entry)it.next();
+	        statesList.add((State)pairs.getValue());
+		}
+		String statesJson = gson.toJson(statesList);
+		
+		String data = "{\"alarms\":"+alarmsJson+",\"app_settings\":"+appSettingsJson+",\"states\":"+statesJson+"}";
 		
     	OutputStream out = null;
     	response.setContentType("text/plain");

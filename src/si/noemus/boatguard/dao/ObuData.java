@@ -23,6 +23,7 @@ public class ObuData {
 	private static Map<Integer, StateData> lastStateData = new HashMap<Integer, StateData>();
 	
 	public ObuData(){
+
 	}
 	
 	public Map<Integer, ObuSetting> getSettings(String obuid, String gsmnum, String serial) {
@@ -58,6 +59,7 @@ public class ObuData {
 	    	try {
 	    		if (rs != null) rs.close();
 	    		if (stmt != null) stmt.close();
+	    		if (con != null) con.close();
 			} catch (Exception e) {}
 	    }	
 		
@@ -75,16 +77,12 @@ public class ObuData {
 	6.-UTC TIME
 	*/
 	public int setData(String gsmnum, String serial, String data) {
-		System.out.println("1");
 		Connection con = null;
 		Statement stmt = null;
 		Obu obu = getObu(gsmnum, serial);
-		System.out.println("2");
 		Map<Integer, State> obuStates = getStates(obu.getId());
-		System.out.println("3");
 		lastStateData = getStateData(obu.getId());
-		System.out.println("4");
-    	
+		
 	    try {
 	    	String[] states = data.split(",");
 	    	String dateState = states[Constant.OBU_DATE_VALUE];
@@ -173,6 +171,7 @@ public class ObuData {
 	    } finally {
 	    	try {
 	    		if (stmt != null) stmt.close();
+	    		if (con != null) con.close();
 			} catch (Exception e) {}
 	    }
 		
@@ -224,6 +223,7 @@ public class ObuData {
 	    	try {
 	    		if (rs != null) rs.close();
 	    		if (stmt != null) stmt.close();
+	    		if (con != null) con.close();
 			} catch (Exception e) {}
 	    }	
 		
@@ -236,17 +236,16 @@ public class ObuData {
 		ResultSet rs = null;
 	    Statement stmt = null;
 	    Map<Integer, StateData> statesData = new HashMap<Integer, StateData>();
-	    try {
+		try {
     		con = DbManager.getConnection("config");
-
+    	    
 	    	String	sql = "select * "
 	    			+ "from states_data,  (select max(date_state) as d from states_data where id_obu = 1) as max_date "
 	    			+ "where id_obu = " + id + "  and date_state = max_date.d";
 	    		
     		stmt = con.createStatement();   	
-	    	rs = stmt.executeQuery(sql);
-	    	
-	    	
+    		rs = stmt.executeQuery(sql);
+			
 	    	while (rs.next()) {
 	    		StateData stateData = new StateData();
 	    		stateData.setId_state(rs.getInt("id_state"));
@@ -258,17 +257,17 @@ public class ObuData {
 	    		
 	    		//System.out.println(rs.getInt("id_state")+"+"+rs.getString("value"));
 	    	}
-	
-	    } catch (Exception theException) {
+		} catch (Exception theException) {
 	    	theException.printStackTrace();
 	    } finally {
 	    	try {
 	    		if (rs != null) rs.close();
 	    		if (stmt != null) stmt.close();
+	    		if (con != null) con.close();
 			} catch (Exception e) {}
 	    }
 		
-    	return statesData;
+		return statesData;
 	}
 
 	
@@ -400,6 +399,7 @@ public class ObuData {
 	    	try {
 	    		if (rs != null) rs.close();
 	    		if (stmt != null) stmt.close();
+	    		if (con != null) con.close();
 			} catch (Exception e) {}
 	    }
 	}	
@@ -438,6 +438,7 @@ public class ObuData {
 	    	try {
 	    		if (rs != null) rs.close();
 	    		if (stmt != null) stmt.close();
+	    		if (con != null) con.close();
 			} catch (Exception e) {}
 	    }
 	    
@@ -483,6 +484,7 @@ public class ObuData {
 	    	try {
 	    		if (rs != null) rs.close();
 	    		if (stmt != null) stmt.close();
+	    		if (con != null) con.close();
 			} catch (Exception e) {}
 	    }	
 		
@@ -523,6 +525,7 @@ public class ObuData {
 	    	try {
 	    		if (rs != null) rs.close();
 	    		if (stmt != null) stmt.close();
+	    		if (con != null) con.close();
 			} catch (Exception e) {}
 	    }	
 		
@@ -562,6 +565,7 @@ public class ObuData {
 	    	try {
 	    		if (rs != null) rs.close();
 	    		if (stmt != null) stmt.close();
+	    		if (con != null) con.close();
 			} catch (Exception e) {}
 	    }	
 		
@@ -607,6 +611,7 @@ public class ObuData {
 	    	try {
 	    		if (rs != null) rs.close();
 	    		if (stmt != null) stmt.close();
+	    		if (con != null) con.close();
 			} catch (Exception e) {}
 	    }	
 		
@@ -633,6 +638,7 @@ public class ObuData {
 	    } finally {
 	    	try {
 	    		if (stmt != null) stmt.close();
+	    		if (con != null) con.close();
 			} catch (Exception e) {}
 	    }
 	}		

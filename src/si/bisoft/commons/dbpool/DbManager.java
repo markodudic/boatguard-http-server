@@ -21,8 +21,8 @@ public abstract class DbManager {
 		} else {
 			//log.debug(name);
 			log.debug(cnf);
-			//BoneCpManager cdbm = new BoneCpManager(cnf);
-			C3P0DbManager cdbm = new C3P0DbManager(cnf);
+			BoneCpManager cdbm = new BoneCpManager(cnf);
+			//C3P0DbManager cdbm = new C3P0DbManager(cnf);
 			//log.debug(cdbm);
 			dbConfigs.put(name, cnf);
 			dbManagers.put(name, cdbm);
@@ -38,7 +38,8 @@ public abstract class DbManager {
 		} else {
 			//log.debug(name);
 			//log.debug(cnf);
-			C3P0DbManager cdbm = new C3P0DbManager(cnf);
+			BoneCpManager cdbm = new BoneCpManager(cnf);
+			//C3P0DbManager cdbm = new C3P0DbManager(cnf);
 			//log.debug(cdbm);
 			dbManagers.put(name, cdbm);
 			//log.debug(dbManagers);

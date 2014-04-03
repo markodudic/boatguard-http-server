@@ -1,5 +1,6 @@
 package si.noemus.boatguard.dao;
 
+import java.lang.reflect.Field;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
@@ -16,6 +17,7 @@ public class Cache {
 	private static Log log = LogFactory.getLog(Cache.class); 
 	public static Map<Integer, Alarm> alarms = new HashMap<Integer, Alarm>();
 	public static Map<Integer, State> states = new HashMap<Integer, State>();
+	public static Map<String, State> statesByCode = new HashMap<String, State>();
 	public static Map<String, AppSetting> appSettings = new HashMap<String, AppSetting>();
 	public static Map<Integer, Setting> settings = new HashMap<Integer, Setting>();
 	public static Map<Integer, Component> components = new HashMap<Integer, Component>();
@@ -79,6 +81,7 @@ public class Cache {
 	    	try {
 	    		if (rs != null) rs.close();
 	    		if (stmt != null) stmt.close();
+	    		if (con != null) con.close();
 			} catch (Exception e) {}
 	    }
 		
@@ -96,18 +99,32 @@ public class Cache {
     		stmt = con.createStatement();   	
 	    	rs = stmt.executeQuery(sql);
 	    	states.clear();	
+	    	statesByCode.clear();
 	    	
 	    	while (rs.next()) {
 	    		State state = new State();
 	    		state.setId(rs.getInt("id"));
 	    		state.setId_component(rs.getInt("id_component"));
 	    		state.setName(rs.getString("name"));
+	    		state.setCode(rs.getString("code"));
 	    		state.setValues(rs.getString("values"));
 	    		state.setPosition(rs.getInt("position"));
 	    		state.setType(rs.getString("type"));
 	    		state.setActive(rs.getInt("active"));
 	    		states.put(rs.getInt("position"), state);
+	    		statesByCode.put(rs.getString("code"), state);
 	    	}
+	    	
+		    Constant.STATE_ROW_STATE_VALUE = Cache.statesByCode.get(Constant.STATE_ROW_STATE).getId();
+	    	Constant.STATE_PUMP_STATE_VALUE = Cache.statesByCode.get(Constant.STATE_PUMP_STATE).getId();
+	    	Constant.STATE_ACCU_TOK_VALUE = Cache.statesByCode.get(Constant.STATE_ACCU_TOK).getId();
+	    	Constant.STATE_ACCU_NAPETOST_VALUE = Cache.statesByCode.get(Constant.STATE_ACCU_NAPETOST).getId();
+	    	Constant.STATE_ACCU_AH_VALUE = Cache.statesByCode.get(Constant.STATE_ACCU_AH).getId();
+	    	
+	    	Constant.OBU_SETTINGS_GEO_FENCE_VALUE = Cache.statesByCode.get(Constant.OBU_SETTINGS_GEO_FENCE).getId();
+	    	Constant.OBU_SETTINGS_LON_VALUE = Cache.statesByCode.get(Constant.OBU_SETTINGS_LON).getId();
+	    	Constant.OBU_SETTINGS_LAT_VALUE = Cache.statesByCode.get(Constant.OBU_SETTINGS_LAT).getId();
+	    	Constant.OBU_SETTINGS_GEO_DISTANCE_VALUE = Cache.statesByCode.get(Constant.OBU_SETTINGS_GEO_DISTANCE).getId();	    	
 	
 	    } catch (Exception theException) {
 	    	theException.printStackTrace();
@@ -115,6 +132,7 @@ public class Cache {
 	    	try {
 	    		if (rs != null) rs.close();
 	    		if (stmt != null) stmt.close();
+	    		if (con != null) con.close();
 			} catch (Exception e) {}
 	    }
 		
@@ -142,7 +160,8 @@ public class Cache {
 	    		appSettings.put(rs.getString("name"), appSetting);
 	    	}
 	    	
-	    	Constant.STATE_ROW_STATE_VALUE = Integer.parseInt(Cache.appSettings.get(Constant.STATE_ROW_STATE).getValue());
+	    	/*
+		    Constant.STATE_ROW_STATE_VALUE = Integer.parseInt(Cache.appSettings.get(Constant.STATE_ROW_STATE).getValue());
 	    	Constant.STATE_PUMP_STATE_VALUE = Integer.parseInt(Cache.appSettings.get(Constant.STATE_PUMP_STATE).getValue());
 	    	Constant.STATE_ACCU_TOK_VALUE = Integer.parseInt(Cache.appSettings.get(Constant.STATE_ACCU_TOK).getValue());
 	    	Constant.STATE_ACCU_NAPETOST_VALUE = Integer.parseInt(Cache.appSettings.get(Constant.STATE_ACCU_NAPETOST).getValue());
@@ -152,7 +171,7 @@ public class Cache {
 	    	Constant.OBU_SETTINGS_LON_VALUE = Integer.parseInt(Cache.appSettings.get(Constant.OBU_SETTINGS_LON).getValue());
 	    	Constant.OBU_SETTINGS_LAT_VALUE = Integer.parseInt(Cache.appSettings.get(Constant.OBU_SETTINGS_LAT).getValue());
 	    	Constant.OBU_SETTINGS_GEO_DISTANCE_VALUE = Integer.parseInt(Cache.appSettings.get(Constant.OBU_SETTINGS_GEO_DISTANCE).getValue());
-	    	
+	    	*/
 	    	Constant.APP_SETTINGS_NAPETOST_TOK_MAX_VALUE = Integer.parseInt(Cache.appSettings.get(Constant.APP_SETTINGS_NAPETOST_TOK_MAX).getValue());
 	    	Constant.APP_SETTINGS_NAPETOST_TOK_MIN_VALUE = Integer.parseInt(Cache.appSettings.get(Constant.APP_SETTINGS_NAPETOST_TOK_MIN).getValue());
 	    	Constant.APP_SETTINGS_ENERGIJA_VALUE = Integer.parseInt(Cache.appSettings.get(Constant.APP_SETTINGS_ENERGIJA).getValue());
@@ -171,7 +190,6 @@ public class Cache {
 	    	Constant.GEO_FENCE_ALARM_VALUE = Integer.parseInt(Cache.appSettings.get(Constant.GEO_FENCE_ALARM).getValue());
 	    	Constant.GEO_FENCE_ENABLED_VALUE = Integer.parseInt(Cache.appSettings.get(Constant.GEO_FENCE_ENABLED).getValue());
 
-
 	
 	    } catch (Exception theException) {
 	    	theException.printStackTrace();
@@ -179,6 +197,7 @@ public class Cache {
 	    	try {
 	    		if (rs != null) rs.close();
 	    		if (stmt != null) stmt.close();
+	    		if (con != null) con.close();
 			} catch (Exception e) {}
 	    }
 		
@@ -212,6 +231,7 @@ public class Cache {
 	    	try {
 	    		if (rs != null) rs.close();
 	    		if (stmt != null) stmt.close();
+	    		if (con != null) con.close();
 			} catch (Exception e) {}
 	    }
 		
@@ -244,6 +264,7 @@ public class Cache {
 	    	try {
 	    		if (rs != null) rs.close();
 	    		if (stmt != null) stmt.close();
+	    		if (con != null) con.close();
 			} catch (Exception e) {}
 	    }
 		
