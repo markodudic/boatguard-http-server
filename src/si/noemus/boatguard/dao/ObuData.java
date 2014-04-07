@@ -12,6 +12,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import com.google.gson.Gson;
+
 import si.bisoft.commons.dbpool.DbManager;
 import si.noemus.boatguard.comm.MailClient;
 import si.noemus.boatguard.comm.SmsClient;
@@ -36,9 +38,9 @@ public class ObuData {
 
 	    	String	sql = "select obu_settings.*, settings.code "
 	    			+ "from obus left join "
-	    			+ "		obu_settings on (obus.id = obu_settings.id_obu) left join "
+	    			+ "		obu_settings on (obus.uid = obu_settings.id_obu) left join "
 	    			+ "		settings on (obu_settings.id_setting = settings.id) "
-	    			+ "where number = '" + gsmnum + "' or serial_number = '" + serial + "' or obus.id = " + obuid + " "
+	    			+ "where number = '" + gsmnum + "' or serial_number = '" + serial + "' or obus.uid = " + obuid + " "
 	    			+ "order by id_setting";
 	    		
     		stmt = con.createStatement();   	
@@ -80,8 +82,8 @@ public class ObuData {
 		Connection con = null;
 		Statement stmt = null;
 		Obu obu = getObu(gsmnum, serial);
-		Map<Integer, State> obuStates = getStates(obu.getId());
-		lastStateData = getStateData(obu.getId());
+		Map<Integer, State> obuStates = getStates(obu.getUid());
+		lastStateData = getStateData(obu.getUid());
 		
 	    try {
 	    	String[] states = data.split(",");
@@ -97,7 +99,7 @@ public class ObuData {
 				stmt = con.createStatement();   	
 	 
 		    	String	sql = "insert into states_data (id_state, id_obu, value, date_state) " + 
-		    				"values (" + Constant.STATE_ROW_STATE_VALUE + ", " + obu.getId() + ", '" + data + "', " + dateState + ")";
+		    				"values (" + Constant.STATE_ROW_STATE_VALUE + ", " + obu.getUid() + ", '" + data + "', " + dateState + ")";
 		    		
 		    	stmt.executeUpdate(sql);
 		    	
@@ -143,7 +145,7 @@ public class ObuData {
 		    				}
 		    			}
 		    			sql = "insert into states_data (id_state, id_obu, value, date_state) " + 
-		    	    		"values ('" + state.getId() + "', " + obu.getId() + ", '" + stateValue + "', " + dateState + ")";
+		    	    		"values ('" + state.getId() + "', " + obu.getUid() + ", '" + stateValue + "', " + dateState + ")";
 		    	    	stmt.executeUpdate(sql);
 			    			
 		    		}
@@ -157,12 +159,12 @@ public class ObuData {
 	    		float lon2 = Util.transform(Float.parseFloat(obuSettings.get(Constant.OBU_SETTINGS_LON_VALUE)));
 	    		int distance = (int) Math.round(Util.gps2m(lat1, lon1, lat2, lon2));
 		    	sql = "insert into states_data (id_state, id_obu, value, date_state) " + 
-	    	    		"values (" + Cache.appSettings.get(Constant.OBU_SETTINGS_GEO_DISTANCE).getValue() + ", " + obu.getId() + ", '" + distance + "', " + dateState + ")";
+	    	    		"values (" + Cache.appSettings.get(Constant.OBU_SETTINGS_GEO_DISTANCE).getValue() + ", " + obu.getUid() + ", '" + distance + "', " + dateState + ")";
 		    		
 	   	    	stmt.executeUpdate(sql);
 		    	
 		    	sql = "insert into states_data (id_state, id_obu, value, date_state) " + 
-	    	    		"values (" + Cache.appSettings.get(Constant.OBU_SETTINGS_GEO_FENCE).getValue() + ", " + obu.getId() + ", '" + Integer.parseInt(obuSettings.get(Constant.OBU_SETTINGS_GEO_FENCE_VALUE)) + "', " + dateState + ")";
+	    	    		"values (" + Cache.appSettings.get(Constant.OBU_SETTINGS_GEO_FENCE).getValue() + ", " + obu.getUid() + ", '" + Integer.parseInt(obuSettings.get(Constant.OBU_SETTINGS_GEO_FENCE_VALUE)) + "', " + dateState + ")";
 		    		
 	   	    	stmt.executeUpdate(sql);
 	    	}
@@ -175,7 +177,7 @@ public class ObuData {
 			} catch (Exception e) {}
 	    }
 		
-		return obu.getId();
+		return obu.getUid();
 	}
 	
 	
@@ -194,7 +196,7 @@ public class ObuData {
 	    	rs = stmt.executeQuery(sql);
     		
 	    	if (rs.next()) {
-	    		obu.setId(rs.getInt("id"));
+	    		obu.setUid(rs.getInt("id"));
 	    		obu.setName(rs.getString("name"));
 	    		obu.setNumber(rs.getString("number"));
 	    		obu.setPin(rs.getString("pin"));
@@ -203,8 +205,8 @@ public class ObuData {
 	    		obu.setActive(rs.getInt("active"));	    		
 	    	}
 	    	
-    		if (obu.getId() > 0) {
-		    	sql = "select * from obu_settings where id_obu = " + obu.getId() + "";
+    		if (obu.getUid() > 0) {
+		    	sql = "select * from obu_settings where id_obu = " + obu.getUid() + "";
 	    		
 	    		rs = stmt.executeQuery(sql);
 	    		Map<Integer, String> settings = obu.getSettings();
@@ -588,19 +590,21 @@ public class ObuData {
 	    	rs = stmt.executeQuery(sql);
     		
 	    	while (rs.next()) {
-	    		customer.setId(rs.getInt("id"));
+	    		customer.setUid(rs.getInt("uid"));
 	    		customer.setId_obu(rs.getInt("id_obu"));
 	    		customer.setName(rs.getString("name"));
 	    		customer.setSurname(rs.getString("surname"));
 	    		customer.setUsername(rs.getString("username"));
 	    		customer.setPassword(rs.getString("password"));
-	    		customer.setNumber(rs.getString("number"));
 	    		customer.setEmail(rs.getString("email"));
 	    		customer.setRegister_date(rs.getTimestamp("register_date"));
 	    		customer.setLast_visited(rs.getTimestamp("last_visited"));
 	    		customer.setApp_version(rs.getString("app_version"));
+	    		customer.setPhone_number(rs.getString("phone_number"));
 	    		customer.setPhone_model(rs.getString("phone_model"));
 	    		customer.setPhone_platform(rs.getString("phone_platform"));
+	    		customer.setPhone_platform_version(rs.getString("phone_platform_version"));
+	    		customer.setPhone_uuid(rs.getString("phone_uuid"));
 	    		customer.setHome_network(rs.getString("home_network"));
 	    		customer.setActive(rs.getString("active"));
 	    	}
@@ -618,6 +622,153 @@ public class ObuData {
     	return customer;
 	}	
 	
+	public String login(String username, String password, String obuSerialNumber, String deviceName, String devicePlatform, String deviceVersion, String deviceUuid, String phoneNumber, String appVersion) {
+		
+		Connection con = null;
+		ResultSet rs = null;
+	    Statement stmt = null;
+		Gson gson = new Gson();
+		String obuS = null;
+		String errorS = null;
+		
+ 	    try {
+    		con = DbManager.getConnection("config");
+
+	    	String	sql = "select customers.uid customer_id, obus.* "
+	    			+ "from customers inner join obus on (customers.id_obu = obus.uid) "
+	    			+ "where UPPER(username) = UPPER('" + username + "') AND UPPER(password) = UPPER('" + password + "')";
+	    		
+    		stmt = con.createStatement();   	
+	    	rs = stmt.executeQuery(sql);
+    		System.out.println("SQL="+sql);
+
+	    	if (rs.next()) {
+	    		Obu obu= new Obu();
+	    		obu.setUid(rs.getInt("uid"));
+	    		obu.setName(rs.getString("name"));
+	    		obu.setNumber(rs.getString("number"));
+	    		obu.setPin(rs.getString("pin"));
+	    		obu.setPuk(rs.getString("puk"));
+	    		obu.setSerial_number(rs.getString("serial_number"));
+	    		obu.setActive(rs.getInt("active"));
+				obuS = gson.toJson(obu);
+
+	    		setLoginData(username, deviceName, devicePlatform, deviceVersion, deviceUuid, phoneNumber, appVersion);
+	    	} else {
+	    		Error error = new Error(Error.LOGIN_ERROR, Error.LOGIN_ERROR_CODE, Error.LOGIN_ERROR_MSG);
+				errorS = gson.toJson(error);
+	    	}
+			
+	
+	    } catch (Exception theException) {
+	    	theException.printStackTrace();
+	    } finally {
+	    	try {
+	    		if (rs != null) rs.close();
+	    		if (stmt != null) stmt.close();
+	    		if (con != null) con.close();
+			} catch (Exception e) {}
+	    }	
+		
+		String result = "{\"obu\":"+obuS+",\"error\":"+errorS+"}";
+    	return result;
+
+		
+	}
+
+	public String register(String username, String password, String obuSerialNumber, String deviceName, String devicePlatform, String deviceVersion, String deviceUuid, String phoneNumber, String appVersion) {
+		
+		Connection con = null;
+		ResultSet rs = null;
+	    Statement stmt = null;
+		Gson gson = new Gson();
+		String errorS = null;
+    	String result = "";
+		
+ 	    try {
+    		con = DbManager.getConnection("config");
+
+	    	String	sql = "select customers.uid customer_id, obus.* "
+	    			+ "from customers left join obus on (customers.id_obu = obus.uid) "
+	    			+ "where (UPPER(username) = UPPER('" + username + "') and serial_number = " + obuSerialNumber + " and obus.active=1) OR "
+	    					+ "NOT EXISTS (select uid from obus where serial_number = " + obuSerialNumber + ")";
+	    		
+	    	System.out.println("SQL="+sql);
+	    	stmt = con.createStatement();   	
+	    	rs = stmt.executeQuery(sql);
+	    	
+    		
+	    	if (rs.next()) {
+	    		Error error = new Error(Error.REGISTER_ERROR, Error.REGISTER_ERROR_CODE, Error.REGISTER_ERROR_MSG);
+				errorS = gson.toJson(error);
+				result = "{\"error\":"+errorS+"}";
+	    	} else {
+		    	sql = "insert into customers (username, password, register_date, active, id_obu) " 
+		    			+ "select '" + username + "', '" + password + "', now(), 1, uid "
+		    			+ "from obus "
+		    			+ "where serial_number = " + obuSerialNumber;
+		    	stmt.executeUpdate(sql);
+	    		
+		    	sql = "update obus " + 
+		    			"set active = 1 " +
+		    			"where serial_number = " + obuSerialNumber;
+		    	stmt.executeUpdate(sql);
+
+		    	result = login(username, password, obuSerialNumber, deviceName, devicePlatform, deviceVersion, deviceUuid, phoneNumber, appVersion);
+	    	}
+			
+	
+	    } catch (Exception theException) {
+    		Error error = new Error(Error.REGISTER_ERROR, Error.REGISTER_ERROR_CODE, Error.REGISTER_ERROR_MSG);
+			errorS = gson.toJson(error);
+			result = "{\"error\":"+errorS+"}";
+	    	theException.printStackTrace();
+	    } finally {
+	    	try {
+	    		if (rs != null) rs.close();
+	    		if (stmt != null) stmt.close();
+	    		if (con != null) con.close();
+			} catch (Exception e) {}
+	    }	
+		
+		return result;
+
+		
+	}
+
+	
+	public void setLoginData(String username, String deviceName, String devicePlatform, String deviceVersion, String deviceUuid, String phoneNumber, String appVersion){
+		Connection con = null;
+		Statement stmt = null;
+		
+		try {
+	    	con = DbManager.getConnection("config");
+			stmt = con.createStatement();   	
+ 
+			String	sql = "update customers " + 
+	    				"set phone_model = '" + deviceName + "', " +
+	    				"	phone_platform = '" + devicePlatform + "', " +
+	    				"	phone_platform_version = '" + deviceVersion + "', " +
+	    				"	phone_uuid = '" + deviceUuid + "', " +
+	    				"	phone_number = '" + phoneNumber + "', " +
+	    				"	app_version = '" + appVersion + "', " +
+	    				"	last_visited = now() " +
+	    				"where UPPER(username) = UPPER('" + username + "')";
+			System.out.println("SQL="+sql);
+	
+	    	stmt.executeUpdate(sql);
+	    	
+	    	
+	    } catch (Exception theException) {
+	    	theException.printStackTrace();
+	    } finally {
+	    	try {
+	    		if (stmt != null) stmt.close();
+	    		if (con != null) con.close();
+			} catch (Exception e) {}
+	    }
+	}
+
 	public void confirmAlarm(int alarmid, int obuid) {
 		Connection con = null;
 		Statement stmt = null;
@@ -641,5 +792,7 @@ public class ObuData {
 	    		if (con != null) con.close();
 			} catch (Exception e) {}
 	    }
-	}		
+	}	
+	
+
 }
