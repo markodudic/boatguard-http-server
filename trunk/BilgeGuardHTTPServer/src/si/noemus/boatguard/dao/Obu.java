@@ -5,7 +5,7 @@ import java.util.Map;
 
 public class Obu {
 	
-	private int id;
+	private int uid;
 	private String name;
 	private String number;
 	private String pin;
@@ -14,11 +14,11 @@ public class Obu {
 	private int active;
 	public Map<Integer, String> settings = new HashMap<Integer, String>();
 	
-	public int getId() {
-		return id;
+	public int getUid() {
+		return uid;
 	}
-	public void setId(int id) {
-		this.id = id;
+	public void setUid(int uid) {
+		this.uid = uid;
 	}
 	public String getNumber() {
 		return number;

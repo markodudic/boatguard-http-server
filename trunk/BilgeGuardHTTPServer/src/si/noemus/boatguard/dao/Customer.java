@@ -4,27 +4,29 @@ import java.sql.Timestamp;
 
 public class Customer {
 		
-		private int id;
+		private int uid;
 		private int id_obu;
 		private String name;
 		private String surname;
 		private String username;
 		private String password;
-		private String number;
 		private String email;
 		private Timestamp register_date;
 		private Timestamp last_visited;
 		private String app_version;
+		private String phone_number;
 		private String phone_model;
 		private String phone_platform;
+		private String phone_platform_version;
+		private String phone_uuid;
 		private String home_network;
 		private String active;
 		
-		public int getId() {
-			return id;
+		public int getUid() {
+			return uid;
 		}
-		public void setId(int id) {
-			this.id = id;
+		public void setUid(int uid) {
+			this.uid = uid;
 		}
 		public int getId_obu() {
 			return id_obu;
@@ -55,12 +57,6 @@ public class Customer {
 		}
 		public void setPassword(String password) {
 			this.password = password;
-		}
-		public String getNumber() {
-			return number;
-		}
-		public void setNumber(String number) {
-			this.number = number;
 		}
 		public String getEmail() {
 			return email;
@@ -110,4 +106,23 @@ public class Customer {
 		public void setActive(String active) {
 			this.active = active;
 		}
+		public String getPhone_number() {
+			return phone_number;
+		}
+		public void setPhone_number(String phone_number) {
+			this.phone_number = phone_number;
+		}
+		public String getPhone_platform_version() {
+			return phone_platform_version;
+		}
+		public void setPhone_platform_version(String phone_platform_version) {
+			this.phone_platform_version = phone_platform_version;
+		}
+		public String getPhone_uuid() {
+			return phone_uuid;
+		}
+		public void setPhone_uuid(String phone_uuid) {
+			this.phone_uuid = phone_uuid;
+		}
+		
 	}
