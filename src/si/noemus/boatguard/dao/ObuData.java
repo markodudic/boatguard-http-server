@@ -417,7 +417,7 @@ public class ObuData {
 
 	    	String	sql = "select obus.name obus_name, customers.name customers_name, customers.surname customers_surname, customers.phone_number customers_number "
     				+ "from obus left join customers on (obus.uid = customers.id_obu)" +
-    				" where obus.id = " + obuid;
+    				" where obus.uid = " + obuid;
 	    		
     		stmt = con.createStatement();   	
 	    	rs = stmt.executeQuery(sql);
