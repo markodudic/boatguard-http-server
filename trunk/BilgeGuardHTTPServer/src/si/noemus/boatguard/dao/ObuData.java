@@ -158,14 +158,14 @@ public class ObuData {
 	    		float lat2 = Util.transform(Float.parseFloat(obuSettings.get(Constant.OBU_SETTINGS_LAT_VALUE)));
 	    		float lon2 = Util.transform(Float.parseFloat(obuSettings.get(Constant.OBU_SETTINGS_LON_VALUE)));
 	    		int distance = (int) Math.round(Util.gps2m(lat1, lon1, lat2, lon2));
-		    	sql = "insert into states_data (id_state, id_obu, value, date_state) " + 
-	    	    		"values (" + Cache.appSettings.get(Constant.OBU_SETTINGS_GEO_DISTANCE).getValue() + ", " + obu.getUid() + ", '" + distance + "', " + dateState + ")";
-		    		
+	    		sql = "insert into states_data (id_state, id_obu, value, date_state) " + 
+	    	    		"values (" + Constant.OBU_SETTINGS_GEO_DISTANCE_VALUE + ", " + obu.getUid() + ", '" + distance + "', " + dateState + ")";
+	    			
 	   	    	stmt.executeUpdate(sql);
 		    	
 		    	sql = "insert into states_data (id_state, id_obu, value, date_state) " + 
-	    	    		"values (" + Cache.appSettings.get(Constant.OBU_SETTINGS_GEO_FENCE).getValue() + ", " + obu.getUid() + ", '" + Integer.parseInt(obuSettings.get(Constant.OBU_SETTINGS_GEO_FENCE_VALUE)) + "', " + dateState + ")";
-		    		
+	    	    		"values (" + Constant.OBU_SETTINGS_GEO_FENCE_VALUE + ", " + obu.getUid() + ", '" + Integer.parseInt(obuSettings.get(Constant.OBU_SETTINGS_GEO_FENCE_VALUE)) + "', " + dateState + ")";
+	    			
 	   	    	stmt.executeUpdate(sql);
 	    	}
 	    } catch (Exception theException) {
@@ -196,7 +196,7 @@ public class ObuData {
 	    	rs = stmt.executeQuery(sql);
     		
 	    	if (rs.next()) {
-	    		obu.setUid(rs.getInt("id"));
+	    		obu.setUid(rs.getInt("uid"));
 	    		obu.setName(rs.getString("name"));
 	    		obu.setNumber(rs.getString("number"));
 	    		obu.setPin(rs.getString("pin"));
@@ -415,8 +415,8 @@ public class ObuData {
 	    	con = DbManager.getConnection("config");
 			stmt = con.createStatement();   	
 
-	    	String	sql = "select obus.name obus_name, customers.name customers_name, customers.surname customers_surname, customers.number customers_number "
-    				+ "from obus left join customers on (obus.id = customers.id_obu)" +
+	    	String	sql = "select obus.name obus_name, customers.name customers_name, customers.surname customers_surname, customers.phone_number customers_number "
+    				+ "from obus left join customers on (obus.uid = customers.id_obu)" +
     				" where obus.id = " + obuid;
 	    		
     		stmt = con.createStatement();   	

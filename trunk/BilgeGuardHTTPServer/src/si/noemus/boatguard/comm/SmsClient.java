@@ -17,7 +17,7 @@ public class SmsClient {
 			stmt = con.createStatement();   	
 
 	    	String	sql = "insert into smsserver_out (recipient, text, create_date) " + 
-    				"select customers.number, '" + message + "', now() "
+    				"select customers.phone_number, '" + message + "', now() "
     				+ "from customers " +
     				"where customers.id_obu = " + obuid +
     	    		"	and customers.active = 1";
