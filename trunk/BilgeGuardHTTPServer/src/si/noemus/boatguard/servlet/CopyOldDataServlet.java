@@ -68,6 +68,7 @@ public class CopyOldDataServlet extends HttpServlet {
 	    		System.out.println("Old data: " + data);
 	    		ObuData obuData = new ObuData();
 	    		int obuid = obuData.setData(null, "123456", data);
+	    		obuData.calculateAlarms(obuid);
 	    	}
 	
 	    } catch (Exception theException) {
