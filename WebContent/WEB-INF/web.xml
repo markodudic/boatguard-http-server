@@ -100,4 +100,19 @@
     <servlet-name>RpcServlet</servlet-name>
     <url-pattern>/rpc</url-pattern>
   </servlet-mapping>
+  
+  <servlet>
+    <servlet-name>CopyOldDataServlet</servlet-name>
+    <servlet-class>si.noemus.boatguard.servlet.CopyOldDataServlet</servlet-class>
+	 <init-param>
+	   <param-name>scheduler_pattern</param-name>
+		<param-value>*/1 6-19 * * *</param-value>
+	 </init-param>
+    <load-on-startup>10</load-on-startup>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>CopyOldDataServlet</servlet-name>
+    <url-pattern>/old</url-pattern>
+  </servlet-mapping>
+  
 </web-app>
