@@ -750,7 +750,7 @@ public class ObuData {
 	    				"	phone_platform = '" + devicePlatform + "', " +
 	    				"	phone_platform_version = '" + deviceVersion + "', " +
 	    				"	phone_uuid = '" + deviceUuid + "', " +
-	    				"	phone_number = '" + phoneNumber + "', " +
+	    				//"	phone_number = '" + phoneNumber + "', " +
 	    				"	app_version = '" + appVersion + "', " +
 	    				"	last_visited = now() " +
 	    				"where UPPER(username) = UPPER('" + username + "')";

@@ -4,7 +4,7 @@
   <description></description>
   <context-param>
     <param-name>webAppRootKey</param-name>
-    <param-value>bg</param-value>
+    <param-value>boatguard</param-value>
   </context-param>
   <servlet>
     <servlet-name>InitServlet</servlet-name>
@@ -106,7 +106,7 @@
     <servlet-class>si.noemus.boatguard.servlet.CopyOldDataServlet</servlet-class>
 	 <init-param>
 	   <param-name>scheduler_pattern</param-name>
-		<param-value>*/1 6-19 * * *</param-value>
+		<param-value>*/30 6-19 * * *</param-value>
 	 </init-param>
     <load-on-startup>10</load-on-startup>
   </servlet>
