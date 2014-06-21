@@ -66,6 +66,46 @@ public class ObuData {
 	    }	
 		
     	return obuSettings;
+	}
+	
+	public Map<Integer, ObuComponent> getComponents(String obuid, String gsmnum, String serial) {
+		Connection con = null;
+		ResultSet rs = null;
+	    Statement stmt = null;
+	    Map<Integer, ObuComponent> obuComponents = new HashMap<Integer, ObuComponent>();
+    	try {
+    		con = DbManager.getConnection("config");
+
+	    	String	sql = "select obu_components.id_component, components.name, components.type, components.show "
+	    			+ "from obus left join "
+	    			+ "		obu_components on (obus.uid = obu_components.id_obu) left join "
+	    			+ "		components on (obu_components.id_component = components.id) "
+	    			+ "where number = '" + gsmnum + "' or serial_number = '" + serial + "' or obus.uid = " + obuid + " "
+	    			+ "order by obu_components.id_component";
+	    		
+    		stmt = con.createStatement();   	
+	    	rs = stmt.executeQuery(sql);
+    		
+	    	while (rs.next()) {
+	    		ObuComponent obuComponent = new ObuComponent();
+	    		obuComponent.setId_component(rs.getInt("id_component"));
+	    		obuComponent.setName(rs.getString("name"));
+	    		obuComponent.setType(rs.getString("type"));
+	    		obuComponent.setShow(rs.getInt("show"));
+	    		obuComponents.put(rs.getInt("id_component"), obuComponent);
+	    	}
+	
+	    } catch (Exception theException) {
+	    	theException.printStackTrace();
+	    } finally {
+	    	try {
+	    		if (rs != null) rs.close();
+	    		if (stmt != null) stmt.close();
+	    		if (con != null) con.close();
+			} catch (Exception e) {}
+	    }	
+		
+    	return obuComponents;
 	}	
 	 
 	/*

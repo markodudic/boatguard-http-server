@@ -71,9 +71,19 @@
   </servlet-mapping>
   
   <servlet>
+    <servlet-name>GetObuComponentsServlet</servlet-name>
+    <servlet-class>si.noemus.boatguard.servlet.GetObuComponentsServlet</servlet-class>
+    <load-on-startup>7</load-on-startup>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>GetObuComponentsServlet</servlet-name>
+    <url-pattern>/getobucomponents</url-pattern>
+  </servlet-mapping>
+    
+  <servlet>
     <servlet-name>GetSettingsServlet</servlet-name>
     <servlet-class>si.noemus.boatguard.servlet.GetSettingsServlet</servlet-class>
-    <load-on-startup>7</load-on-startup>
+    <load-on-startup>8</load-on-startup>
   </servlet>
   <servlet-mapping>
     <servlet-name>GetSettingsServlet</servlet-name>
@@ -83,7 +93,7 @@
   <servlet>
     <servlet-name>LoginRegisterServlet</servlet-name>
     <servlet-class>si.noemus.boatguard.servlet.LoginRegisterServlet</servlet-class>
-    <load-on-startup>8</load-on-startup>
+    <load-on-startup>9</load-on-startup>
   </servlet>
   <servlet-mapping>
     <servlet-name>LoginRegisterServlet</servlet-name>
@@ -94,7 +104,7 @@
   <servlet>
     <servlet-name>RpcServlet</servlet-name>
     <servlet-class>si.noemus.boatguard.servlet.RpcServlet</servlet-class>
-    <load-on-startup>9</load-on-startup>
+    <load-on-startup>10</load-on-startup>
   </servlet>
   <servlet-mapping>
     <servlet-name>RpcServlet</servlet-name>
