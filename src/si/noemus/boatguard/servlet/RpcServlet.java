@@ -16,7 +16,7 @@ import org.apache.commons.logging.LogFactory;
 
 import si.noemus.boatguard.dao.Cache;
 import si.noemus.boatguard.dao.ObuData;
-import si.noemus.boatguard.dao.ObuSetting;
+import si.noemus.boatguard.objects.ObuSetting;
 import si.noemus.boatguard.util.HttpLog;
 
 

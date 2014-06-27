@@ -17,7 +17,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import si.bisoft.commons.dbpool.DbManager;
 import si.noemus.boatguard.dao.ObuData;
-import si.noemus.boatguard.dao.ObuSetting;
+import si.noemus.boatguard.objects.ObuSetting;
 import it.sauronsoftware.cron4j.Scheduler;
 
 

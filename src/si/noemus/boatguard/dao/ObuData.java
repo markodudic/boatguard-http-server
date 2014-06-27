@@ -17,6 +17,14 @@ import com.google.gson.Gson;
 import si.bisoft.commons.dbpool.DbManager;
 import si.noemus.boatguard.comm.MailClient;
 import si.noemus.boatguard.comm.SmsClient;
+import si.noemus.boatguard.objects.Alarm;
+import si.noemus.boatguard.objects.AlarmData;
+import si.noemus.boatguard.objects.Customer;
+import si.noemus.boatguard.objects.Obu;
+import si.noemus.boatguard.objects.ObuAlarm;
+import si.noemus.boatguard.objects.ObuSetting;
+import si.noemus.boatguard.objects.State;
+import si.noemus.boatguard.objects.StateData;
 import si.noemus.boatguard.util.Constant;
 import si.noemus.boatguard.util.Util;
 
@@ -315,7 +323,7 @@ public class ObuData {
 	
 	public void calculateAlarms(int obuid) {
 		List<ObuAlarm> obuAlarms = getAlarms(obuid);
-		
+    	
 		Map<Integer, StateData> obuLast = getStateData(obuid);
 		Customer customer = getCustomer(obuid);
 		
@@ -344,7 +352,7 @@ public class ObuData {
 	        			alarmValue = Integer.parseInt(alarm.getValue());
 	        		}
 		        	
-		        	if (alarm.getType().equals("N")) {
+		        	if (alarm.getFormat().equals("N")) {
 		        		boolean setAlarm = false;
 			        	if (alarm.getOperand().equals("=")){
 		            		if (Integer.parseInt(stateData.getValue()) == alarmValue) {
@@ -390,7 +398,7 @@ public class ObuData {
 				        	if (alarm.getValue().equals("obu_settings") && setAlarm) {
 				        		state = Constant.GEO_FENCE_ALARM_VALUE+"";
 				        	}
-	            			setAlarm(alarm.getId(), obuid, state, alarm.getMessage(), alarm.getMessage_short(), alarm.getTitle(), alarm.getAction(), obuAlarm.getSound(), obuAlarm.getVibrate(), obuAlarm.getSend_email(), obuAlarm.getSend_customer(), obuAlarm.getSend_friends(), stateData.getDateState(), obuAlarm.getActive(), customer.getEmail());
+	            			setAlarm(alarm.getId(), obuid, state, alarm.getMessage(), alarm.getMessage_short(), alarm.getTitle(), alarm.getAction(), alarm.getType(), obuAlarm.getSound(), obuAlarm.getVibrate(), obuAlarm.getSend_email(), obuAlarm.getSend_customer(), obuAlarm.getSend_friends(), stateData.getDateState(), obuAlarm.getActive(), customer.getEmail());
 			        	}
 		        	}
 		        }
@@ -399,7 +407,7 @@ public class ObuData {
 	}
 
 	
-	public void setAlarm(int alarmid, int obuid, String stateValue, String message, String messageShort, String title, String action, int sound, int vibrate, int sendEmail, int sendCustomer, int sendFriends, Timestamp date_alarm, int active, String email_to) {
+	public void setAlarm(int alarmid, int obuid, String stateValue, String message, String messageShort, String title, String action, String type, int sound, int vibrate, int sendEmail, int sendCustomer, int sendFriends, Timestamp date_alarm, int active, String email_to) {
 		Connection con = null;
 		Statement stmt = null;
 		ResultSet rs = null;
@@ -411,8 +419,8 @@ public class ObuData {
 	    	String	sql = "select * "
 	    				+ "from alarm_data "
 	    				+ "where id_alarm = " + alarmid + " and id_obu = " + obuid + " and confirmed=0";
-	    		
-    		stmt = con.createStatement();   	
+	    	
+	    	stmt = con.createStatement();   	
 	    	rs = stmt.executeQuery(sql);
 	    	
 	    	if (rs.next()) {
@@ -429,8 +437,8 @@ public class ObuData {
 					MailClient.sendMail(email_to, title, msg);
 				}	
 				
-		    	sql = "insert into alarm_data (id_alarm, id_obu, value, message, message_short, title, action, sound, vibrate, send_customer, send_friends, date_alarm, active) " + 
-		    			"values (" + alarmid + ", " + obuid + ", '" + stateValue + "', '" + msg + "', '" + messageShort + "', '" + title + "', '" + action + "', " + sound + ", " + vibrate + ", " + sendCustomer + ", " + sendFriends + ", '" + date_alarm + "', " + active + ")";
+		    	sql = "insert into alarm_data (id_alarm, id_obu, value, message, message_short, title, action, type, sound, vibrate, send_customer, send_friends, date_alarm, active) " + 
+		    			"values (" + alarmid + ", " + obuid + ", '" + stateValue + "', '" + msg + "', '" + messageShort + "', '" + title + "', '" + action + "', '" + type + "', " + sound + ", " + vibrate + ", " + sendCustomer + ", " + sendFriends + ", '" + date_alarm + "', " + active + ")";
 		    		
 		    	stmt.executeUpdate(sql);
 	    	}

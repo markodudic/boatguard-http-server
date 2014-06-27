@@ -18,7 +18,6 @@ import org.apache.commons.logging.LogFactory;
 
 import si.noemus.boatguard.dao.ObuComponent;
 import si.noemus.boatguard.dao.ObuData;
-import si.noemus.boatguard.dao.ObuSetting;
 import si.noemus.boatguard.util.HttpLog;
 
 import com.google.gson.Gson;
