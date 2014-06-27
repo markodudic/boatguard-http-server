@@ -1,24 +1,35 @@
-package si.noemus.boatguard.dao;
+package si.noemus.boatguard.objects;
+
+
 
 public class ObuSetting {
+
+	public ObuSetting(){
+		
+	}	
 	
 	private int id_setting;
+	private String code;
 	private String value;
 	private String type;
-	private String code;
+	
+	@Override
+	public String toString(){
+		return "OBUSETTING: idSetting: " + this.id_setting + ", code:" + this.code + ", value:" + this.value + ", type" + this.type;
+	}
 
 
-	public String getCode() {
-		return code;
-	}
-	public void setCode(String code) {
-		this.code = code;
-	}
 	public int getId_setting() {
 		return id_setting;
 	}
 	public void setId_setting(int id_setting) {
 		this.id_setting = id_setting;
+	}
+	public String getCode() {
+		return code;
+	}
+	public void setCode(String code) {
+		this.code = code;
 	}
 	public String getValue() {
 		return value;
@@ -32,7 +43,5 @@ public class ObuSetting {
 	public void setType(String type) {
 		this.type = type;
 	}
-	
-	
 
 }

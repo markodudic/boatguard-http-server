@@ -17,9 +17,9 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import si.noemus.boatguard.dao.AlarmData;
 import si.noemus.boatguard.dao.ObuData;
-import si.noemus.boatguard.dao.StateData;
+import si.noemus.boatguard.objects.AlarmData;
+import si.noemus.boatguard.objects.StateData;
 import si.noemus.boatguard.util.Constant;
 import si.noemus.boatguard.util.HttpLog;
 

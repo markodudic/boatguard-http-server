@@ -1,4 +1,4 @@
-package si.noemus.boatguard.dao;
+package si.noemus.boatguard.objects;
 
 import java.util.HashMap;
 import java.util.Map;

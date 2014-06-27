@@ -116,7 +116,7 @@
     <servlet-class>si.noemus.boatguard.servlet.CopyOldDataServlet</servlet-class>
 	 <init-param>
 	   <param-name>scheduler_pattern</param-name>
-		<param-value>*/30 6-19 * * *</param-value>
+		<param-value>*/1 * * * *</param-value>
 	 </init-param>
     <load-on-startup>10</load-on-startup>
   </servlet>

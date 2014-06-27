@@ -16,10 +16,10 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import si.noemus.boatguard.dao.Alarm;
-import si.noemus.boatguard.dao.AppSetting;
 import si.noemus.boatguard.dao.Cache;
-import si.noemus.boatguard.dao.State;
+import si.noemus.boatguard.objects.Alarm;
+import si.noemus.boatguard.objects.AppSetting;
+import si.noemus.boatguard.objects.State;
 import si.noemus.boatguard.util.HttpLog;
 
 import com.google.gson.Gson;

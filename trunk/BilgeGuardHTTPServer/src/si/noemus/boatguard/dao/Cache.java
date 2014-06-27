@@ -11,6 +11,11 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import si.bisoft.commons.dbpool.DbManager;
+import si.noemus.boatguard.objects.Alarm;
+import si.noemus.boatguard.objects.AppSetting;
+import si.noemus.boatguard.objects.Component;
+import si.noemus.boatguard.objects.Setting;
+import si.noemus.boatguard.objects.State;
 import si.noemus.boatguard.util.Constant;
 
 public class Cache {
@@ -72,6 +77,7 @@ public class Cache {
 	    		alarm.setAction(rs.getString("action"));
 	    		alarm.setType(rs.getString("type"));
 	    		alarm.setActive(rs.getInt("active"));
+	    		alarm.setFormat(rs.getString("format"));
 	    		alarms.put(rs.getInt("id"), alarm);
 	    	}
 	

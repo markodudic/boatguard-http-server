@@ -1,4 +1,4 @@
-package si.noemus.boatguard.dao;
+package si.noemus.boatguard.objects;
 
 import java.sql.Timestamp;
 
