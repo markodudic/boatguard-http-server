@@ -125,4 +125,15 @@
     <url-pattern>/old</url-pattern>
   </servlet-mapping>
   
+  
+  <servlet>
+    <servlet-name>SendSMSServlet</servlet-name>
+    <servlet-class>si.noemus.boatguard.servlet.SendSMSServlet</servlet-class>
+    <load-on-startup>11</load-on-startup>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>SendSMSServlet</servlet-name>
+    <url-pattern>/sendSms</url-pattern>
+  </servlet-mapping>  
+
 </web-app>
