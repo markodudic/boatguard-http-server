@@ -126,12 +126,13 @@ public class ObuData {
 	5.-LATITUDE
 	6.-UTC TIME
 	*/
-	public int setData(String gsmnum, String serial, String data) {
+	public boolean setData(String gsmnum, String serial, String data) {
 		Connection con = null;
 		Statement stmt = null;
 		Obu obu = getObu(gsmnum, serial);
 		Map<Integer, State> obuStates = getStates(obu.getUid());
 		lastStateData = getStateData(obu.getUid());
+		boolean isAdd = false;
 		
 	    try {
 	    	String[] states = data.split(",");
@@ -142,6 +143,7 @@ public class ObuData {
 	    	
 	    	if (lastStateData.get(Constant.STATE_ROW_STATE_VALUE)==null || tsDS.after(lastStateData.get(Constant.STATE_ROW_STATE_VALUE).getDateState())) {
 	    		//Map<Integer, StateData> stateDataLast = getStateData(obu.getId());
+	    		isAdd = true;
 		    	
 		    	con = DbManager.getConnection("config");
 				stmt = con.createStatement();   	
@@ -225,7 +227,7 @@ public class ObuData {
 			} catch (Exception e) {}
 	    }
 		
-		return obu.getUid();
+		return isAdd;
 	}
 	
 	
@@ -321,11 +323,12 @@ public class ObuData {
 	}
 
 	
-	public void calculateAlarms(int obuid) {
-		List<ObuAlarm> obuAlarms = getAlarms(obuid);
+	public void calculateAlarms(String gsmnum, String serial) {
+		Obu obu = getObu(gsmnum, serial);
+		List<ObuAlarm> obuAlarms = getAlarms(obu.getUid());
     	
-		Map<Integer, StateData> obuLast = getStateData(obuid);
-		Customer customer = getCustomer(obuid);
+		Map<Integer, StateData> obuLast = getStateData(obu.getUid());
+		Customer customer = getCustomer(obu.getUid());
 		
 		Iterator it = obuLast.entrySet().iterator();
 		while (it.hasNext()) {
@@ -342,7 +345,7 @@ public class ObuData {
 		        	int alarmValue;
 		        	if (alarm.getValue().equals("obu_settings")) {
 		        		ObuData obuData = new ObuData();
-		        		Map<Integer, ObuSetting> obuSettings = obuData.getSettings(obuid+"", null, null);
+		        		Map<Integer, ObuSetting> obuSettings = obuData.getSettings(obu.getUid()+"", null, null);
 	        			state = ((ObuSetting)obuSettings.get(Constant.OBU_SETTINGS_GEO_FENCE_VALUE)).getValue();
 	        			if (Integer.parseInt(state) == Constant.GEO_FENCE_DISABLED_VALUE){
         					continue;
@@ -398,7 +401,7 @@ public class ObuData {
 				        	if (alarm.getValue().equals("obu_settings") && setAlarm) {
 				        		state = Constant.GEO_FENCE_ALARM_VALUE+"";
 				        	}
-	            			setAlarm(alarm.getId(), obuid, state, alarm.getMessage(), alarm.getMessage_short(), alarm.getTitle(), alarm.getAction(), alarm.getType(), obuAlarm.getSound(), obuAlarm.getVibrate(), obuAlarm.getSend_email(), obuAlarm.getSend_customer(), obuAlarm.getSend_friends(), stateData.getDateState(), obuAlarm.getActive(), customer.getEmail());
+	            			setAlarm(alarm.getId(), obu.getUid(), state, alarm.getMessage(), alarm.getMessage_short(), alarm.getTitle(), alarm.getAction(), alarm.getType(), obuAlarm.getSound(), obuAlarm.getVibrate(), obuAlarm.getSend_email(), obuAlarm.getSend_customer(), obuAlarm.getSend_friends(), stateData.getDateState(), obuAlarm.getActive(), customer.getEmail());
 			        	}
 		        	}
 		        }

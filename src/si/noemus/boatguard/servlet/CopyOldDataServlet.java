@@ -67,8 +67,10 @@ public class CopyOldDataServlet extends HttpServlet {
 	    		String data = rs.getString("text").replace("#BG:", "");
 	    		System.out.println("Old data: " + data);
 	    		ObuData obuData = new ObuData();
-	    		int obuid = obuData.setData(null, "123456", data);
-	    		obuData.calculateAlarms(obuid);
+	    		boolean isAdd = obuData.setData(null, "123456", data);
+	    		if (isAdd) {
+	    			obuData.calculateAlarms(null, "123456");
+	    		}
 	    	}
 	
 	    } catch (Exception theException) {
