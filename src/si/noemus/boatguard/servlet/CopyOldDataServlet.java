@@ -1,11 +1,14 @@
 package si.noemus.boatguard.servlet;
 
+import it.sauronsoftware.cron4j.Scheduler;
+
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
@@ -18,7 +21,6 @@ import javax.servlet.http.HttpServletResponse;
 import si.bisoft.commons.dbpool.DbManager;
 import si.noemus.boatguard.dao.ObuData;
 import si.noemus.boatguard.objects.ObuSetting;
-import it.sauronsoftware.cron4j.Scheduler;
 
 
 public class CopyOldDataServlet extends HttpServlet {
@@ -44,7 +46,7 @@ public class CopyOldDataServlet extends HttpServlet {
 	    SimpleDateFormat df = new SimpleDateFormat("dd.MM.yyyy kk:mm:ss");
 	    SimpleDateFormat dfTime = new SimpleDateFormat("kk:mm:ss");
 		SimpleDateFormat dfYear=new SimpleDateFormat("yyyy");
-		System.out.println("Copy old data start at: " + df.format(runTime.getTime()));
+		//System.out.println("Copy old data start at: " + df.format(runTime.getTime()));
 		
 		
 		Connection con = null;
@@ -65,9 +67,13 @@ public class CopyOldDataServlet extends HttpServlet {
     		
 	    	if (rs.next()) {
 	    		String data = rs.getString("text").replace("#BG:", "");
-	    		System.out.println("Old data: " + data);
+	    		SimpleDateFormat sdfSource = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+	            Date date = sdfSource.parse(rs.getString("message_date"));
+	            SimpleDateFormat sdfDestination = new SimpleDateFormat("yyyyMMddHHmmss");
+	            String strDate = sdfDestination.format(date);
+	            String newData = data.substring(0, data.lastIndexOf(",")+1) + strDate;
 	    		ObuData obuData = new ObuData();
-	    		boolean isAdd = obuData.setData(null, "123456", data);
+	    		boolean isAdd = obuData.setData(null, "123456", newData);
 	    		if (isAdd) {
 	    			obuData.calculateAlarms(null, "123456");
 	    		}
@@ -87,7 +93,7 @@ public class CopyOldDataServlet extends HttpServlet {
 		
 		
     	runTime = Calendar.getInstance();
-		System.out.println("Copy old data end at: " + df.format(runTime.getTime()));
+		//System.out.println("Copy old data end at: " + df.format(runTime.getTime()));
 		
     }	
 		
