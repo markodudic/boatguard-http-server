@@ -77,9 +77,13 @@ public class SendSMSServlet extends HttpServlet {
 	    try {
 	    	con = DbManager.getConnection("config");
 			stmt = con.createStatement();   	
-
+			
+			//posljem nov sms samo ce ni ze
 	    	String	sql = "insert into smsserver_out (recipient, text, create_date) " + 
-	    				"select obu, '#SRV#', now() from users where name = '" + user + "'";
+	    				"select obu, '#SRV#', now() "
+	    				+ "from users "
+	    				+ "where name = '" + user + "' and "
+	    				+ "		not exists (select * from smsserver_out where recipient = users.obu and status != 'S')";
 	    		
     		System.out.println("sql="+sql);
 	    	stmt.executeUpdate(sql);
