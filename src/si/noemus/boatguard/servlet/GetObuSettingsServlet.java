@@ -68,7 +68,7 @@ public class GetObuSettingsServlet extends HttpServlet {
 		String format = (String) request.getParameter("format");
 		
 		ObuData obuData = new ObuData();
-		Map<Integer, ObuSetting> obuSettings = obuData.getSettings(obuid, gsmnum, serial);
+		Map<Integer, ObuSetting> obuSettings = obuData.getObuSettings(obuid, gsmnum, serial);
 		List<ObuSetting> obuSettingsList = new ArrayList<ObuSetting>();
 		
 		Iterator it = obuSettings.entrySet().iterator();
