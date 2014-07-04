@@ -1,5 +1,6 @@
 package si.noemus.boatguard.dao;
 
+import java.lang.reflect.Type;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
@@ -12,8 +13,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import com.google.gson.Gson;
-
 import si.bisoft.commons.dbpool.DbManager;
 import si.noemus.boatguard.comm.MailClient;
 import si.noemus.boatguard.comm.SmsClient;
@@ -22,11 +21,15 @@ import si.noemus.boatguard.objects.AlarmData;
 import si.noemus.boatguard.objects.Customer;
 import si.noemus.boatguard.objects.Obu;
 import si.noemus.boatguard.objects.ObuAlarm;
+import si.noemus.boatguard.objects.ObuComponent;
 import si.noemus.boatguard.objects.ObuSetting;
 import si.noemus.boatguard.objects.State;
 import si.noemus.boatguard.objects.StateData;
 import si.noemus.boatguard.util.Constant;
 import si.noemus.boatguard.util.Util;
+
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 public class ObuData {
 	
@@ -79,7 +82,58 @@ public class ObuData {
 	public void setObuSettings(String obuid, String data) {
 		Gson gson = new Gson();
 		System.out.println("DATA="+data);
-        //String data = gson.toJson(list);
+		Type listType = new TypeToken<List<ObuSetting>>(){}.getType();
+		List obuSettings = gson.fromJson(data, listType);
+		
+		Connection con = null;
+		Statement stmt = null;
+		try {
+	    	con = DbManager.getConnection("config");
+			stmt = con.createStatement();   	
+
+			for (int i = 0; i < obuSettings.size(); i++) {
+				ObuSetting obuSetting = (ObuSetting) obuSettings.get(i);
+				
+		    	String sql = "update obu_settings " + 
+			    		" set value = " + obuSetting.getValue() +
+			    		" where id_obu = " + obuid + " and id_setting = " + obuSetting.getId_setting();
+					
+				stmt.executeUpdate(sql);
+					    	
+			}
+			
+			//set current location
+			String sqls = "update obu_settings " +
+						"set value = (select value " +
+									"from states_data " +
+									"where id_obu = " + obuid +
+									"		and id_state = " + Constant.OBU_SETTINGS_LAT_VALUE +
+									" order by date_state desc " +
+									"limit 1) " +
+						"where id_setting = " + Constant.OBU_SETTINGS_LAT_VALUE;
+			
+			stmt.executeUpdate(sqls);
+
+			sqls = "update obu_settings " +
+					"set value = (select value " +
+								"from states_data " +
+								"where id_obu = " + obuid +
+								"		and id_state = " + Constant.OBU_SETTINGS_LON_VALUE +
+								" order by date_state desc " +
+								"limit 1) " +
+					"where id_setting = " + Constant.OBU_SETTINGS_LON_VALUE;
+		
+			stmt.executeUpdate(sqls);
+			
+			//updetam lokacijo
+		} catch (Exception theException) {
+			theException.printStackTrace();
+		} finally {
+			try {
+				if (stmt != null) stmt.close();
+				if (con != null) con.close();
+			} catch (Exception e) {}
+		}		
         
 		
 	}
