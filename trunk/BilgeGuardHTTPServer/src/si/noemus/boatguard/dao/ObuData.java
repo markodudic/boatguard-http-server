@@ -36,7 +36,7 @@ public class ObuData {
 
 	}
 	
-	public Map<Integer, ObuSetting> getSettings(String obuid, String gsmnum, String serial) {
+	public Map<Integer, ObuSetting> getObuSettings(String obuid, String gsmnum, String serial) {
 		Connection con = null;
 		ResultSet rs = null;
 	    Statement stmt = null;
@@ -74,6 +74,14 @@ public class ObuData {
 	    }	
 		
     	return obuSettings;
+	}
+
+	public void setObuSettings(String obuid, String data) {
+		Gson gson = new Gson();
+		System.out.println("DATA="+data);
+        //String data = gson.toJson(list);
+        
+		
 	}
 	
 	public Map<Integer, ObuComponent> getComponents(String obuid, String gsmnum, String serial) {
@@ -345,7 +353,7 @@ public class ObuData {
 		        	int alarmValue;
 		        	if (alarm.getValue().equals("obu_settings")) {
 		        		ObuData obuData = new ObuData();
-		        		Map<Integer, ObuSetting> obuSettings = obuData.getSettings(obu.getUid()+"", null, null);
+		        		Map<Integer, ObuSetting> obuSettings = obuData.getObuSettings(obu.getUid()+"", null, null);
 	        			state = ((ObuSetting)obuSettings.get(Constant.OBU_SETTINGS_GEO_FENCE_VALUE)).getValue();
 	        			if (Integer.parseInt(state) == Constant.GEO_FENCE_DISABLED_VALUE){
         					continue;
