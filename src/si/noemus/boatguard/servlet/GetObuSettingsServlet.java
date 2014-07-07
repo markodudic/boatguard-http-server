@@ -65,7 +65,6 @@ public class GetObuSettingsServlet extends HttpServlet {
 		String gsmnum = (String) request.getParameter("gsmnum");
 		String serial = (String) request.getParameter("serial");
 		String obuid = (String) request.getParameter("obuid");
-		String format = (String) request.getParameter("format");
 		
 		ObuData obuData = new ObuData();
 		Map<Integer, ObuSetting> obuSettings = obuData.getObuSettings(obuid, gsmnum, serial);
@@ -75,17 +74,11 @@ public class GetObuSettingsServlet extends HttpServlet {
 		String settings = "";
 		while (it.hasNext()) {
 	        Map.Entry pairs = (Map.Entry)it.next();
-	        if (format==null || !format.equals("json")) {
-	        	settings += ((ObuSetting)pairs.getValue()).getValue() + ";";
-	        } else {
-	        	obuSettingsList.add((ObuSetting)pairs.getValue());
-	        }
+        	obuSettingsList.add((ObuSetting)pairs.getValue());
 		}
 			
-		if (format!=null && format.equals("json")) {
-			Gson gson = new Gson();
-			settings = gson.toJson(obuSettingsList);			
-		}
+		Gson gson = new Gson();
+		settings = gson.toJson(obuSettingsList);			
     	
     	OutputStream out = null;
     	response.setContentType("text/plain");

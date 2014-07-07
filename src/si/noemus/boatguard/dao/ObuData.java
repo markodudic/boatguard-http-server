@@ -78,6 +78,47 @@ public class ObuData {
 		
     	return obuSettings;
 	}
+	
+	public Map<Integer, ObuSetting> getObuSettingsForObu(String obuid, String gsmnum, String serial) {
+		Connection con = null;
+		ResultSet rs = null;
+	    Statement stmt = null;
+	    Map<Integer, ObuSetting> obuSettings = new HashMap<Integer, ObuSetting>();
+    	try {
+    		con = DbManager.getConnection("config");
+
+	    	String	sql = "select obu_settings.*, settings.code, app_settings.value "
+	    				+ "from obus left join "
+	    				+ "	obu_settings on (obus.uid = obu_settings.id_obu) left join "
+	    				+ "	settings on (obu_settings.id_setting = settings.id)  left join "
+	    				+ "	app_settings on (settings.code = app_settings.name) "
+						+ "where (number = '" + gsmnum + "' or serial_number = '" + serial + "' or obus.uid = " + obuid + ") and app_settings.value is not null "
+						+ "order by app_settings.value";
+	    		
+    		stmt = con.createStatement();   	
+	    	rs = stmt.executeQuery(sql);
+    		
+	    	while (rs.next()) {
+	    		ObuSetting obuSetting = new ObuSetting();
+	    		obuSetting.setId_setting(rs.getInt("id_setting"));
+	    		obuSetting.setValue(rs.getString("value"));
+	    		obuSetting.setType(rs.getString("type"));
+	    		obuSetting.setCode(rs.getString("code"));
+	    		obuSettings.put(rs.getInt("id_setting"), obuSetting);
+	    	}
+	
+	    } catch (Exception theException) {
+	    	theException.printStackTrace();
+	    } finally {
+	    	try {
+	    		if (rs != null) rs.close();
+	    		if (stmt != null) stmt.close();
+	    		if (con != null) con.close();
+			} catch (Exception e) {}
+	    }	
+		
+    	return obuSettings;
+	}	
 
 	public void setObuSettings(String obuid, String data) {
 		Gson gson = new Gson();

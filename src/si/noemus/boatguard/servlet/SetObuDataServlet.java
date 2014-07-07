@@ -2,6 +2,10 @@ package si.noemus.boatguard.servlet;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 import java.util.logging.Logger;
 
 import javax.servlet.ServletException;
@@ -10,6 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import si.noemus.boatguard.dao.ObuData;
+import si.noemus.boatguard.objects.ObuSetting;
 import si.noemus.boatguard.util.HttpLog;
 
 
@@ -55,12 +60,27 @@ public class SetObuDataServlet extends HttpServlet {
 			obuData.calculateAlarms(gsmnum, serial);
 		}
 		
+		Map<Integer, ObuSetting> obuSettings = obuData.getObuSettingsForObu(null, gsmnum, serial);
+		
+		Iterator it = obuSettings.entrySet().iterator();
+		String settings = "";
+		while (it.hasNext()) {
+	        Map.Entry pairs = (Map.Entry)it.next();
+	        settings += ((ObuSetting)pairs.getValue()).getValue();
+		}
+		//dodam se 00 in 00 za SteviloInputov in SteviloOutputov
+		settings += "0000";
+		//dodam se dolzino v HEXA
+		String len = Integer.toHexString(settings.length());
+		
+		settings = (len.length()==1?"0"+len:len) + settings;
+		
     	OutputStream out = null;
     	response.setContentType("text/plain");
 		response.setHeader("Content-disposition", null);
 		response.setHeader("Access-Control-Allow-Origin", "*");
 		out = response.getOutputStream();
-		out.write("ok".getBytes());
+		out.write(settings.getBytes());
 		out.flush();
 		out.close();    
 	
