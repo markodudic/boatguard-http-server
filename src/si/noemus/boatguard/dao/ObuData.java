@@ -136,7 +136,7 @@ public class ObuData {
 				ObuSetting obuSetting = (ObuSetting) obuSettings.get(i);
 				
 		    	String sql = "update obu_settings " + 
-			    		" set value = " + obuSetting.getValue() +
+			    		" set value = '" + obuSetting.getValue() + "'" +
 			    		" where id_obu = " + obuid + " and id_setting = " + obuSetting.getId_setting();
 					
 				stmt.executeUpdate(sql);
