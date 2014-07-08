@@ -190,7 +190,7 @@ public class Cache {
 	    	Constant.OBU_ACCU_AH_VALUE = Integer.parseInt(Cache.appSettings.get(Constant.OBU_ACCU_AH).getValue());
 	    	Constant.OBU_LAT_VALUE = Integer.parseInt(Cache.appSettings.get(Constant.OBU_LAT).getValue());
 	    	Constant.OBU_LON_VALUE = Integer.parseInt(Cache.appSettings.get(Constant.OBU_LON).getValue());
-	    	Constant.OBU_DATE_VALUE = Integer.parseInt(Cache.appSettings.get(Constant.OBU_DATE).getValue());
+	    	//Constant.OBU_DATE_VALUE = Integer.parseInt(Cache.appSettings.get(Constant.OBU_DATE).getValue());
 	    	
 	    	Constant.GEO_FENCE_DISABLED_VALUE = Integer.parseInt(Cache.appSettings.get(Constant.GEO_FENCE_DISABLED).getValue());
 	    	Constant.GEO_FENCE_ALARM_VALUE = Integer.parseInt(Cache.appSettings.get(Constant.GEO_FENCE_ALARM).getValue());
