@@ -5,8 +5,10 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.sql.Timestamp;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -79,11 +81,11 @@ public class ObuData {
     	return obuSettings;
 	}
 	
-	public Map<Integer, ObuSetting> getObuSettingsForObu(String obuid, String gsmnum, String serial) {
+	public List<ObuSetting> getObuSettingsForObu(String obuid, String gsmnum, String serial) {
 		Connection con = null;
 		ResultSet rs = null;
 	    Statement stmt = null;
-	    Map<Integer, ObuSetting> obuSettings = new HashMap<Integer, ObuSetting>();
+	    List<ObuSetting> obuSettings = new ArrayList<ObuSetting>();
     	try {
     		con = DbManager.getConnection("config");
 
@@ -104,7 +106,7 @@ public class ObuData {
 	    		obuSetting.setValue(rs.getString("value"));
 	    		obuSetting.setType(rs.getString("type"));
 	    		obuSetting.setCode(rs.getString("code"));
-	    		obuSettings.put(rs.getInt("id_setting"), obuSetting);
+	    		obuSettings.add(obuSetting);
 	    	}
 	
 	    } catch (Exception theException) {
@@ -220,14 +222,22 @@ public class ObuData {
 	}	
 	 
 	/*
-	0,02F3,01F3,00E,15.1,46.5,20130523181121.000
-	0.-STANJE PUMPE (0-NE PUMPA, 2-PUMPA, 3-ZAMA�ENA)
-	1.-PRETECENE As
-	2.-STANJE NAPETOSTI
-	3.-TRENUTNI TOK
-	4.-LONGITUDE
-	5.-LATITUDE
-	6.-UTC TIME
+	1234.1222,12345.1111,1,0,0,1,0,0,2F50,1A1B1C,2F50,00,00
+	0.-LATITUDE
+	1.-LONGITUDE
+	2.-GPS FIX
+	3.-STANJE PUMPE (0-NE PUMPA, 1-PUMPA, 1-ZAMAsENA, 2-POKVARJENA)
+	4.-DEVIŠKI START
+	5.-ANCHOR DRIFTING STATE
+	6.-ANCHOR DRIFTING ALARM
+	7.-ACCU DISCONNECT
+	8.-TOK
+	9.-ENERGIJA
+	10.-NAPETOST
+	11.-OUTPUT COUNT
+	12.-OUTPUTS x OUTPUT COUNT
+	13.-INPUT COUNT
+	14.-INPUTS x INPUT COUNT
 	*/
 	public boolean setData(String gsmnum, String serial, String data) {
 		Connection con = null;
@@ -239,12 +249,15 @@ public class ObuData {
 		
 	    try {
 	    	String[] states = data.split(",");
-	    	String dateState = states[Constant.OBU_DATE_VALUE];
-	    	SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMddhhmmss");
-	        Date parsedDate = dateFormat.parse(dateState);
-	        Timestamp tsDS = new java.sql.Timestamp(parsedDate.getTime());
+	    	//String dateState = states[Constant.OBU_DATE_VALUE];
+	    	//SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMddhhmmss");
+	        //Date parsedDate = dateFormat.parse(dateState);
+	        //Timestamp tsDS = new java.sql.Timestamp(parsedDate.getTime());
 	    	
-	    	if (lastStateData.get(Constant.STATE_ROW_STATE_VALUE)==null || tsDS.after(lastStateData.get(Constant.STATE_ROW_STATE_VALUE).getDateState())) {
+	    	DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+	    	Date today = Calendar.getInstance().getTime();        
+	    	String dateState = df.format(today);
+	    	//if (lastStateData.get(Constant.STATE_ROW_STATE_VALUE)==null || tsDS.after(lastStateData.get(Constant.STATE_ROW_STATE_VALUE).getDateState())) {
 	    		//Map<Integer, StateData> stateDataLast = getStateData(obu.getId());
 	    		isAdd = true;
 		    	
@@ -252,7 +265,7 @@ public class ObuData {
 				stmt = con.createStatement();   	
 	 
 		    	String	sql = "insert into states_data (id_state, id_obu, value, date_state) " + 
-		    				"values (" + Constant.STATE_ROW_STATE_VALUE + ", " + obu.getUid() + ", '" + data + "', " + dateState + ")";
+		    				"values (" + Constant.STATE_ROW_STATE_VALUE + ", " + obu.getUid() + ", '" + data + "', '" + dateState + "')";
 		    		
 		    	stmt.executeUpdate(sql);
 		    	
@@ -269,7 +282,7 @@ public class ObuData {
 		    				}
 		    				stateValue = stateTok+"";	    				
 		    			}
-		    			if (state.getId() == Constant.STATE_ACCU_NAPETOST_VALUE){
+			    		else if (state.getId() == Constant.STATE_ACCU_NAPETOST_VALUE){
 		    				int stateNapetost = Integer.parseInt(stateValue, 16);
 		    				int stateTok = Integer.parseInt(states[Constant.OBU_ACCU_AH_VALUE], 16);
 		    				//ce je tok<APP_SETTING_TOK_MIN je napetost zadnja od takrat ko je tok>APP_SETTING_TOK_MIN
@@ -279,7 +292,7 @@ public class ObuData {
 		    					stateValue = Math.round((stateNapetost / Constant.APP_SETTINGS_NAPETOST_KOEF1_VALUE) * Constant.APP_SETTINGS_NAPETOST_KOEF2_VALUE)+"";
 		    				}
 		    			}
-		    			if (state.getId() == Constant.STATE_ACCU_AH_VALUE){
+			    		else if (state.getId() == Constant.STATE_ACCU_AH_VALUE){
 		    				int stateAh = Integer.parseInt(stateValue, 16);
 		    				int stateAhLast = Constant.APP_SETTINGS_NAPETOST_TOK_MAX_VALUE;
 		    				if (lastStateData.get(Constant.STATE_ROW_STATE) != null) {
@@ -298,7 +311,7 @@ public class ObuData {
 		    				}
 		    			}
 		    			sql = "insert into states_data (id_state, id_obu, value, date_state) " + 
-		    	    		"values ('" + state.getId() + "', " + obu.getUid() + ", '" + stateValue + "', " + dateState + ")";
+		    	    		"values ('" + state.getId() + "', " + obu.getUid() + ", '" + stateValue + "', '" + dateState + "')";
 		    	    	stmt.executeUpdate(sql);
 			    			
 		    		}
@@ -312,15 +325,15 @@ public class ObuData {
 	    		float lon2 = Util.transform(Float.parseFloat(obuSettings.get(Constant.OBU_SETTINGS_LON_VALUE)));
 	    		int distance = (int) Math.round(Util.gps2m(lat1, lon1, lat2, lon2));
 	    		sql = "insert into states_data (id_state, id_obu, value, date_state) " + 
-	    	    		"values (" + Constant.OBU_SETTINGS_GEO_DISTANCE_VALUE + ", " + obu.getUid() + ", '" + distance + "', " + dateState + ")";
+	    	    		"values (" + Constant.OBU_SETTINGS_GEO_DISTANCE_VALUE + ", " + obu.getUid() + ", '" + distance + "', '" + dateState + "')";
 	    			
 	   	    	stmt.executeUpdate(sql);
 		    	
 		    	sql = "insert into states_data (id_state, id_obu, value, date_state) " + 
-	    	    		"values (" + Constant.OBU_SETTINGS_GEO_FENCE_VALUE + ", " + obu.getUid() + ", '" + Integer.parseInt(obuSettings.get(Constant.OBU_SETTINGS_GEO_FENCE_VALUE)) + "', " + dateState + ")";
+	    	    		"values (" + Constant.OBU_SETTINGS_GEO_FENCE_VALUE + ", " + obu.getUid() + ", '" + obuSettings.get(Constant.OBU_SETTINGS_GEO_FENCE_VALUE) + "', '" + dateState + "')";
 	    			
 	   	    	stmt.executeUpdate(sql);
-	    	}
+	    	//}
 	    } catch (Exception theException) {
 	    	theException.printStackTrace();
 	    } finally {

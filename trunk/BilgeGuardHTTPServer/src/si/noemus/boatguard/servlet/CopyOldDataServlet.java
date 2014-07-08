@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -27,6 +28,7 @@ public class CopyOldDataServlet extends HttpServlet {
 
 	static Logger log = Logger.getLogger(CopyOldDataServlet.class.getName());
     private String scheduler_pattern;
+    private Timestamp lastDate;
 
 	public void init() throws ServletException
 	{
@@ -65,17 +67,31 @@ public class CopyOldDataServlet extends HttpServlet {
     		stmt = con.createStatement();   	
 	    	rs = stmt.executeQuery(sql);
     		
+	    	//STARO: #BG:0,15F519,2C8,00A,1426.626404,4601.989670,20140707125241
+	    	//NOVO:  1234.1222,12345.1111,1,0,0,1,0,0,2F50,1A1B1C,2F50,00,00
+	    	
 	    	if (rs.next()) {
 	    		String data = rs.getString("text").replace("#BG:", "");
 	    		SimpleDateFormat sdfSource = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
 	            Date date = sdfSource.parse(rs.getString("message_date"));
-	            SimpleDateFormat sdfDestination = new SimpleDateFormat("yyyyMMddHHmmss");
-	            String strDate = sdfDestination.format(date);
-	            String newData = data.substring(0, data.lastIndexOf(",")+1) + strDate;
-	    		ObuData obuData = new ObuData();
-	    		boolean isAdd = obuData.setData(null, "123456", newData);
-	    		if (isAdd) {
-	    			obuData.calculateAlarms(null, "123456");
+	            Timestamp tsDS = new java.sql.Timestamp(date.getTime());
+	            
+	            if (lastDate == null) lastDate = tsDS;
+	            	
+	            if (tsDS.after(lastDate)) {
+		            /*SimpleDateFormat sdfDestination = new SimpleDateFormat("yyyyMMddHHmmss");
+		            String strDate = sdfDestination.format(date);
+		            String newData = data.substring(0, data.lastIndexOf(",")+1) + strDate;*/
+		    		String [] dataList = data.split(",");
+		    		String newData = dataList[4]+","+dataList[5]+",1,"+dataList[0]+",0,0,0,0,"+dataList[2]+","+dataList[1]+","+dataList[3];
+		    		System.out.println("copy old data="+newData);
+		    		
+		    		ObuData obuData = new ObuData();
+		    		boolean isAdd = obuData.setData(null, "123456", newData);
+		    		if (isAdd) {
+		    			obuData.calculateAlarms(null, "123456");
+		    		}
+		    		lastDate = tsDS;
 	    		}
 	    	}
 	

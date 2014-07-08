@@ -60,14 +60,14 @@ public class SetObuDataServlet extends HttpServlet {
 			obuData.calculateAlarms(gsmnum, serial);
 		}
 		
-		Map<Integer, ObuSetting> obuSettings = obuData.getObuSettingsForObu(null, gsmnum, serial);
+		List<ObuSetting> obuSettings = obuData.getObuSettingsForObu(null, gsmnum, serial);
 		
-		Iterator it = obuSettings.entrySet().iterator();
 		String settings = "";
-		while (it.hasNext()) {
-	        Map.Entry pairs = (Map.Entry)it.next();
-	        settings += ((ObuSetting)pairs.getValue()).getValue();
+		for (int i=0; i<obuSettings.size(); i++) {
+			ObuSetting obuSetting = obuSettings.get(i);
+	        settings += obuSetting.getValue();
 		}
+		
 		//dodam se 00 in 00 za SteviloInputov in SteviloOutputov
 		settings += "0000";
 		//dodam se dolzino v HEXA
