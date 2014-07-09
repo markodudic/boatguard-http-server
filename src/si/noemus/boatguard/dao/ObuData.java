@@ -310,14 +310,28 @@ public class ObuData {
 		    					stateValue = energija + "";
 		    				}
 		    			}
-		    			sql = "insert into states_data (id_state, id_obu, value, date_state) " + 
+			    		else if ((state.getId() == Constant.STATE_LON_VALUE) || (state.getId() == Constant.STATE_LAT_VALUE)) {
+			    			String geoFixValue = states[Constant.OBU_GEO_FIX_VALUE];
+			    			
+			    			//ce je geo_fix=0 prepisem stare koordinate
+			    			if (!geoFixValue.equals(Constant.GEO_FIX_OK_VALUE)) {
+			    				stateValue = lastStateData.get(state.getId()).getValue();
+			    				if (state.getId() == Constant.STATE_LON_VALUE) {
+			    					states[Constant.OBU_LON_VALUE] = stateValue;
+			    				}
+			    				else if (state.getId() == Constant.STATE_LAT_VALUE) {
+			    					states[Constant.OBU_LAT_VALUE] = stateValue;
+			    				}
+			    			}		    		
+			    		}
+			    		sql = "insert into states_data (id_state, id_obu, value, date_state) " + 
 		    	    		"values ('" + state.getId() + "', " + obu.getUid() + ", '" + stateValue + "', '" + dateState + "')";
 		    	    	stmt.executeUpdate(sql);
 			    			
 		    		}
 		    	}
 		    
-		    	//geo fence
+		    	//geo fence distance
 		    	Map<Integer, String> obuSettings = obu.getSettings();
 	    		float lat1 = Util.transform(Float.parseFloat(states[Constant.OBU_LAT_VALUE]));
 	    		float lon1 = Util.transform(Float.parseFloat(states[Constant.OBU_LON_VALUE]));
@@ -328,7 +342,7 @@ public class ObuData {
 	    	    		"values (" + Constant.OBU_SETTINGS_GEO_DISTANCE_VALUE + ", " + obu.getUid() + ", '" + distance + "', '" + dateState + "')";
 	    			
 	   	    	stmt.executeUpdate(sql);
-		    	
+		    	//geo fence status prtepisem
 		    	sql = "insert into states_data (id_state, id_obu, value, date_state) " + 
 	    	    		"values (" + Constant.OBU_SETTINGS_GEO_FENCE_VALUE + ", " + obu.getUid() + ", '" + obuSettings.get(Constant.OBU_SETTINGS_GEO_FENCE_VALUE) + "', '" + dateState + "')";
 	    			

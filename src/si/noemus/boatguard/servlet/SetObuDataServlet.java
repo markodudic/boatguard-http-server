@@ -42,8 +42,6 @@ public class SetObuDataServlet extends HttpServlet {
 	 * @see javax.servlet.http.HttpServlet#doPost(HttpServletRequest arg0,
 	 *      HttpServletResponse arg1)
 	 *      
-	 *      http://localhost:8080/bg/data?gsmnum=&serial=123456&data=0,150031,2D0,00B,1403.452026,4626.050656,20140321093336
-
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		System.out.println("SERVLET POST");		

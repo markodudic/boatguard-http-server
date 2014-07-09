@@ -14,6 +14,12 @@ public class Constant {
 	public static Integer STATE_ACCU_NAPETOST_VALUE				= 31;
 	public static final String STATE_ACCU_AH 					= "ACCU_AH";
 	public static Integer STATE_ACCU_AH_VALUE					= 32;
+	public static final String STATE_LAT 						= "LAT";
+	public static Integer STATE_LAT_VALUE						= 11;
+	public static final String STATE_LON	 					= "LON";
+	public static Integer STATE_LON_VALUE						= 12;
+	public static final String STATE_GEO_FIX 					= "GEO_FIX";
+	public static Integer STATE_GEO_FIX_VALUE					= 14;
 
 	public static final String OBU_SETTINGS_GEO_FENCE 			= "GEO_FENCE";
 	public static Integer OBU_SETTINGS_GEO_FENCE_VALUE			= 10;
@@ -49,6 +55,8 @@ public class Constant {
 	public static Integer OBU_LON_VALUE							= 1;
 	//public static final String OBU_DATE 						= "OBU_DATE";
 	//public static Integer OBU_DATE_VALUE						= -1;
+	public static final String OBU_GEO_FIX 						= "OBU_GEO_FIX";
+	public static Integer OBU_GEO_FIX_VALUE						= 2;
 
 	public static final String GEO_FENCE_DISABLED 				= "GEO_FENCE_DISABLED";
 	public static Integer GEO_FENCE_DISABLED_VALUE				= 0;
@@ -56,5 +64,7 @@ public class Constant {
 	public static Integer GEO_FENCE_ENABLED_VALUE				= 1;
 	public static final String GEO_FENCE_ALARM 					= "GEO_FENCE_ALARM";
 	public static Integer GEO_FENCE_ALARM_VALUE					= 2;
+	public static final String GEO_FIX_OK						= "GEO_FIX";
+	public static Integer GEO_FIX_OK_VALUE						= 1;
 
 }
