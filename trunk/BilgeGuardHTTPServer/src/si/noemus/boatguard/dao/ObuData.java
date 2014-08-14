@@ -80,7 +80,24 @@ public class ObuData {
 		
     	return obuSettings;
 	}
+
 	
+	/*
+	0d00500112340000
+	Če je število vseh bajtov po Y recimo 3F (63 desetiško) je YH=3(33) in YL=F(46) 
+	0.-NUM BYTES (2 mesta)
+	1.-PIA PRISOTNA (1)
+	2.-URE IN MINUTE (2)
+	3.-RESET ENERGY (1)
+	4.-PUMP CALIBRATION (1)
+	5.-GEO FENCE ON (1)
+	6.-GEO FENCE DISTANCE (4)
+	7.-OUTPUT COUNT (2)
+	8.-OUTPUTS x OUTPUT COUNT
+	9.-INPUT COUNT (2)
+	10.-INPUTS x INPUT COUNT
+	*/
+			
 	public List<ObuSetting> getObuSettingsForObu(String obuid, String gsmnum, String serial) {
 		Connection con = null;
 		ResultSet rs = null;
@@ -220,24 +237,26 @@ public class ObuData {
 		
     	return obuComponents;
 	}	
-	 
+
+			
 	/*
-	1234.1222,12345.1111,1,0,0,1,0,0,2F50,1A1B1C,2F50,00,00
+	1234.1222,12345.1111,1,5,0,0,1,0,0,2F50,1A1B1C,2F50,00,00
 	0.-LATITUDE
 	1.-LONGITUDE
 	2.-GPS FIX
-	3.-STANJE PUMPE (0-NE PUMPA, 1-PUMPA, 1-ZAMAsENA, 2-POKVARJENA)
-	4.-DEVIŠKI START
-	5.-ANCHOR DRIFTING STATE
-	6.-ANCHOR DRIFTING ALARM
-	7.-ACCU DISCONNECT
-	8.-TOK
-	9.-ENERGIJA
-	10.-NAPETOST
-	11.-OUTPUT COUNT
-	12.-OUTPUTS x OUTPUT COUNT
-	13.-INPUT COUNT
-	14.-INPUTS x INPUT COUNT
+	3.-SAT NUM
+	4.-STANJE PUMPE (0-NE PUMPA, 1-PUMPA, 2-ZAMAsENA, 3-POKVARJENA)
+	5.-DEVIŠKI START
+	6.-ANCHOR DRIFTING STATE
+	7.-ANCHOR DRIFTING ALARM
+	8.-ACCU DISCONNECT
+	9.-TOK
+	10.-ENERGIJA
+	11.-NAPETOST
+	12.-OUTPUT COUNT
+	13.-OUTPUTS x OUTPUT COUNT
+	14.-INPUT COUNT
+	15.-INPUTS x INPUT COUNT
 	*/
 	public boolean setData(String gsmnum, String serial, String data) {
 		Connection con = null;

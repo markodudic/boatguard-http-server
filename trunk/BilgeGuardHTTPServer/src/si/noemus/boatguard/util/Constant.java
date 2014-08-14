@@ -42,13 +42,13 @@ public class Constant {
 	public static Double APP_SETTINGS_NAPETOST_KOEF2_VALUE		= 12.5;
 
 	public static final String OBU_PUMP_STATE 					= "OBU_PUMP_STATE";
-	public static Integer OBU_PUMP_STATE_VALUE					= 3;
+	public static Integer OBU_PUMP_STATE_VALUE					= 4;
 	public static final String OBU_ACCU_NAPETOST 				= "OBU_ACCU_NAPETOST";
-	public static Integer OBU_ACCU_NAPETOST_VALUE				= 10;
+	public static Integer OBU_ACCU_NAPETOST_VALUE				= 11;
 	public static final String OBU_ACCU_TOK 					= "OBU_ACCU_TOK";
-	public static Integer OBU_ACCU_TOK_VALUE					= 8;
+	public static Integer OBU_ACCU_TOK_VALUE					= 9;
 	public static final String OBU_ACCU_AH 						= "OBU_ACCU_AH";
-	public static Integer OBU_ACCU_AH_VALUE						= 9;
+	public static Integer OBU_ACCU_AH_VALUE						= 10;
 	public static final String OBU_LAT 							= "OBU_LAT";
 	public static Integer OBU_LAT_VALUE							= 0;
 	public static final String OBU_LON 							= "OBU_LON";
