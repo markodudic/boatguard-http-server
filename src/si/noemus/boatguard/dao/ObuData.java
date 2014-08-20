@@ -238,25 +238,26 @@ public class ObuData {
     	return obuComponents;
 	}	
 
-			
 	/*
-	1234.1222,12345.1111,1,5,0,0,1,0,0,2F50,1A1B1C,2F50,00,00
+	1234.1222,N,12345.1111,E,1,5,0,0,1,0,0,2F50,1A1B1C,2F50,00,00
 	0.-LATITUDE
-	1.-LONGITUDE
-	2.-GPS FIX
-	3.-SAT NUM
-	4.-STANJE PUMPE (0-NE PUMPA, 1-PUMPA, 2-ZAMAsENA, 3-POKVARJENA)
-	5.-DEVIŠKI START
-	6.-ANCHOR DRIFTING STATE
-	7.-ANCHOR DRIFTING ALARM
-	8.-ACCU DISCONNECT
-	9.-TOK
-	10.-ENERGIJA
-	11.-NAPETOST
-	12.-OUTPUT COUNT
-	13.-OUTPUTS x OUTPUT COUNT
-	14.-INPUT COUNT
-	15.-INPUTS x INPUT COUNT
+	1.-N/S INDICATOR
+	2.-LONGITUDE
+	3.-E/W INDICATOR
+	4.-GPS FIX
+	5.-SAT NUM
+	6.-STANJE PUMPE (0-NE PUMPA, 1-PUMPA, 2-ZAMAsENA, 3-POKVARJENA)
+	7.-DEVIŠKI START
+	8.-ANCHOR DRIFTING STATE
+	9.-ANCHOR DRIFTING ALARM
+	10.-ACCU DISCONNECT
+	11-TOK
+	12.-ENERGIJA
+	13.-NAPETOST
+	14.-OUTPUT COUNT
+	15.-OUTPUTS x OUTPUT COUNT
+	16.-INPUT COUNT
+	17.-INPUTS x INPUT COUNT
 	*/
 	public boolean setData(String gsmnum, String serial, String data) {
 		Connection con = null;
@@ -292,6 +293,8 @@ public class ObuData {
 		    		if (Cache.states.get(i) != null) {
 		    			String stateValue = states[i];
 		    			State state = obuStates.get(Cache.states.get(i).getId());
+		    			if (state == null) continue;
+		    			
 			    		if (state.getId() == Constant.STATE_ACCU_TOK_VALUE){
 			    			Double stateTok = Double.parseDouble(Integer.parseInt(stateValue, 16)+"");
 			    			if (stateTok <= Constant.APP_SETTINGS_NAPETOST_TOK_MIN_VALUE) {
@@ -334,12 +337,14 @@ public class ObuData {
 			    			
 			    			//ce je geo_fix=0 prepisem stare koordinate
 			    			if (!geoFixValue.equals(Constant.GEO_FIX_OK_VALUE)) {
-			    				stateValue = lastStateData.get(state.getId()).getValue();
-			    				if (state.getId() == Constant.STATE_LON_VALUE) {
-			    					states[Constant.OBU_LON_VALUE] = stateValue;
-			    				}
-			    				else if (state.getId() == Constant.STATE_LAT_VALUE) {
-			    					states[Constant.OBU_LAT_VALUE] = stateValue;
+			    				if (lastStateData.get(state.getId()) != null) {
+				    				stateValue = lastStateData.get(state.getId()).getValue();
+				    				if (state.getId() == Constant.STATE_LON_VALUE) {
+				    					states[Constant.OBU_LON_VALUE] = stateValue;
+				    				}
+				    				else if (state.getId() == Constant.STATE_LAT_VALUE) {
+				    					states[Constant.OBU_LAT_VALUE] = stateValue;
+				    				}
 			    				}
 			    			}		    		
 			    		}
