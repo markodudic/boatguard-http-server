@@ -264,7 +264,7 @@ public class ObuData {
 		Statement stmt = null;
 		Obu obu = getObu(gsmnum, serial);
 		Map<Integer, State> obuStates = getStates(obu.getUid());
-		lastStateData = getStateData(obu.getUid());
+		lastStateData = getObuData(obu.getUid());
 		boolean isAdd = false;
 		
 	    try {
@@ -437,7 +437,7 @@ public class ObuData {
 	}	
 
 	
-	public Map<Integer, StateData> getStateData(int id) {
+	public Map<Integer, StateData> getObuData(int id) {
 		Connection con = null;
 		ResultSet rs = null;
 	    Statement stmt = null;
@@ -476,12 +476,53 @@ public class ObuData {
 		return statesData;
 	}
 
+	public List<Map<Integer, StateData>> getObuHistoryData(int id) {
+		Connection con = null;
+		ResultSet rs = null;
+	    Statement stmt = null;
+	    Map<Integer, StateData> statesData = new HashMap<Integer, StateData>();
+	    List<Map<Integer, StateData>> historyData = new ArrayList<Map<Integer, StateData>>();
+		try {
+    		con = DbManager.getConnection("config");
+    	    
+	    	String	sql = "select * "
+	    			+ "from states_data "
+	    			+ "where id_obu = " + id + " " 
+	    			+ "order by date_state "
+	    			+ "limit 100";
+	    		
+    		stmt = con.createStatement();   	
+    		rs = stmt.executeQuery(sql);
+			
+	    	while (rs.next()) {
+	    		StateData stateData = new StateData();
+	    		stateData.setId_state(rs.getInt("id_state"));
+	    		stateData.setId_obu(rs.getInt("id_obu"));
+	    		stateData.setValue(rs.getString("value"));
+	    		stateData.setType(rs.getString("type"));
+	    		stateData.setDateState(rs.getTimestamp("date_state"));	
+	    		statesData.put(rs.getInt("id_state"), stateData);
+	    		historyData.add(statesData);
+	    		//System.out.println(rs.getInt("id_state")+"+"+rs.getString("value"));
+	    	}
+		} catch (Exception theException) {
+	    	theException.printStackTrace();
+	    } finally {
+	    	try {
+	    		if (rs != null) rs.close();
+	    		if (stmt != null) stmt.close();
+	    		if (con != null) con.close();
+			} catch (Exception e) {}
+	    }
+		
+		return historyData;
+	}
 	
 	public void calculateAlarms(String gsmnum, String serial) {
 		Obu obu = getObu(gsmnum, serial);
 		List<ObuAlarm> obuAlarms = getAlarms(obu.getUid());
     	
-		Map<Integer, StateData> obuLast = getStateData(obu.getUid());
+		Map<Integer, StateData> obuLast = getObuData(obu.getUid());
 		Customer customer = getCustomer(obu.getUid());
 		
 		Iterator it = obuLast.entrySet().iterator();

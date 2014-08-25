@@ -112,9 +112,20 @@
   </servlet-mapping>  
   
   <servlet>
+    <servlet-name>GetObuHistoryDataServlet</servlet-name>
+    <servlet-class>si.noemus.boatguard.servlet.GetObuHistoryDataServlet</servlet-class>
+    <load-on-startup>11</load-on-startup>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>GetObuHistoryDataServlet</servlet-name>
+    <url-pattern>/gethistorydata</url-pattern>
+  </servlet-mapping>
+  
+  
+  <servlet>
     <servlet-name>RpcServlet</servlet-name>
     <servlet-class>si.noemus.boatguard.servlet.RpcServlet</servlet-class>
-    <load-on-startup>11</load-on-startup>
+    <load-on-startup>12</load-on-startup>
   </servlet>
   <servlet-mapping>
     <servlet-name>RpcServlet</servlet-name>
@@ -128,7 +139,7 @@
 	   <param-name>scheduler_pattern</param-name>
 		<param-value>*/1 * * * *</param-value>
 	 </init-param>
-    <load-on-startup>12</load-on-startup>
+    <load-on-startup>13</load-on-startup>
   </servlet>
   <servlet-mapping>
     <servlet-name>CopyOldDataServlet</servlet-name>
@@ -139,7 +150,7 @@
   <servlet>
     <servlet-name>SendSMSServlet</servlet-name>
     <servlet-class>si.noemus.boatguard.servlet.SendSMSServlet</servlet-class>
-    <load-on-startup>13</load-on-startup>
+    <load-on-startup>14</load-on-startup>
   </servlet>
   <servlet-mapping>
     <servlet-name>SendSMSServlet</servlet-name>
