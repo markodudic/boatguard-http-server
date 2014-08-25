@@ -482,19 +482,28 @@ public class ObuData {
 	    Statement stmt = null;
 	    Map<Integer, StateData> statesData = new HashMap<Integer, StateData>();
 	    List<Map<Integer, StateData>> historyData = new ArrayList<Map<Integer, StateData>>();
+	    Timestamp lastD = null;
 		try {
     		con = DbManager.getConnection("config");
     	    
 	    	String	sql = "select * "
 	    			+ "from states_data "
 	    			+ "where id_obu = " + id + " " 
-	    			+ "order by date_state "
-	    			+ "limit 100";
+	    			+ "order by date_state desc "
+	    			+ "limit 1000";
 	    		
     		stmt = con.createStatement();   	
     		rs = stmt.executeQuery(sql);
 			
 	    	while (rs.next()) {
+	    		Timestamp d = rs.getTimestamp("date_state");
+	    		if (lastD==null || !d.equals(lastD)) {
+	    			if (lastD!=null) {
+	    				historyData.add(statesData);
+	    			}
+		    		statesData = new HashMap<Integer, StateData>();
+	    			lastD = d;
+	    		}
 	    		StateData stateData = new StateData();
 	    		stateData.setId_state(rs.getInt("id_state"));
 	    		stateData.setId_obu(rs.getInt("id_obu"));
@@ -502,9 +511,10 @@ public class ObuData {
 	    		stateData.setType(rs.getString("type"));
 	    		stateData.setDateState(rs.getTimestamp("date_state"));	
 	    		statesData.put(rs.getInt("id_state"), stateData);
-	    		historyData.add(statesData);
-	    		//System.out.println(rs.getInt("id_state")+"+"+rs.getString("value"));
 	    	}
+			if (lastD!=null) {
+				historyData.add(statesData);
+			}
 		} catch (Exception theException) {
 	    	theException.printStackTrace();
 	    } finally {
