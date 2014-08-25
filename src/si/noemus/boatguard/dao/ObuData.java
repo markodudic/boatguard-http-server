@@ -476,12 +476,13 @@ public class ObuData {
 		return statesData;
 	}
 
-	public List<Map<Integer, StateData>> getObuHistoryData(int id) {
+	public List<List<StateData>> getObuHistoryData(int id) {
 		Connection con = null;
 		ResultSet rs = null;
 	    Statement stmt = null;
-	    Map<Integer, StateData> statesData = new HashMap<Integer, StateData>();
-	    List<Map<Integer, StateData>> historyData = new ArrayList<Map<Integer, StateData>>();
+	    List<StateData> statesData = new ArrayList<StateData>();
+	    List<List<StateData>> historyData = new ArrayList<List<StateData>>();
+		
 	    Timestamp lastD = null;
 		try {
     		con = DbManager.getConnection("config");
@@ -501,16 +502,16 @@ public class ObuData {
 	    			if (lastD!=null) {
 	    				historyData.add(statesData);
 	    			}
-		    		statesData = new HashMap<Integer, StateData>();
+		    		statesData = new ArrayList<StateData>();
 	    			lastD = d;
 	    		}
-	    		StateData stateData = new StateData();
+	    	    StateData stateData = new StateData();
 	    		stateData.setId_state(rs.getInt("id_state"));
 	    		stateData.setId_obu(rs.getInt("id_obu"));
 	    		stateData.setValue(rs.getString("value"));
 	    		stateData.setType(rs.getString("type"));
 	    		stateData.setDateState(rs.getTimestamp("date_state"));	
-	    		statesData.put(rs.getInt("id_state"), stateData);
+	    		statesData.add(stateData);
 	    	}
 			if (lastD!=null) {
 				historyData.add(statesData);

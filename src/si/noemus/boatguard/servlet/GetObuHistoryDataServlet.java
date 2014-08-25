@@ -2,12 +2,8 @@ package si.noemus.boatguard.servlet;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -18,9 +14,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import si.noemus.boatguard.dao.ObuData;
-import si.noemus.boatguard.objects.AlarmData;
 import si.noemus.boatguard.objects.StateData;
-import si.noemus.boatguard.util.Constant;
 import si.noemus.boatguard.util.HttpLog;
 
 import com.google.gson.Gson;
@@ -65,7 +59,7 @@ public class GetObuHistoryDataServlet extends HttpServlet {
 		String obuid = (String) request.getParameter("obuid");
 		
 		ObuData obuData = new ObuData();
-		List<Map<Integer, StateData>> obuHistoryData = obuData.getObuHistoryData(Integer.parseInt(obuid));
+		List<List<StateData>> obuHistoryData = obuData.getObuHistoryData(Integer.parseInt(obuid));
 		Gson gson = new Gson();
 		String states = gson.toJson(obuHistoryData);
 		
