@@ -27,12 +27,12 @@ import com.google.gson.Gson;
 
 
 
-public class GetObuDataServlet extends HttpServlet {
+public class GetObuHistoryDataServlet extends HttpServlet {
 
 	Locale locale = Locale.getDefault();
 	
 	//static Logger log = Logger.getLogger(ObuSettingsServlet.class.getName());
-	private static Log log = LogFactory.getLog(GetObuDataServlet.class);
+	private static Log log = LogFactory.getLog(GetObuHistoryDataServlet.class);
 
 	public void init() throws ServletException
 	{
@@ -65,20 +65,11 @@ public class GetObuDataServlet extends HttpServlet {
 		String obuid = (String) request.getParameter("obuid");
 		
 		ObuData obuData = new ObuData();
-		Map<Integer, StateData> stateData = obuData.getObuData(Integer.parseInt(obuid));
-		/*Iterator it = stateData.entrySet().iterator();
-		List<StateData> stateDataList = new ArrayList<StateData>();
-		while (it.hasNext()) {
-	        Map.Entry pairs = (Map.Entry)it.next();
-	        stateDataList.add((StateData)pairs.getValue());
-		}*/
+		List<Map<Integer, StateData>> obuHistoryData = obuData.getObuHistoryData(Integer.parseInt(obuid));
 		Gson gson = new Gson();
-		String states = gson.toJson(stateData);
+		String states = gson.toJson(obuHistoryData);
 		
-		List<AlarmData> alarmData = obuData.getAlarmData(Integer.parseInt(obuid));
-		String alarms = gson.toJson(alarmData);
-		
-		String data = "{\"states\":"+states+",\"alarms\":"+alarms+"}";
+		String data = "{\"states\":"+states+"}";
 		
     	OutputStream out = null;
     	response.setContentType("text/plain");
