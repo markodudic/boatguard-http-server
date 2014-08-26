@@ -66,10 +66,10 @@ public class SetObuDataServlet extends HttpServlet {
 	        settings += obuSetting.getValue();
 		}
 		
-		//dodam se 00 in 00 za SteviloInputov in SteviloOutputov
-		settings += "0000";
+		//dodam se 000 in 000 za SteviloInputov in SteviloOutputov
+		settings += "000000";
 		//dodam se dolzino v HEXA
-		String len = Integer.toHexString(settings.length());
+		String len = Integer.toHexString(settings.length()).toUpperCase();
 		
 		settings = (len.length()==1?"0"+len:len) + settings;
 		
