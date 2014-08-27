@@ -67,7 +67,7 @@ public class SetObuDataServlet extends HttpServlet {
 		}
 		
 		//dodam se 000 in 000 za SteviloInputov in SteviloOutputov
-		settings += "000000";
+		settings += "0000";
 		//dodam se dolzino v HEXA
 		String len = Integer.toHexString(settings.length()).toUpperCase();
 		
