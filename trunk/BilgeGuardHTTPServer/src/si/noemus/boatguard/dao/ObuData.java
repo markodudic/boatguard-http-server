@@ -120,7 +120,14 @@ public class ObuData {
 	    	while (rs.next()) {
 	    		ObuSetting obuSetting = new ObuSetting();
 	    		obuSetting.setId_setting(rs.getInt("id_setting"));
-	    		obuSetting.setValue(rs.getString("value"));
+	    		String v = rs.getString("value");
+    			if ((rs.getInt("id_setting") == Constant.OBU_SETTINGS_ANCHOR_DRIFTING_VALUE) || 
+    				(rs.getInt("id_setting") == Constant.OBU_SETTINGS_GEO_DISTANCE_VALUE)) {
+	    			while (v.length()<4) {
+	    				v = '0' + v;
+	    			}
+	    		}
+	    		obuSetting.setValue(v);
 	    		obuSetting.setType(rs.getString("type"));
 	    		obuSetting.setCode(rs.getString("code"));
 	    		obuSettings.add(obuSetting);

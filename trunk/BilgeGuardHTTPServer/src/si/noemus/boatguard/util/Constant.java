@@ -29,6 +29,8 @@ public class Constant {
 	public static Integer OBU_SETTINGS_LAT_VALUE				= 11;
 	public static final String OBU_SETTINGS_GEO_DISTANCE		= "GEO_DISTANCE";
 	public static Integer OBU_SETTINGS_GEO_DISTANCE_VALUE		= 13;
+	public static final String OBU_SETTINGS_ANCHOR_DRIFTING		= "ANCHOR_DRIFTING";
+	public static Integer OBU_SETTINGS_ANCHOR_DRIFTING_VALUE	= 41;
 
 	public static final String APP_SETTINGS_NAPETOST_TOK_MAX 	= "NAPETOST_TOK_MAX";
 	public static Integer APP_SETTINGS_NAPETOST_TOK_MAX_VALUE	= 1023;
