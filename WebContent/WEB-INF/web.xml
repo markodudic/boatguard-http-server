@@ -47,7 +47,7 @@
   </servlet>
   <servlet-mapping>
     <servlet-name>GetObuAlarmsServlet</servlet-name>
-    <url-pattern>/getalarms</url-pattern>
+    <url-pattern>/getobualarms</url-pattern>
   </servlet-mapping>
     
   <servlet>
@@ -157,4 +157,14 @@
     <url-pattern>/sendSms</url-pattern>
   </servlet-mapping>  
 
+  
+  <servlet>
+    <servlet-name>SetObuAlarmsServlet</servlet-name>
+    <servlet-class>si.noemus.boatguard.servlet.SetObuAlarmsServlet</servlet-class>
+    <load-on-startup>15</load-on-startup>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>SetObuAlarmsServlet</servlet-name>
+    <url-pattern>/setobualarms</url-pattern>
+  </servlet-mapping>    
 </web-app>
