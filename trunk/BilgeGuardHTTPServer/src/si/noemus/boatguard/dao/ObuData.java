@@ -536,6 +536,94 @@ public class ObuData {
 		return historyData;
 	}
 	
+	
+	public List<ObuAlarm> getObuAlarms(int obuid) {
+		Connection con = null;
+		ResultSet rs = null;
+	    Statement stmt = null;
+	    List<ObuAlarm> obuAlarms = new ArrayList<ObuAlarm>();
+    	try {
+    		con = DbManager.getConnection("config");
+
+	    	String	sql = "select * "
+	    			+ "from obu_alarms left join alarms on (obu_alarms.id_alarm = alarms.id) "
+	    			+ "where id_obu = " + obuid;
+	    		
+    		stmt = con.createStatement();   	
+	    	rs = stmt.executeQuery(sql);
+    		
+	    	while (rs.next()) {
+	    		ObuAlarm obuAlarm = new ObuAlarm();
+	    		obuAlarm.setId_alarm(rs.getInt("id_alarm"));
+	    		obuAlarm.setId_obu(rs.getInt("id_obu"));
+	    		obuAlarm.setValue(rs.getString("value"));
+	    		obuAlarm.setMessage(getMessage(rs.getString("message"), obuid));
+	    		obuAlarm.setMessage_short(rs.getString("message_short"));
+	    		obuAlarm.setTitle(rs.getString("title"));
+	    		obuAlarm.setAction(rs.getString("action"));
+	    		obuAlarm.setSound(rs.getInt("sound"));
+	    		obuAlarm.setVibrate(rs.getInt("vibrate"));
+	    		obuAlarm.setType(rs.getString("type"));
+	    		obuAlarm.setActive(rs.getInt("active"));
+	    		obuAlarm.setSend_email(rs.getInt("send_email"));
+	    		obuAlarm.setSend_customer(rs.getInt("send_customer"));
+	    		obuAlarm.setSend_friends(rs.getInt("send_friends"));
+	    		obuAlarms.add(obuAlarm);
+	    	}
+
+	    } catch (Exception theException) {
+	    	theException.printStackTrace();
+	    } finally {
+	    	try {
+	    		if (rs != null) rs.close();
+	    		if (stmt != null) stmt.close();
+	    		if (con != null) con.close();
+			} catch (Exception e) {}
+	    }	
+		
+    	return obuAlarms;
+	}	
+	
+	
+	public void setObuAlarms(String obuid, String data) {
+		Gson gson = new Gson();
+		System.out.println("DATA="+data);
+		Type listType = new TypeToken<List<ObuAlarm>>(){}.getType();
+		List obuAlarms = gson.fromJson(data, listType);
+		
+		Connection con = null;
+		Statement stmt = null;
+		try {
+	    	con = DbManager.getConnection("config");
+			stmt = con.createStatement();   	
+
+			for (int i = 0; i < obuAlarms.size(); i++) {
+				ObuAlarm obuAlarm = (ObuAlarm) obuAlarms.get(i);
+				
+		    	String sql = "update obu_alarms " + 
+			    		" set active = '" + obuAlarm.getActive() + "'," +
+			    		" 	send_email = '" + obuAlarm.getSend_email() + "'," +
+			    		" 	send_friends = '" + obuAlarm.getSend_friends() + "'" +
+			    		" where id_obu = " + obuid + " and id_alarm = " + obuAlarm.getId_alarm();
+		    	System.out.println("sql="+sql);
+					
+				stmt.executeUpdate(sql);
+					    	
+			}
+			
+		} catch (Exception theException) {
+			theException.printStackTrace();
+		} finally {
+			try {
+				if (stmt != null) stmt.close();
+				if (con != null) con.close();
+			} catch (Exception e) {}
+		}		
+        
+		
+	}
+	
+	
 	public void calculateAlarms(String gsmnum, String serial) {
 		Obu obu = getObu(gsmnum, serial);
 		List<ObuAlarm> obuAlarms = getAlarms(obu.getUid());
