@@ -21,6 +21,8 @@ public class Customer {
 		private String phone_uuid;
 		private String home_network;
 		private String active;
+		private String serial_number;
+		private String boat_name;
 		
 		public int getUid() {
 			return uid;
@@ -123,6 +125,18 @@ public class Customer {
 		}
 		public void setPhone_uuid(String phone_uuid) {
 			this.phone_uuid = phone_uuid;
+		}
+		public String getSerial_number() {
+			return serial_number;
+		}
+		public void setSerial_number(String serial_number) {
+			this.serial_number = serial_number;
+		}
+		public String getBoat_name() {
+			return boat_name;
+		}
+		public void setBoat_name(String boat_name) {
+			this.boat_name = boat_name;
 		}
 		
 	}

@@ -605,9 +605,7 @@ public class ObuData {
 			    		" 	send_email = '" + obuAlarm.getSend_email() + "'," +
 			    		" 	send_friends = '" + obuAlarm.getSend_friends() + "'" +
 			    		" where id_obu = " + obuid + " and id_alarm = " + obuAlarm.getId_alarm();
-		    	System.out.println("sql="+sql);
-					
-				stmt.executeUpdate(sql);
+		    	stmt.executeUpdate(sql);
 					    	
 			}
 			
@@ -619,8 +617,6 @@ public class ObuData {
 				if (con != null) con.close();
 			} catch (Exception e) {}
 		}		
-        
-		
 	}
 	
 	
@@ -934,8 +930,8 @@ public class ObuData {
     	try {
     		con = DbManager.getConnection("config");
 
-	    	String	sql = "select * "
-	    			+ "from customers "
+	    	String	sql = "select customers.*, obus.name boat_name, obus.serial_number "
+	    			+ "from customers left join obus on (customers.id_obu = obus.uid) "
 	    			+ "where id_obu = " + obuid;
 	    		
     		stmt = con.createStatement();   	
@@ -959,6 +955,8 @@ public class ObuData {
 	    		customer.setPhone_uuid(rs.getString("phone_uuid"));
 	    		customer.setHome_network(rs.getString("home_network"));
 	    		customer.setActive(rs.getString("active"));
+	    		customer.setSerial_number(rs.getString("serial_number"));
+	    		customer.setBoat_name(rs.getString("boat_name"));
 	    	}
 	
 	    } catch (Exception theException) {
@@ -973,6 +971,43 @@ public class ObuData {
 		
     	return customer;
 	}	
+
+	
+	public void setCustomer(String obuid, String data) {
+		Gson gson = new Gson();
+		System.out.println("DATA="+data);
+		//Type listType = new TypeToken<List<Customer>>(){}.getType();
+		Customer customer = gson.fromJson(data, Customer.class);
+		
+		Connection con = null;
+		Statement stmt = null;
+		try {
+	    	con = DbManager.getConnection("config");
+			stmt = con.createStatement();   	
+
+			String sql = "update customers " + 
+			    		" set name = '" + customer.getName() + "'," +
+			    		" 	surname = '" + customer.getSurname() + "'," +
+			    		" 	email = '" + customer.getEmail() + "'" +
+			    		" where id_obu = " + obuid;
+		    stmt.executeUpdate(sql);
+			
+			sql = "update obus " + 
+		    		" set name = '" + customer.getBoat_name() + "'" +
+		    		" where uid = " + obuid;
+			stmt.executeUpdate(sql);
+		} catch (Exception theException) {
+			theException.printStackTrace();
+		} finally {
+			try {
+				if (stmt != null) stmt.close();
+				if (con != null) con.close();
+			} catch (Exception e) {}
+		}		
+        
+		
+	}
+
 	
 	public String login(String username, String password, String obuSerialNumber, String deviceName, String devicePlatform, String deviceVersion, String deviceUuid, String phoneNumber, String appVersion) {
 		

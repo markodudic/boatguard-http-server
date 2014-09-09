@@ -167,4 +167,25 @@
     <servlet-name>SetObuAlarmsServlet</servlet-name>
     <url-pattern>/setobualarms</url-pattern>
   </servlet-mapping>    
+  
+  <servlet>
+    <servlet-name>GetCustomerServlet</servlet-name>
+    <servlet-class>si.noemus.boatguard.servlet.GetCustomerServlet</servlet-class>
+    <load-on-startup>16</load-on-startup>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>GetCustomerServlet</servlet-name>
+    <url-pattern>/getcustomer</url-pattern>
+  </servlet-mapping>  
+    
+  <servlet>
+    <servlet-name>SetCustomerServlet</servlet-name>
+    <servlet-class>si.noemus.boatguard.servlet.SetCustomerServlet</servlet-class>
+    <load-on-startup>17</load-on-startup>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>SetCustomerServlet</servlet-name>
+    <url-pattern>/setcustomer</url-pattern>
+  </servlet-mapping>
+    
 </web-app>
