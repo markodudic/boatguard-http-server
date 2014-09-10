@@ -46,7 +46,6 @@ public class SetCustomerServlet extends HttpServlet {
 		
 		HttpLog.afterHttp(request, null);
 
-		String obuid = (String) request.getParameter("obuid");
 		String data = (String) request.getParameter("data");
 		
 		StringBuilder sb = new StringBuilder();
@@ -61,7 +60,7 @@ public class SetCustomerServlet extends HttpServlet {
 	    }
         
 		ObuData obuData = new ObuData();
-		obuData.setCustomer(obuid, sb.toString());
+		obuData.setCustomer(sb.toString());
 		
     	OutputStream out = null;
     	response.setContentType("text/plain");

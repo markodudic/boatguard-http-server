@@ -46,7 +46,6 @@ public class SetObuSettingsServlet extends HttpServlet {
 
 		HttpLog.afterHttp(request, null);
 
-		String obuid = (String) request.getParameter("obuid");
 		String data = (String) request.getParameter("data");
 		
 		StringBuilder sb = new StringBuilder();
@@ -61,7 +60,7 @@ public class SetObuSettingsServlet extends HttpServlet {
 	    }
         
 		ObuData obuData = new ObuData();
-		obuData.setObuSettings(obuid, sb.toString());
+		obuData.setObuSettings(sb.toString());
 		
     	OutputStream out = null;
     	response.setContentType("text/plain");

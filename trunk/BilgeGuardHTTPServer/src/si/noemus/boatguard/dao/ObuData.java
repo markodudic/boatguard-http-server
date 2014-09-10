@@ -21,6 +21,7 @@ import si.noemus.boatguard.comm.SmsClient;
 import si.noemus.boatguard.objects.Alarm;
 import si.noemus.boatguard.objects.AlarmData;
 import si.noemus.boatguard.objects.Customer;
+import si.noemus.boatguard.objects.Friend;
 import si.noemus.boatguard.objects.Obu;
 import si.noemus.boatguard.objects.ObuAlarm;
 import si.noemus.boatguard.objects.ObuComponent;
@@ -61,6 +62,7 @@ public class ObuData {
     		
 	    	while (rs.next()) {
 	    		ObuSetting obuSetting = new ObuSetting();
+	    		obuSetting.setId_obu(rs.getInt("id_obu"));
 	    		obuSetting.setId_setting(rs.getInt("id_setting"));
 	    		obuSetting.setValue(rs.getString("value"));
 	    		obuSetting.setType(rs.getString("type"));
@@ -146,7 +148,7 @@ public class ObuData {
     	return obuSettings;
 	}	
 
-	public void setObuSettings(String obuid, String data) {
+	public void setObuSettings(String data) {
 		Gson gson = new Gson();
 		System.out.println("DATA="+data);
 		Type listType = new TypeToken<List<ObuSetting>>(){}.getType();
@@ -157,13 +159,14 @@ public class ObuData {
 		try {
 	    	con = DbManager.getConnection("config");
 			stmt = con.createStatement();   	
-
+			int obuId = 0;
 			for (int i = 0; i < obuSettings.size(); i++) {
 				ObuSetting obuSetting = (ObuSetting) obuSettings.get(i);
+				obuId = obuSetting.getId_obu();
 				
 		    	String sql = "update obu_settings " + 
 			    		" set value = '" + obuSetting.getValue() + "'" +
-			    		" where id_obu = " + obuid + " and id_setting = " + obuSetting.getId_setting();
+			    		" where id_obu = " + obuId + " and id_setting = " + obuSetting.getId_setting();
 					
 				stmt.executeUpdate(sql);
 					    	
@@ -173,7 +176,7 @@ public class ObuData {
 			String sqls = "update obu_settings " +
 						"set value = (select value " +
 									"from states_data " +
-									"where id_obu = " + obuid +
+									"where id_obu = " + obuId +
 									"		and id_state = " + Constant.OBU_SETTINGS_LAT_VALUE +
 									" order by date_state desc " +
 									"limit 1) " +
@@ -184,7 +187,7 @@ public class ObuData {
 			sqls = "update obu_settings " +
 					"set value = (select value " +
 								"from states_data " +
-								"where id_obu = " + obuid +
+								"where id_obu = " + obuId +
 								"		and id_state = " + Constant.OBU_SETTINGS_LON_VALUE +
 								" order by date_state desc " +
 								"limit 1) " +
@@ -585,7 +588,7 @@ public class ObuData {
 	}	
 	
 	
-	public void setObuAlarms(String obuid, String data) {
+	public void setObuAlarms(String data) {
 		Gson gson = new Gson();
 		System.out.println("DATA="+data);
 		Type listType = new TypeToken<List<ObuAlarm>>(){}.getType();
@@ -604,7 +607,7 @@ public class ObuData {
 			    		" set active = '" + obuAlarm.getActive() + "'," +
 			    		" 	send_email = '" + obuAlarm.getSend_email() + "'," +
 			    		" 	send_friends = '" + obuAlarm.getSend_friends() + "'" +
-			    		" where id_obu = " + obuid + " and id_alarm = " + obuAlarm.getId_alarm();
+			    		" where id_obu = " + obuAlarm.getId_obu() + " and id_alarm = " + obuAlarm.getId_alarm();
 		    	stmt.executeUpdate(sql);
 					    	
 			}
@@ -973,10 +976,8 @@ public class ObuData {
 	}	
 
 	
-	public void setCustomer(String obuid, String data) {
+	public void setCustomer(String data) {
 		Gson gson = new Gson();
-		System.out.println("DATA="+data);
-		//Type listType = new TypeToken<List<Customer>>(){}.getType();
 		Customer customer = gson.fromJson(data, Customer.class);
 		
 		Connection con = null;
@@ -989,12 +990,12 @@ public class ObuData {
 			    		" set name = '" + customer.getName() + "'," +
 			    		" 	surname = '" + customer.getSurname() + "'," +
 			    		" 	email = '" + customer.getEmail() + "'" +
-			    		" where id_obu = " + obuid;
+			    		" where id_obu = " + customer.getId_obu();
 		    stmt.executeUpdate(sql);
 			
 			sql = "update obus " + 
 		    		" set name = '" + customer.getBoat_name() + "'" +
-		    		" where uid = " + obuid;
+		    		" where uid = " + customer.getId_obu();
 			stmt.executeUpdate(sql);
 		} catch (Exception theException) {
 			theException.printStackTrace();
@@ -1008,6 +1009,84 @@ public class ObuData {
 		
 	}
 
+	
+	public List<Friend> getFriends(int customerid) {
+		Connection con = null;
+		ResultSet rs = null;
+	    Statement stmt = null;
+	    List<Friend> friends = new ArrayList<Friend>();
+    	try {
+    		con = DbManager.getConnection("config");
+
+	    	String	sql = "select * "
+	    			+ "from friends "
+	    			+ "where id_customer = " + customerid;
+	    		
+    		stmt = con.createStatement();   	
+	    	rs = stmt.executeQuery(sql);
+    		
+	    	while (rs.next()) {
+	    		Friend friend = new Friend();
+	    		friend.setUid(rs.getInt("uid"));
+	    		friend.setId_customer(rs.getInt("id_customer"));
+	    		friend.setName(rs.getString("name"));
+	    		friend.setSurname(rs.getString("surname"));
+	    		friend.setNumber(rs.getString("number"));
+	    		friend.setEmail(rs.getString("email"));
+	    		friends.add(friend);
+	    	}
+	
+	    } catch (Exception theException) {
+	    	theException.printStackTrace();
+	    } finally {
+	    	try {
+	    		if (rs != null) rs.close();
+	    		if (stmt != null) stmt.close();
+	    		if (con != null) con.close();
+			} catch (Exception e) {}
+	    }	
+		
+    	return friends;
+	}	
+	
+	
+	public void setFriends(String data) {
+		Gson gson = new Gson();
+		System.out.println("DATA="+data);
+		Type listType = new TypeToken<List<Friend>>(){}.getType();
+		List friends = gson.fromJson(data, listType);
+		
+		Connection con = null;
+		Statement stmt = null;
+		try {
+	    	con = DbManager.getConnection("config");
+			stmt = con.createStatement();   	
+
+			for (int i = 0; i < friends.size(); i++) {
+				Friend friend = (Friend) friends.get(i);
+				
+		    	String sql = "REPLACE INTO FRIENDS (uid, id_customer, name, surname, number, email, active) " +
+		    				" VALUES (" + friend.getUid() + ", " + 
+		    							friend.getId_customer() + ", '" + 
+		    							friend.getName() + "', '" + 
+		    							friend.getSurname() + "', '" + 
+		    							friend.getNumber() + "', '" + 
+		    							friend.getEmail() + "', " + 
+		    							friend.getActive() + ")";
+		    	stmt.executeUpdate(sql);
+					    	
+			}
+			
+		} catch (Exception theException) {
+			theException.printStackTrace();
+		} finally {
+			try {
+				if (stmt != null) stmt.close();
+				if (con != null) con.close();
+			} catch (Exception e) {}
+		}		
+	}
+	
 	
 	public String login(String username, String password, String obuSerialNumber, String deviceName, String devicePlatform, String deviceVersion, String deviceUuid, String phoneNumber, String appVersion) {
 		

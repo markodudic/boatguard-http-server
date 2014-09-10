@@ -14,9 +14,9 @@ import si.noemus.boatguard.dao.ObuData;
 import si.noemus.boatguard.util.HttpLog;
 
 
-public class SetObuAlarmsServlet extends HttpServlet {
+public class SetFriendsServlet extends HttpServlet {
 
-	static Logger log = Logger.getLogger(SetObuAlarmsServlet.class.getName());
+	static Logger log = Logger.getLogger(SetFriendsServlet.class.getName());
 
 	public void init() throws ServletException
 	{
@@ -60,7 +60,7 @@ public class SetObuAlarmsServlet extends HttpServlet {
 	    }
         
 		ObuData obuData = new ObuData();
-		obuData.setObuAlarms(sb.toString());
+		obuData.setFriends(sb.toString());
 		
     	OutputStream out = null;
     	response.setContentType("text/plain");
