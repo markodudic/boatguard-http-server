@@ -187,5 +187,24 @@
     <servlet-name>SetCustomerServlet</servlet-name>
     <url-pattern>/setcustomer</url-pattern>
   </servlet-mapping>
+ 
+    <servlet>
+    <servlet-name>GetFriendsServlet</servlet-name>
+    <servlet-class>si.noemus.boatguard.servlet.GetFriendsServlet</servlet-class>
+    <load-on-startup>18</load-on-startup>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>GetFriendsServlet</servlet-name>
+    <url-pattern>/getfriends</url-pattern>
+  </servlet-mapping>  
     
+  <servlet>
+    <servlet-name>SetFriendsServlet</servlet-name>
+    <servlet-class>si.noemus.boatguard.servlet.SetFriendsServlet</servlet-class>
+    <load-on-startup>19</load-on-startup>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>SetFriendsServlet</servlet-name>
+    <url-pattern>/setfriend</url-pattern>
+  </servlet-mapping>
 </web-app>

@@ -8,6 +8,7 @@ public class ObuSetting {
 		
 	}	
 	
+	private int id_obu;
 	private int id_setting;
 	private String code;
 	private String value;
@@ -19,6 +20,12 @@ public class ObuSetting {
 	}
 
 
+	public int getId_obu() {
+		return id_obu;
+	}
+	public void setId_obu(int id_obu) {
+		this.id_obu = id_obu;
+	}
 	public int getId_setting() {
 		return id_setting;
 	}
