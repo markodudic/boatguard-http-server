@@ -1033,6 +1033,7 @@ public class ObuData {
 	    		friend.setSurname(rs.getString("surname"));
 	    		friend.setNumber(rs.getString("number"));
 	    		friend.setEmail(rs.getString("email"));
+	    		friend.setActive(rs.getString("active"));
 	    		friends.add(friend);
 	    	}
 	
@@ -1060,12 +1061,14 @@ public class ObuData {
 		Statement stmt = null;
 		try {
 	    	con = DbManager.getConnection("config");
-			stmt = con.createStatement();   	
+			stmt = con.createStatement(); 
+			String ids = "";
 
 			for (int i = 0; i < friends.size(); i++) {
 				Friend friend = (Friend) friends.get(i);
+				ids += (i>0?",":"") + friend.getUid();
 				
-		    	String sql = "REPLACE INTO FRIENDS (uid, id_customer, name, surname, number, email, active) " +
+		    	String sql = "REPLACE INTO friends (uid, id_customer, name, surname, number, email, active) " +
 		    				" VALUES (" + friend.getUid() + ", " + 
 		    							friend.getId_customer() + ", '" + 
 		    							friend.getName() + "', '" + 
@@ -1074,8 +1077,11 @@ public class ObuData {
 		    							friend.getEmail() + "', " + 
 		    							friend.getActive() + ")";
 		    	stmt.executeUpdate(sql);
-					    	
 			}
+			
+			String sql = "DELETE FROM friends WHERE uid NOT IN (" + ids + ")";
+			System.out.println(sql);
+	    	stmt.executeUpdate(sql);
 			
 		} catch (Exception theException) {
 			theException.printStackTrace();
