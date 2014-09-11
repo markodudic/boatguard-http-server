@@ -205,6 +205,6 @@
   </servlet>
   <servlet-mapping>
     <servlet-name>SetFriendsServlet</servlet-name>
-    <url-pattern>/setfriend</url-pattern>
+    <url-pattern>/setfriends</url-pattern>
   </servlet-mapping>
 </web-app>
