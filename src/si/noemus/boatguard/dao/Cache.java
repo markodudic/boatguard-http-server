@@ -24,7 +24,7 @@ public class Cache {
 	public static Map<Integer, State> states = new HashMap<Integer, State>();
 	public static Map<String, State> statesByCode = new HashMap<String, State>();
 	public static Map<String, AppSetting> appSettings = new HashMap<String, AppSetting>();
-	public static Map<Integer, Setting> settings = new HashMap<Integer, Setting>();
+	public static Map<String, Setting> settings = new HashMap<String, Setting>();
 	public static Map<Integer, Component> components = new HashMap<Integer, Component>();
 
 	
@@ -41,6 +41,7 @@ public class Cache {
 			cacheStates();
 			cacheAppSettings();
 			cacheAlarms();
+			cacheSettings();
 			log.debug("STOP RESET CACHE ");
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -225,10 +226,10 @@ public class Cache {
 	    	while (rs.next()) {
 	    		Setting setting = new Setting();
 	    		setting.setId(rs.getInt("id"));
-	    		setting.setName(rs.getString("name"));
+	    		setting.setName(rs.getString("code"));
 	    		setting.setValue(rs.getString("value"));
 	    		setting.setType(rs.getString("type"));
-	    		settings.put(rs.getInt("id"), setting);
+	    		settings.put(rs.getString("code"), setting);
 	    	}
 	
 	    } catch (Exception theException) {
