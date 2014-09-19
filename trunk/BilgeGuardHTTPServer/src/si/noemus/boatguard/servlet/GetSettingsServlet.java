@@ -19,6 +19,7 @@ import org.apache.commons.logging.LogFactory;
 import si.noemus.boatguard.dao.Cache;
 import si.noemus.boatguard.objects.Alarm;
 import si.noemus.boatguard.objects.AppSetting;
+import si.noemus.boatguard.objects.Setting;
 import si.noemus.boatguard.objects.State;
 import si.noemus.boatguard.util.HttpLog;
 
@@ -89,7 +90,17 @@ public class GetSettingsServlet extends HttpServlet {
 		}
 		String statesJson = gson.toJson(statesList);
 		
-		String data = "{\"alarms\":"+alarmsJson+",\"app_settings\":"+appSettingsJson+",\"states\":"+statesJson+"}";
+		Map<String, Setting> settings = Cache.settings;
+		it = settings.entrySet().iterator();
+		List<Setting> settingsList = new ArrayList<Setting>();
+		while (it.hasNext()) {
+	        Map.Entry pairs = (Map.Entry)it.next();
+	        settingsList.add((Setting)pairs.getValue());
+		}
+		String settingsJson = gson.toJson(settingsList);
+
+		
+		String data = "{\"alarms\":"+alarmsJson+",\"app_settings\":"+appSettingsJson+",\"states\":"+statesJson+",\"settings\":"+settingsJson+"}";
 		
     	OutputStream out = null;
     	response.setContentType("text/plain");
