@@ -58,7 +58,7 @@ public class Constant {
 	//public static final String OBU_DATE 						= "OBU_DATE";
 	//public static Integer OBU_DATE_VALUE						= -1;
 	public static final String OBU_GEO_FIX 						= "OBU_GEO_FIX";
-	public static Integer OBU_GEO_FIX_VALUE						= 2;
+	public static Integer OBU_GEO_FIX_VALUE						= 4;
 
 	public static final String GEO_FENCE_DISABLED 				= "GEO_FENCE_DISABLED";
 	public static Integer GEO_FENCE_DISABLED_VALUE				= 0;

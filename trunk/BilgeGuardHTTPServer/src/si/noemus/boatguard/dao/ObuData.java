@@ -302,6 +302,12 @@ public class ObuData {
 		    	for (int i=0;i<states.length;i++) {
 		    		if (Cache.states.get(i) != null) {
 		    			String stateValue = states[i];
+		    			
+		    			//TUKAJ JE SAM PREMAPIRANJE ZARADI KITE IZ D/N V 1/0 ZA PODATKE OD 7-10
+		    			if ((i>6) && (i<11)) {
+		    				stateValue = stateValue.replace("D", "1").replace("N", "0");
+		    			}
+		    			
 		    			State state = obuStates.get(Cache.states.get(i).getId());
 		    			if (state == null) continue;
 		    			
@@ -343,10 +349,10 @@ public class ObuData {
 		    				}
 		    			}
 			    		else if ((state.getId() == Constant.STATE_LON_VALUE) || (state.getId() == Constant.STATE_LAT_VALUE)) {
-			    			String geoFixValue = states[Constant.OBU_GEO_FIX_VALUE];
+			    			Integer geoFixValue = Integer.parseInt(states[Constant.OBU_GEO_FIX_VALUE]);
 			    			
 			    			//ce je geo_fix=0 prepisem stare koordinate
-			    			if (!geoFixValue.equals(Constant.GEO_FIX_OK_VALUE)) {
+			    			if (geoFixValue != Constant.GEO_FIX_OK_VALUE) {
 			    				if (lastStateData.get(state.getId()) != null) {
 				    				stateValue = lastStateData.get(state.getId()).getValue();
 				    				if (state.getId() == Constant.STATE_LON_VALUE) {
@@ -360,7 +366,7 @@ public class ObuData {
 			    		}
 			    		sql = "insert into states_data (id_state, id_obu, value, date_state) " + 
 		    	    		"values ('" + state.getId() + "', " + obu.getUid() + ", '" + stateValue + "', '" + dateState + "')";
-		    	    	stmt.executeUpdate(sql);
+			    		stmt.executeUpdate(sql);
 			    			
 		    		}
 		    	}
