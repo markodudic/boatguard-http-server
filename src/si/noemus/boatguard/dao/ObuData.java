@@ -382,9 +382,16 @@ public class ObuData {
 	    	    		"values (" + Constant.OBU_SETTINGS_GEO_DISTANCE_VALUE + ", " + obu.getUid() + ", '" + distance + "', '" + dateState + "')";
 	    			
 	   	    	stmt.executeUpdate(sql);
+	   	    	
 		    	//geo fence status prtepisem
-		    	sql = "insert into states_data (id_state, id_obu, value, date_state) " + 
-	    	    		"values (" + Constant.OBU_SETTINGS_GEO_FENCE_VALUE + ", " + obu.getUid() + ", '" + obuSettings.get(Constant.OBU_SETTINGS_GEO_FENCE_VALUE) + "', '" + dateState + "')";
+	   	    	if (distance > Integer.parseInt( obuSettings.get(Constant.OBU_SETTINGS_GEO_DISTANCE_VALUE))) {
+		   	    	sql = "insert into states_data (id_state, id_obu, value, date_state) " + 
+		    	    		"values (" + Constant.OBU_SETTINGS_GEO_FENCE_VALUE + ", " + obu.getUid() + ", '" + Constant.GEO_FENCE_ALARM_VALUE + "', '" + dateState + "')";
+    			}
+	   	    	else {
+	   	    		sql = "insert into states_data (id_state, id_obu, value, date_state) " + 
+		    	    		"values (" + Constant.OBU_SETTINGS_GEO_FENCE_VALUE + ", " + obu.getUid() + ", '" + obuSettings.get(Constant.OBU_SETTINGS_GEO_FENCE_VALUE) + "', '" + dateState + "')";
+	   	    	}
 	    			
 	   	    	stmt.executeUpdate(sql);
 	    	//}
