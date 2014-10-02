@@ -20,8 +20,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import si.bisoft.commons.dbpool.DbManager;
-import si.noemus.boatguard.dao.ObuData;
-import si.noemus.boatguard.objects.ObuSetting;
+import com.boatguard.boatguard.dao.ObuData;
+import com.boatguard.boatguard.objects.ObuSetting;
 
 
 public class CopyOldDataServlet extends HttpServlet {

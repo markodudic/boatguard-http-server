@@ -18,10 +18,10 @@ import org.apache.commons.logging.LogFactory;
 
 import com.google.gson.Gson;
 
-import si.noemus.boatguard.dao.ObuData;
-import si.noemus.boatguard.objects.Alarm;
-import si.noemus.boatguard.objects.ObuSetting;
-import si.noemus.boatguard.util.HttpLog;
+import com.boatguard.boatguard.dao.ObuData;
+import com.boatguard.boatguard.objects.Alarm;
+import com.boatguard.boatguard.objects.ObuSetting;
+import com.boatguard.boatguard.util.HttpLog;
 
 
 

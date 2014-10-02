@@ -32,8 +32,8 @@ import org.apache.log4j.PropertyConfigurator;
 
 import si.bisoft.commons.dbpool.DbManager;
 import si.bisoft.commons.dbpool.DbPoolingConfig;
-import si.noemus.boatguard.comm.MailClient;
-import si.noemus.boatguard.dao.Cache;
+import com.boatguard.boatguard.comm.MailClient;
+import com.boatguard.boatguard.dao.Cache;
 
 public class InitServlet extends HttpServlet implements javax.servlet.Servlet {
 

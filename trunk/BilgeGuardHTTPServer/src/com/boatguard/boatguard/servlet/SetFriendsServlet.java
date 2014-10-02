@@ -10,8 +10,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import si.noemus.boatguard.dao.ObuData;
-import si.noemus.boatguard.util.HttpLog;
+import com.boatguard.boatguard.dao.ObuData;
+import com.boatguard.boatguard.util.HttpLog;
 
 
 public class SetFriendsServlet extends HttpServlet {
