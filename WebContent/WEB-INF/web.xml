@@ -8,7 +8,7 @@
   </context-param>
   <servlet>
     <servlet-name>InitServlet</servlet-name>
-    <servlet-class>si.noemus.boatguard.servlet.InitServlet</servlet-class>
+    <servlet-class>com.boatguard.boatguard.servlet.InitServlet</servlet-class>
     <init-param>
       <param-name>config-init-file</param-name>
       <param-value>/WEB-INF/config.properties</param-value>
@@ -22,7 +22,7 @@
   
   <servlet>
     <servlet-name>SetObuDataServlet</servlet-name>
-    <servlet-class>si.noemus.boatguard.servlet.SetObuDataServlet</servlet-class>
+    <servlet-class>com.boatguard.boatguard.servlet.SetObuDataServlet</servlet-class>
     <load-on-startup>2</load-on-startup>
   </servlet>
   <servlet-mapping>
@@ -32,7 +32,7 @@
   
   <servlet>
     <servlet-name>GetObuDataServlet</servlet-name>
-    <servlet-class>si.noemus.boatguard.servlet.GetObuDataServlet</servlet-class>
+    <servlet-class>com.boatguard.boatguard.servlet.GetObuDataServlet</servlet-class>
     <load-on-startup>3</load-on-startup>
   </servlet>
   <servlet-mapping>
@@ -42,7 +42,7 @@
   
   <servlet>
     <servlet-name>GetObuAlarmsServlet</servlet-name>
-    <servlet-class>si.noemus.boatguard.servlet.GetObuAlarmsServlet</servlet-class>
+    <servlet-class>com.boatguard.boatguard.servlet.GetObuAlarmsServlet</servlet-class>
     <load-on-startup>4</load-on-startup>
   </servlet>
   <servlet-mapping>
@@ -52,7 +52,7 @@
     
   <servlet>
     <servlet-name>ConfirmObuAlarmServlet</servlet-name>
-    <servlet-class>si.noemus.boatguard.servlet.ConfirmObuAlarmServlet</servlet-class>
+    <servlet-class>com.boatguard.boatguard.servlet.ConfirmObuAlarmServlet</servlet-class>
     <load-on-startup>5</load-on-startup>
   </servlet>
   <servlet-mapping>
@@ -62,7 +62,7 @@
   
   <servlet>
     <servlet-name>GetObuSettingsServlet</servlet-name>
-    <servlet-class>si.noemus.boatguard.servlet.GetObuSettingsServlet</servlet-class>
+    <servlet-class>com.boatguard.boatguard.servlet.GetObuSettingsServlet</servlet-class>
     <load-on-startup>6</load-on-startup>
   </servlet>
   <servlet-mapping>
@@ -72,7 +72,7 @@
   
   <servlet>
     <servlet-name>GetObuComponentsServlet</servlet-name>
-    <servlet-class>si.noemus.boatguard.servlet.GetObuComponentsServlet</servlet-class>
+    <servlet-class>com.boatguard.boatguard.servlet.GetObuComponentsServlet</servlet-class>
     <load-on-startup>7</load-on-startup>
   </servlet>
   <servlet-mapping>
@@ -82,7 +82,7 @@
     
   <servlet>
     <servlet-name>GetSettingsServlet</servlet-name>
-    <servlet-class>si.noemus.boatguard.servlet.GetSettingsServlet</servlet-class>
+    <servlet-class>com.boatguard.boatguard.servlet.GetSettingsServlet</servlet-class>
     <load-on-startup>8</load-on-startup>
   </servlet>
   <servlet-mapping>
@@ -92,7 +92,7 @@
   
   <servlet>
     <servlet-name>LoginRegisterServlet</servlet-name>
-    <servlet-class>si.noemus.boatguard.servlet.LoginRegisterServlet</servlet-class>
+    <servlet-class>com.boatguard.boatguard.servlet.LoginRegisterServlet</servlet-class>
     <load-on-startup>9</load-on-startup>
   </servlet>
   <servlet-mapping>
@@ -103,7 +103,7 @@
   
   <servlet>
     <servlet-name>SetObuSettingsServlet</servlet-name>
-    <servlet-class>si.noemus.boatguard.servlet.SetObuSettingsServlet</servlet-class>
+    <servlet-class>com.boatguard.boatguard.servlet.SetObuSettingsServlet</servlet-class>
     <load-on-startup>10</load-on-startup>
   </servlet>
   <servlet-mapping>
@@ -113,7 +113,7 @@
   
   <servlet>
     <servlet-name>GetObuHistoryDataServlet</servlet-name>
-    <servlet-class>si.noemus.boatguard.servlet.GetObuHistoryDataServlet</servlet-class>
+    <servlet-class>com.boatguard.boatguard.servlet.GetObuHistoryDataServlet</servlet-class>
     <load-on-startup>11</load-on-startup>
   </servlet>
   <servlet-mapping>
@@ -124,7 +124,7 @@
   
   <servlet>
     <servlet-name>RpcServlet</servlet-name>
-    <servlet-class>si.noemus.boatguard.servlet.RpcServlet</servlet-class>
+    <servlet-class>com.boatguard.boatguard.servlet.RpcServlet</servlet-class>
     <load-on-startup>12</load-on-startup>
   </servlet>
   <servlet-mapping>
@@ -134,7 +134,7 @@
   
   <servlet>
     <servlet-name>CopyOldDataServlet</servlet-name>
-    <servlet-class>si.noemus.boatguard.servlet.CopyOldDataServlet</servlet-class>
+    <servlet-class>com.boatguard.boatguard.servlet.CopyOldDataServlet</servlet-class>
 	 <init-param>
 	   <param-name>scheduler_pattern</param-name>
 		<param-value>*/1 * * * *</param-value>
@@ -149,7 +149,7 @@
   
   <servlet>
     <servlet-name>SendSMSServlet</servlet-name>
-    <servlet-class>si.noemus.boatguard.servlet.SendSMSServlet</servlet-class>
+    <servlet-class>com.boatguard.boatguard.servlet.SendSMSServlet</servlet-class>
     <load-on-startup>14</load-on-startup>
   </servlet>
   <servlet-mapping>
@@ -160,7 +160,7 @@
   
   <servlet>
     <servlet-name>SetObuAlarmsServlet</servlet-name>
-    <servlet-class>si.noemus.boatguard.servlet.SetObuAlarmsServlet</servlet-class>
+    <servlet-class>com.boatguard.boatguard.servlet.SetObuAlarmsServlet</servlet-class>
     <load-on-startup>15</load-on-startup>
   </servlet>
   <servlet-mapping>
@@ -170,7 +170,7 @@
   
   <servlet>
     <servlet-name>GetCustomerServlet</servlet-name>
-    <servlet-class>si.noemus.boatguard.servlet.GetCustomerServlet</servlet-class>
+    <servlet-class>com.boatguard.boatguard.servlet.GetCustomerServlet</servlet-class>
     <load-on-startup>16</load-on-startup>
   </servlet>
   <servlet-mapping>
@@ -180,7 +180,7 @@
     
   <servlet>
     <servlet-name>SetCustomerServlet</servlet-name>
-    <servlet-class>si.noemus.boatguard.servlet.SetCustomerServlet</servlet-class>
+    <servlet-class>com.boatguard.boatguard.servlet.SetCustomerServlet</servlet-class>
     <load-on-startup>17</load-on-startup>
   </servlet>
   <servlet-mapping>
@@ -190,7 +190,7 @@
  
     <servlet>
     <servlet-name>GetFriendsServlet</servlet-name>
-    <servlet-class>si.noemus.boatguard.servlet.GetFriendsServlet</servlet-class>
+    <servlet-class>com.boatguard.boatguard.servlet.GetFriendsServlet</servlet-class>
     <load-on-startup>18</load-on-startup>
   </servlet>
   <servlet-mapping>
@@ -200,7 +200,7 @@
     
   <servlet>
     <servlet-name>SetFriendsServlet</servlet-name>
-    <servlet-class>si.noemus.boatguard.servlet.SetFriendsServlet</servlet-class>
+    <servlet-class>com.boatguard.boatguard.servlet.SetFriendsServlet</servlet-class>
     <load-on-startup>19</load-on-startup>
   </servlet>
   <servlet-mapping>

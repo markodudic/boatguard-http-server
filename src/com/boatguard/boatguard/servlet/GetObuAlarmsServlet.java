@@ -13,9 +13,9 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import si.noemus.boatguard.dao.ObuData;
-import si.noemus.boatguard.objects.ObuAlarm;
-import si.noemus.boatguard.util.HttpLog;
+import com.boatguard.boatguard.dao.ObuData;
+import com.boatguard.boatguard.objects.ObuAlarm;
+import com.boatguard.boatguard.util.HttpLog;
 
 import com.google.gson.Gson;
 

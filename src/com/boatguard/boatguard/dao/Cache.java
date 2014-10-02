@@ -11,12 +11,12 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import si.bisoft.commons.dbpool.DbManager;
-import si.noemus.boatguard.objects.Alarm;
-import si.noemus.boatguard.objects.AppSetting;
-import si.noemus.boatguard.objects.Component;
-import si.noemus.boatguard.objects.Setting;
-import si.noemus.boatguard.objects.State;
-import si.noemus.boatguard.util.Constant;
+import com.boatguard.boatguard.objects.Alarm;
+import com.boatguard.boatguard.objects.AppSetting;
+import com.boatguard.boatguard.objects.Component;
+import com.boatguard.boatguard.objects.Setting;
+import com.boatguard.boatguard.objects.State;
+import com.boatguard.boatguard.util.Constant;
 
 public class Cache {
 	private static Log log = LogFactory.getLog(Cache.class); 
