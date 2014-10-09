@@ -469,7 +469,7 @@ public class ObuData {
     		con = DbManager.getConnection("config");
     	    
 	    	String	sql = "select * "
-	    			+ "from states_data,  (select max(date_state) as d from states_data where id_obu = 1) as max_date "
+	    			+ "from states_data,  (select max(date_state) as d from states_data where id_obu = " + id + ") as max_date "
 	    			+ "where id_obu = " + id + "  and date_state = max_date.d";
 	    		
     		stmt = con.createStatement();   	
