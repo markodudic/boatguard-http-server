@@ -468,9 +468,11 @@ public class ObuData {
 		try {
     		con = DbManager.getConnection("config");
     	    
-	    	String	sql = "select * "
-	    			+ "from states_data,  (select max(date_state) as d from states_data where id_obu = " + id + ") as max_date "
-	    			+ "where id_obu = " + id + "  and date_state = max_date.d";
+	    	String	sql = "select states_data.*, states.ord "
+	    			+ "from states_data left join states on (states_data.id_state = states.id) ,  "
+	    			+ "	(select max(date_state) as d from states_data where id_obu = " + id + ") as max_date "
+	    			+ "where id_obu = " + id + "  and date_state = max_date.d "
+	    			+ "order by ord";
 	    		
     		stmt = con.createStatement();   	
     		rs = stmt.executeQuery(sql);
