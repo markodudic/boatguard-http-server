@@ -131,7 +131,7 @@ public class ObuData {
 	    				v = '0' + v;
 	    			}
 	    		}
-    			/*if (rs.getInt("id_setting") == Constant.OBU_SETTINGS_ENERGY_RESET_VALUE) {
+    			/*if (rs.getInt("id_setting") == Constant.OBU_SETTINGS_BATTERY_ENERGY_RESET_VALUE) {
 	    			//za KITO konverzija v D/N
     				if (v.equals("0")) v = "N";
 	    			else v = "D";
@@ -153,7 +153,7 @@ public class ObuData {
 			/*String sqls = "update obu_settings " +
 						"set value = 0 " +
 						"where id_obu = " + obuid + " and " +
-						"	id_setting = " + Constant.OBU_SETTINGS_ENERGY_RESET_VALUE;
+						"	id_setting = " + Constant.OBU_SETTINGS_BATTERY_ENERGY_RESET_VALUE;
 			stmt.executeUpdate(sqls);*/
 	
 	    } catch (Exception theException) {
@@ -276,18 +276,19 @@ public class ObuData {
 	3.-E/W INDICATOR
 	4.-GPS FIX
 	5.-SAT NUM
-	6.-STANJE PUMPE (0-NE PUMPA, 1-PUMPA, 2-ZAMAsENA, 3-POKVARJENA)
-	7.-DEVIŠKI START
-	8.-ANCHOR DRIFTING STATE
-	9.-ANCHOR DRIFTING ALARM
-	10.-ACCU DISCONNECT
-	11-TOK
-	12.-ENERGIJA
-	13.-NAPETOST
-	14.-OUTPUT COUNT
-	15.-OUTPUTS x OUTPUT COUNT
-	16.-INPUT COUNT
-	17.-INPUTS x INPUT COUNT
+	6.-PIA STATE
+	7.-STANJE PUMPE (0-NE PUMPA, 1-PUMPA, 2-ZAMAsENA, 3-POKVARJENA)
+	8.-DEVIŠKI START
+	9.-ANCHOR DRIFTING STATE
+	10.-ANCHOR DRIFTING ALARM
+	11.-ACCU DISCONNECT
+	12-TOK
+	13.-ENERGIJA
+	14.-NAPETOST
+	15.-OUTPUT COUNT
+	16.-OUTPUTS x OUTPUT COUNT
+	17.-INPUT COUNT
+	18.-INPUTS x INPUT COUNT
 	*/
 	public boolean setData(String gsmnum, String serial, String data) {
 		Connection con = null;
@@ -341,14 +342,26 @@ public class ObuData {
 		    				stateValue = stateTok+"";	    				
 		    			}
 			    		else if (state.getId() == Constant.STATE_ACCU_NAPETOST_VALUE){
-		    				int stateNapetost = Integer.parseInt(stateValue, 16);
+			    			long val1 = Integer.parseInt(stateValue.substring(0,2), 16) * (256*256*256);
+			    			long val2 = Integer.parseInt(stateValue.substring(2,4), 16) * (256*256);
+			    			long val3 = Integer.parseInt(stateValue.substring(4,6), 16) * (256);
+			    			double energy = (val1 + val2 + val3) / 3600 / Constant.APP_SETTINGS_NAPETOST_KOEF3_VALUE;
+		    				Map<Integer, ObuSetting> obuSettings = getObuSettings(obu.getUid()+"", null, null);
+		        			int capacity = Integer.parseInt(((ObuSetting)obuSettings.get(Constant.OBU_SETTINGS_BATTERY_CAPACITY_VALUE)).getValue());
+		        			if (energy < capacity) {
+		        				stateValue = (100 - Math.round((energy / capacity) * 100)) + "";
+		        			}
+		        			else {
+		        				stateValue = "0";
+		        			}
+		        					    				/*
 		    				int stateTok = Integer.parseInt(states[Constant.OBU_ACCU_AH_VALUE], 16);
 		    				//ce je tok<APP_SETTING_TOK_MIN je napetost zadnja od takrat ko je tok>APP_SETTING_TOK_MIN
 		    				if ((lastStateData.get(Constant.STATE_ACCU_NAPETOST)!= null) && (stateTok <= Constant.APP_SETTINGS_NAPETOST_TOK_MIN_VALUE)) {
 		    					stateValue = Integer.parseInt(lastStateData.get(Constant.STATE_ACCU_NAPETOST_VALUE).getValue()) + "";
 		    				} else {
 		    					stateValue = Math.round((stateNapetost / Constant.APP_SETTINGS_NAPETOST_KOEF1_VALUE) * Constant.APP_SETTINGS_NAPETOST_KOEF2_VALUE)+"";
-		    				}
+		    				}*/
 		    			}
 			    		else if (state.getId() == Constant.STATE_ACCU_AH_VALUE){
 		    				int stateAh = Integer.parseInt(stateValue, 16);
@@ -676,15 +689,23 @@ public class ObuData {
 		        String state = stateData.getValue();
 		        		
 		        if (stateData.getId_state() == alarm.getId_state()) {
-			        int alarmValue;
+			        int alarmValue = 0;
 		        	if (alarm.getValue().equals("obu_settings")) {
 		        		ObuData obuData = new ObuData();
 		        		Map<Integer, ObuSetting> obuSettings = obuData.getObuSettings(obu.getUid()+"", null, null);
 	        			state = ((ObuSetting)obuSettings.get(Constant.OBU_SETTINGS_GEO_FENCE_VALUE)).getValue();
-	        			if (Integer.parseInt(state) == Constant.GEO_FENCE_DISABLED_VALUE){
-        					continue;
+	        			
+				        if (stateData.getId_state() == Constant.OBU_SETTINGS_GEO_FENCE_VALUE){
+		        			if (Integer.parseInt(state) == Constant.GEO_FENCE_DISABLED_VALUE){
+	        					continue;
+		        			}
+		        			alarmValue = Integer.parseInt(((ObuSetting)obuSettings.get(Constant.OBU_SETTINGS_GEO_DISTANCE_VALUE)).getValue());	        				
 	        			}
-	        			alarmValue = Integer.parseInt(((ObuSetting)obuSettings.get(Constant.OBU_SETTINGS_GEO_DISTANCE_VALUE)).getValue());
+	        			else if (stateData.getId_state() == Constant.STATE_ACCU_NAPETOST_VALUE) {
+		        			alarmValue = Integer.parseInt(((ObuSetting)obuSettings.get(Constant.OBU_SETTINGS_BATTERY_ALARM_LEVEL_VALUE)).getValue());	
+		        			System.out.println("alarmValue="+alarmValue);
+		        			
+	        			}
 	        		} else {
 	        			alarmValue = Integer.parseInt(alarm.getValue());
 	        		}

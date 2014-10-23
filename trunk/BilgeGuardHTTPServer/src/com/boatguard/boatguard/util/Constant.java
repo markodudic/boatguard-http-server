@@ -8,10 +8,10 @@ public class Constant {
 	public static Integer STATE_ROW_STATE_VALUE					= 1;
 	public static final String STATE_PUMP_STATE 				= "PUMP_STATE";
 	public static Integer STATE_PUMP_STATE_VALUE				= 20;
-	public static final String STATE_ACCU_TOK 					= "ACCU_TOK";
-	public static Integer STATE_ACCU_TOK_VALUE					= 30;
 	public static final String STATE_ACCU_NAPETOST 				= "ACCU_NAPETOST";
-	public static Integer STATE_ACCU_NAPETOST_VALUE				= 31;
+	public static Integer STATE_ACCU_NAPETOST_VALUE				= 30;
+	public static final String STATE_ACCU_TOK 					= "ACCU_TOK";
+	public static Integer STATE_ACCU_TOK_VALUE					= 31;
 	public static final String STATE_ACCU_AH 					= "ACCU_AH";
 	public static Integer STATE_ACCU_AH_VALUE					= 32;
 	public static final String STATE_LAT 						= "LAT";
@@ -31,8 +31,12 @@ public class Constant {
 	public static Integer OBU_SETTINGS_LAT_VALUE				= 11;
 	public static final String OBU_SETTINGS_GEO_DISTANCE		= "GEO_DISTANCE";
 	public static Integer OBU_SETTINGS_GEO_DISTANCE_VALUE		= 13;
-	public static final String OBU_SETTINGS_ENERGY_RESET		= "ENERGY_RESET";
-	public static Integer OBU_SETTINGS_ENERGY_RESET_VALUE		= 31;
+	public static final String OBU_SETTINGS_BATTERY_ENERGY_RESET= "BATTERY_ENERGY_RESET";
+	public static Integer OBU_SETTINGS_BATTERY_ENERGY_RESET_VALUE= 31;
+	public static final String OBU_SETTINGS_BATTERY_CAPACITY	= "BATTERY_CAPACITY";
+	public static Integer OBU_SETTINGS_BATTERY_CAPACITY_VALUE	= 32;
+	public static final String OBU_SETTINGS_BATTERY_ALARM_LEVEL = "BATTERY_ALARM_LEVEL";
+	public static Integer OBU_SETTINGS_BATTERY_ALARM_LEVEL_VALUE= 33;
 	public static final String OBU_SETTINGS_ANCHOR_DRIFTING		= "ANCHOR_DRIFTING";
 	public static Integer OBU_SETTINGS_ANCHOR_DRIFTING_VALUE	= 41;
 
@@ -46,6 +50,8 @@ public class Constant {
 	public static Double APP_SETTINGS_NAPETOST_KOEF1_VALUE		= 127.875;
 	public static final String APP_SETTINGS_NAPETOST_KOEF2 		= "STATE_NAPETOST_KOEF2";
 	public static Double APP_SETTINGS_NAPETOST_KOEF2_VALUE		= 12.5;
+	public static final String APP_SETTINGS_NAPETOST_KOEF3 		= "STATE_NAPETOST_KOEF3";
+	public static Double APP_SETTINGS_NAPETOST_KOEF3_VALUE		= 11.29;
 
 	public static final String OBU_PUMP_STATE 					= "OBU_PUMP_STATE";
 	public static Integer OBU_PUMP_STATE_VALUE					= 4;
