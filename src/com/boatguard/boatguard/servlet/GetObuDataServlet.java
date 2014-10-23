@@ -2,9 +2,9 @@ package com.boatguard.boatguard.servlet;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -20,9 +20,7 @@ import org.apache.commons.logging.LogFactory;
 import com.boatguard.boatguard.dao.ObuData;
 import com.boatguard.boatguard.objects.AlarmData;
 import com.boatguard.boatguard.objects.StateData;
-import com.boatguard.boatguard.util.Constant;
 import com.boatguard.boatguard.util.HttpLog;
-
 import com.google.gson.Gson;
 
 
@@ -65,7 +63,7 @@ public class GetObuDataServlet extends HttpServlet {
 		String obuid = (String) request.getParameter("obuid");
 		
 		ObuData obuData = new ObuData();
-		Map<Integer, StateData> stateData = obuData.getObuData(Integer.parseInt(obuid));
+		LinkedHashMap<Integer, StateData> stateData = obuData.getObuData(Integer.parseInt(obuid));
 		Iterator it = stateData.entrySet().iterator();
 		List<StateData> stateDataList = new ArrayList<StateData>();
 		while (it.hasNext()) {

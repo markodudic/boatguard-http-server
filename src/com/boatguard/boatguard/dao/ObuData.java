@@ -12,6 +12,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -472,11 +473,11 @@ public class ObuData {
 	}	
 
 	
-	public Map<Integer, StateData> getObuData(int id) {
+	public LinkedHashMap<Integer, StateData> getObuData(int id) {
 		Connection con = null;
 		ResultSet rs = null;
 	    Statement stmt = null;
-	    Map<Integer, StateData> statesData = new HashMap<Integer, StateData>();
+	    LinkedHashMap<Integer, StateData> statesData = new LinkedHashMap<Integer, StateData>();
 		try {
     		con = DbManager.getConnection("config");
     	    
