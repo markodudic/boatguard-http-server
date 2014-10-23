@@ -108,7 +108,7 @@ public class ObuData {
     	try {
     		con = DbManager.getConnection("config");
 
-	    	String	sql = "select obu_settings.id_obu, obu_settings.id_setting, sum(obu_settings.value) value, obu_settings.type, settings.code, app_settings.value "
+	    	String	sql = "select obu_settings.id_obu, obu_settings.id_setting, max(obu_settings.value) value, obu_settings.type, settings.code, app_settings.value "
     				+ "from obus left join "
     				+ "	obu_settings on (obus.uid = obu_settings.id_obu) left join "
     				+ "	settings on (obu_settings.id_setting = settings.id)  left join "
@@ -129,6 +129,11 @@ public class ObuData {
 	    				v = '0' + v;
 	    			}
 	    		}
+    			/*if (rs.getInt("id_setting") == Constant.OBU_SETTINGS_ENERGY_RESET_VALUE) {
+	    			//za KITO konverzija v D/N
+    				if (v.equals("0")) v = "N";
+	    			else v = "D";
+	    		}*/
     			if ((rs.getInt("id_setting") == Constant.OBU_SETTINGS_ANCHOR_DRIFTING_VALUE) || 
     				(rs.getInt("id_setting") == Constant.OBU_SETTINGS_GEO_DISTANCE_VALUE)) {
 	    			v = (Integer.parseInt(v) * 10000 / 1850) + "";
