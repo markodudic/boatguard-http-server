@@ -122,6 +122,7 @@ public class ObuData {
 	    	rs = stmt.executeQuery(sql);
     		
 	    	while (rs.next()) {
+	    		obuid = rs.getInt("id_obu")+"";
 	    		ObuSetting obuSetting = new ObuSetting();
 	    		obuSetting.setId_setting(rs.getInt("id_setting"));
 	    		String v = rs.getString("value");
@@ -147,6 +148,13 @@ public class ObuData {
 	    		obuSetting.setCode(rs.getString("code"));
 	    		obuSettings.add(obuSetting);
 	    	}
+	    	
+			//reset energy reset - za test zakomentirano da lahko kita testira
+			/*String sqls = "update obu_settings " +
+						"set value = 0 " +
+						"where id_obu = " + obuid + " and " +
+						"	id_setting = " + Constant.OBU_SETTINGS_ENERGY_RESET_VALUE;
+			stmt.executeUpdate(sqls);*/
 	
 	    } catch (Exception theException) {
 	    	theException.printStackTrace();
