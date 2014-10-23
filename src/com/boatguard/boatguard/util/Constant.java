@@ -31,6 +31,8 @@ public class Constant {
 	public static Integer OBU_SETTINGS_LAT_VALUE				= 11;
 	public static final String OBU_SETTINGS_GEO_DISTANCE		= "GEO_DISTANCE";
 	public static Integer OBU_SETTINGS_GEO_DISTANCE_VALUE		= 13;
+	public static final String OBU_SETTINGS_ENERGY_RESET		= "ENERGY_RESET";
+	public static Integer OBU_SETTINGS_ENERGY_RESET_VALUE		= 31;
 	public static final String OBU_SETTINGS_ANCHOR_DRIFTING		= "ANCHOR_DRIFTING";
 	public static Integer OBU_SETTINGS_ANCHOR_DRIFTING_VALUE	= 41;
 
