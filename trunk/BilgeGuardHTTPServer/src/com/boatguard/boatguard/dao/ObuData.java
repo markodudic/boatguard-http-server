@@ -163,7 +163,6 @@ public class ObuData {
 
 	public void setObuSettings(String data) {
 		Gson gson = new Gson();
-		System.out.println("DATA="+data);
 		Type listType = new TypeToken<List<ObuSetting>>(){}.getType();
 		List obuSettings = gson.fromJson(data, listType);
 		
@@ -317,7 +316,7 @@ public class ObuData {
 		    			String stateValue = states[i];
 		    			
 		    			//TUKAJ JE SAM PREMAPIRANJE ZARADI KITE IZ D/N V 1/0 ZA PODATKE OD 7-10
-		    			if ((i>6) && (i<11)) {
+		    			if ((i>7) && (i<12)) {
 		    				stateValue = stateValue.replace("D", "1").replace("N", "0");
 		    			}
 		    			
@@ -618,7 +617,6 @@ public class ObuData {
 	
 	public void setObuAlarms(String data) {
 		Gson gson = new Gson();
-		System.out.println("DATA="+data);
 		Type listType = new TypeToken<List<ObuAlarm>>(){}.getType();
 		List obuAlarms = gson.fromJson(data, listType);
 		
@@ -670,7 +668,7 @@ public class ObuData {
 		        String state = stateData.getValue();
 		        		
 		        if (stateData.getId_state() == alarm.getId_state()) {
-		        	int alarmValue;
+			        int alarmValue;
 		        	if (alarm.getValue().equals("obu_settings")) {
 		        		ObuData obuData = new ObuData();
 		        		Map<Integer, ObuSetting> obuSettings = obuData.getObuSettings(obu.getUid()+"", null, null);
@@ -686,7 +684,7 @@ public class ObuData {
 		        	if (alarm.getFormat().equals("N")) {
 		        		boolean setAlarm = false;
 			        	if (alarm.getOperand().equals("=")){
-		            		if (Integer.parseInt(stateData.getValue()) == alarmValue) {
+			        		if (Integer.parseInt(stateData.getValue()) == alarmValue) {
 		            			setAlarm = true;
 		            		}
 			        	} else if (alarm.getOperand().equals("!=")){
@@ -711,7 +709,7 @@ public class ObuData {
 				            			setAlarm = false;
 				            		}
 					        	} else if (alarm.getPrevious().equals("!=")){
-				            		if (Integer.parseInt(stateDataPrevious.getValue()) == alarmValue) {
+					        		if (Integer.parseInt(stateDataPrevious.getValue()) == alarmValue) {
 				            			setAlarm = false;
 				            		}
 					        	} else if (alarm.getPrevious().equals(">")){
@@ -725,7 +723,7 @@ public class ObuData {
 					        	}
 			        		}
 			        	}
-			        	if (setAlarm) {
+				        if (setAlarm) {
 				        	if (alarm.getValue().equals("obu_settings") && setAlarm) {
 				        		state = Constant.GEO_FENCE_ALARM_VALUE+"";
 				        	}
@@ -1081,7 +1079,6 @@ public class ObuData {
 	
 	public void setFriends(String data) {
 		Gson gson = new Gson();
-		System.out.println("DATA="+data);
 		Type listType = new TypeToken<List<Friend>>(){}.getType();
 		List friends = gson.fromJson(data, listType);
 		
@@ -1108,8 +1105,7 @@ public class ObuData {
 			}
 			
 			String sql = "DELETE FROM friends WHERE uid NOT IN (" + ids + ")";
-			System.out.println(sql);
-	    	stmt.executeUpdate(sql);
+			stmt.executeUpdate(sql);
 			
 		} catch (Exception theException) {
 			theException.printStackTrace();
@@ -1140,8 +1136,7 @@ public class ObuData {
 	    		
     		stmt = con.createStatement();   	
 	    	rs = stmt.executeQuery(sql);
-    		System.out.println("SQL="+sql);
-
+    		
 	    	if (rs.next()) {
 	    		Obu obu= new Obu();
 	    		obu.setUid(rs.getInt("uid"));
@@ -1193,7 +1188,6 @@ public class ObuData {
 	    			+ "where (UPPER(username) = UPPER('" + username + "') and serial_number = " + obuSerialNumber + " and obus.active=1) OR "
 	    					+ "NOT EXISTS (select uid from obus where serial_number = " + obuSerialNumber + ")";
 	    		
-	    	System.out.println("SQL="+sql);
 	    	stmt = con.createStatement();   	
 	    	rs = stmt.executeQuery(sql);
 	    	
@@ -1254,9 +1248,7 @@ public class ObuData {
 	    				"	app_version = '" + appVersion + "', " +
 	    				"	last_visited = now() " +
 	    				"where UPPER(username) = UPPER('" + username + "')";
-			System.out.println("SQL="+sql);
-	
-	    	stmt.executeUpdate(sql);
+			stmt.executeUpdate(sql);
 	    	
 	    	
 	    } catch (Exception theException) {
