@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 
 import si.bisoft.commons.dbpool.DbManager;
+
 import com.boatguard.boatguard.comm.MailClient;
 import com.boatguard.boatguard.comm.SmsClient;
 import com.boatguard.boatguard.objects.Alarm;
@@ -30,7 +31,6 @@ import com.boatguard.boatguard.objects.State;
 import com.boatguard.boatguard.objects.StateData;
 import com.boatguard.boatguard.util.Constant;
 import com.boatguard.boatguard.util.Util;
-
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -108,13 +108,14 @@ public class ObuData {
     	try {
     		con = DbManager.getConnection("config");
 
-	    	String	sql = "select obu_settings.*, settings.code, app_settings.value "
-	    				+ "from obus left join "
-	    				+ "	obu_settings on (obus.uid = obu_settings.id_obu) left join "
-	    				+ "	settings on (obu_settings.id_setting = settings.id)  left join "
-	    				+ "	app_settings on (settings.code = app_settings.name) "
-						+ "where (number = '" + gsmnum + "' or serial_number = '" + serial + "' or obus.uid = " + obuid + ") and app_settings.value is not null "
-						+ "order by app_settings.value";
+	    	String	sql = "select obu_settings.id_obu, obu_settings.id_setting, sum(obu_settings.value) value, obu_settings.type, settings.code, app_settings.value "
+    				+ "from obus left join "
+    				+ "	obu_settings on (obus.uid = obu_settings.id_obu) left join "
+    				+ "	settings on (obu_settings.id_setting = settings.id)  left join "
+    				+ "	app_settings on (settings.code = app_settings.name) "
+					+ "where (number = '" + gsmnum + "' or serial_number = '" + serial + "' or obus.uid = " + obuid + ") and app_settings.value is not null "
+					+ "group by app_settings.value"
+					+ " order by app_settings.value";
 	    		
     		stmt = con.createStatement();   	
 	    	rs = stmt.executeQuery(sql);
@@ -123,12 +124,18 @@ public class ObuData {
 	    		ObuSetting obuSetting = new ObuSetting();
 	    		obuSetting.setId_setting(rs.getInt("id_setting"));
 	    		String v = rs.getString("value");
-    			if ((rs.getInt("id_setting") == Constant.OBU_SETTINGS_ANCHOR_DRIFTING_VALUE) || 
-    				(rs.getInt("id_setting") == Constant.OBU_SETTINGS_GEO_DISTANCE_VALUE)) {
-	    			while (v.length()<4) {
+    			if (rs.getInt("id_setting") == Constant.OBU_SETTINGS_REFRESH_TIME_VALUE) {
+	    			while (v.length()<2) {
 	    				v = '0' + v;
 	    			}
 	    		}
+    			if ((rs.getInt("id_setting") == Constant.OBU_SETTINGS_ANCHOR_DRIFTING_VALUE) || 
+    				(rs.getInt("id_setting") == Constant.OBU_SETTINGS_GEO_DISTANCE_VALUE)) {
+	    			v = (Integer.parseInt(v) * 10000 / 1850) + "";
+    				while (v.length()<4) {
+	    				v = '0' + v;
+	    			}
+    	    	}
 	    		obuSetting.setValue(v);
 	    		obuSetting.setType(rs.getString("type"));
 	    		obuSetting.setCode(rs.getString("code"));

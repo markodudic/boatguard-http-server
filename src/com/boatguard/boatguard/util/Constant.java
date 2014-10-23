@@ -21,6 +21,8 @@ public class Constant {
 	public static final String STATE_GEO_FIX 					= "GEO_FIX";
 	public static Integer STATE_GEO_FIX_VALUE					= 14;
 
+	public static final String OBU_SETTINGS_REFRESH_TIME 		= "REFRESH_TIME";
+	public static Integer OBU_SETTINGS_REFRESH_TIME_VALUE		= 1;
 	public static final String OBU_SETTINGS_GEO_FENCE 			= "GEO_FENCE";
 	public static Integer OBU_SETTINGS_GEO_FENCE_VALUE			= 10;
 	public static final String OBU_SETTINGS_LON 				= "LON";
