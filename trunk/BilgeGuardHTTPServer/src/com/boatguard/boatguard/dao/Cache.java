@@ -11,6 +11,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import si.bisoft.commons.dbpool.DbManager;
+
 import com.boatguard.boatguard.objects.Alarm;
 import com.boatguard.boatguard.objects.AppSetting;
 import com.boatguard.boatguard.objects.Component;
@@ -127,12 +128,13 @@ public class Cache {
 	    	Constant.STATE_ACCU_TOK_VALUE = Cache.statesByCode.get(Constant.STATE_ACCU_TOK).getId();
 	    	Constant.STATE_ACCU_NAPETOST_VALUE = Cache.statesByCode.get(Constant.STATE_ACCU_NAPETOST).getId();
 	    	Constant.STATE_ACCU_AH_VALUE = Cache.statesByCode.get(Constant.STATE_ACCU_AH).getId();
+	    	Constant.STATE_ACCU_EMPTY_VALUE = Cache.statesByCode.get(Constant.STATE_ACCU_EMPTY).getId();
 	    	
 	    	Constant.OBU_SETTINGS_GEO_FENCE_VALUE = Cache.statesByCode.get(Constant.OBU_SETTINGS_GEO_FENCE).getId();
 	    	Constant.OBU_SETTINGS_LON_VALUE = Cache.statesByCode.get(Constant.OBU_SETTINGS_LON).getId();
 	    	Constant.OBU_SETTINGS_LAT_VALUE = Cache.statesByCode.get(Constant.OBU_SETTINGS_LAT).getId();
 	    	Constant.OBU_SETTINGS_GEO_DISTANCE_VALUE = Cache.statesByCode.get(Constant.OBU_SETTINGS_GEO_DISTANCE).getId();	    	
-	
+	    	Constant.OBU_SETTINGS_ANCHOR_DRIFTING_VALUE = Cache.statesByCode.get(Constant.OBU_SETTINGS_ANCHOR_DRIFTING).getId();	    	
 	    } catch (Exception theException) {
 	    	theException.printStackTrace();
 	    } finally {
@@ -184,6 +186,7 @@ public class Cache {
 	    	Constant.APP_SETTINGS_ENERGIJA_VALUE = Integer.parseInt(Cache.appSettings.get(Constant.APP_SETTINGS_ENERGIJA).getValue());
 	    	Constant.APP_SETTINGS_NAPETOST_KOEF1_VALUE = Double.parseDouble(Cache.appSettings.get(Constant.APP_SETTINGS_NAPETOST_KOEF1).getValue());
 	    	Constant.APP_SETTINGS_NAPETOST_KOEF2_VALUE = Double.parseDouble(Cache.appSettings.get(Constant.APP_SETTINGS_NAPETOST_KOEF2).getValue());
+	    	Constant.APP_SETTINGS_NAPETOST_KOEF3_VALUE = Double.parseDouble(Cache.appSettings.get(Constant.APP_SETTINGS_NAPETOST_KOEF3).getValue());
 	    	
 	    	Constant.OBU_PUMP_STATE_VALUE = Integer.parseInt(Cache.appSettings.get(Constant.OBU_PUMP_STATE).getValue());
 	    	Constant.OBU_ACCU_NAPETOST_VALUE = Integer.parseInt(Cache.appSettings.get(Constant.OBU_ACCU_NAPETOST).getValue());
@@ -192,10 +195,13 @@ public class Cache {
 	    	Constant.OBU_LAT_VALUE = Integer.parseInt(Cache.appSettings.get(Constant.OBU_LAT).getValue());
 	    	Constant.OBU_LON_VALUE = Integer.parseInt(Cache.appSettings.get(Constant.OBU_LON).getValue());
 	    	//Constant.OBU_DATE_VALUE = Integer.parseInt(Cache.appSettings.get(Constant.OBU_DATE).getValue());
+	    	Constant.OBU_GEO_FIX_VALUE = Integer.parseInt(Cache.appSettings.get(Constant.OBU_GEO_FIX).getValue());
 	    	
 	    	Constant.GEO_FENCE_DISABLED_VALUE = Integer.parseInt(Cache.appSettings.get(Constant.GEO_FENCE_DISABLED).getValue());
 	    	Constant.GEO_FENCE_ALARM_VALUE = Integer.parseInt(Cache.appSettings.get(Constant.GEO_FENCE_ALARM).getValue());
 	    	Constant.GEO_FENCE_ENABLED_VALUE = Integer.parseInt(Cache.appSettings.get(Constant.GEO_FENCE_ENABLED).getValue());
+	    	Constant.GEO_FIX_OK_VALUE = Integer.parseInt(Cache.appSettings.get(Constant.GEO_FIX_OK).getValue());
+	    	Constant.BATTERY_EMPTY_VALUE = Integer.parseInt(Cache.appSettings.get(Constant.BATTERY_EMPTY).getValue());
 
 	
 	    } catch (Exception theException) {

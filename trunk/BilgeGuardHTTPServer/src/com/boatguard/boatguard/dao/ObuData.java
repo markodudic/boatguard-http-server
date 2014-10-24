@@ -150,11 +150,11 @@ public class ObuData {
 	    	}
 	    	
 			//reset energy reset - za test zakomentirano da lahko kita testira
-			/*String sqls = "update obu_settings " +
+			String sqls = "update obu_settings " +
 						"set value = 0 " +
 						"where id_obu = " + obuid + " and " +
 						"	id_setting = " + Constant.OBU_SETTINGS_BATTERY_ENERGY_RESET_VALUE;
-			stmt.executeUpdate(sqls);*/
+			stmt.executeUpdate(sqls);
 	
 	    } catch (Exception theException) {
 	    	theException.printStackTrace();
@@ -354,6 +354,11 @@ public class ObuData {
 		        			else {
 		        				stateValue = "0";
 		        			}
+		        			
+		        			int empty = Integer.parseInt(((ObuSetting)obuSettings.get(Constant.OBU_SETTINGS_BATTERY_ALARM_LEVEL_VALUE)).getValue());
+		        			sql = "insert into states_data (id_state, id_obu, value, date_state) " + 
+					    	   		"values ('" + Constant.STATE_ACCU_EMPTY_VALUE + "', " + obu.getUid() + ", '" + (Integer.parseInt(stateValue)<empty?Constant.BATTERY_EMPTY_VALUE:"0") + "', '" + dateState + "')";
+						    stmt.executeUpdate(sql);		        				
 		        					    				/*
 		    				int stateTok = Integer.parseInt(states[Constant.OBU_ACCU_AH_VALUE], 16);
 		    				//ce je tok<APP_SETTING_TOK_MIN je napetost zadnja od takrat ko je tok>APP_SETTING_TOK_MIN
