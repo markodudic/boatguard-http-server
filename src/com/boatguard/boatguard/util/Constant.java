@@ -4,6 +4,7 @@ import java.text.SimpleDateFormat;
 
 public class Constant {
 
+	//STATE ID
 	public static final String STATE_ROW_STATE 					= "ROW_STATE";
 	public static Integer STATE_ROW_STATE_VALUE					= 1;
 	public static final String STATE_PUMP_STATE 				= "PUMP_STATE";
@@ -14,6 +15,8 @@ public class Constant {
 	public static Integer STATE_ACCU_TOK_VALUE					= 31;
 	public static final String STATE_ACCU_AH 					= "ACCU_AH";
 	public static Integer STATE_ACCU_AH_VALUE					= 32;
+	public static final String STATE_ACCU_EMPTY					= "ACCU_EMPTY";
+	public static Integer STATE_ACCU_EMPTY_VALUE				= 34;
 	public static final String STATE_LAT 						= "LAT";
 	public static Integer STATE_LAT_VALUE						= 11;
 	public static final String STATE_LON	 					= "LON";
@@ -21,6 +24,7 @@ public class Constant {
 	public static final String STATE_GEO_FIX 					= "GEO_FIX";
 	public static Integer STATE_GEO_FIX_VALUE					= 14;
 
+	//OBU SETTINGS ID
 	public static final String OBU_SETTINGS_REFRESH_TIME 		= "REFRESH_TIME";
 	public static Integer OBU_SETTINGS_REFRESH_TIME_VALUE		= 1;
 	public static final String OBU_SETTINGS_GEO_FENCE 			= "GEO_FENCE";
@@ -40,6 +44,7 @@ public class Constant {
 	public static final String OBU_SETTINGS_ANCHOR_DRIFTING		= "ANCHOR_DRIFTING";
 	public static Integer OBU_SETTINGS_ANCHOR_DRIFTING_VALUE	= 41;
 
+	//PARAMETRI
 	public static final String APP_SETTINGS_NAPETOST_TOK_MAX 	= "NAPETOST_TOK_MAX";
 	public static Integer APP_SETTINGS_NAPETOST_TOK_MAX_VALUE	= 1023;
 	public static final String APP_SETTINGS_NAPETOST_TOK_MIN 	= "NAPETOST_TOK_MIN";
@@ -53,6 +58,7 @@ public class Constant {
 	public static final String APP_SETTINGS_NAPETOST_KOEF3 		= "STATE_NAPETOST_KOEF3";
 	public static Double APP_SETTINGS_NAPETOST_KOEF3_VALUE		= 11.29;
 
+	//POZICIJE V PODATKIH IZ OBUJA
 	public static final String OBU_PUMP_STATE 					= "OBU_PUMP_STATE";
 	public static Integer OBU_PUMP_STATE_VALUE					= 4;
 	public static final String OBU_ACCU_NAPETOST 				= "OBU_ACCU_NAPETOST";
@@ -70,6 +76,7 @@ public class Constant {
 	public static final String OBU_GEO_FIX 						= "OBU_GEO_FIX";
 	public static Integer OBU_GEO_FIX_VALUE						= 4;
 
+	//ALARMI
 	public static final String GEO_FENCE_DISABLED 				= "GEO_FENCE_DISABLED";
 	public static Integer GEO_FENCE_DISABLED_VALUE				= 0;
 	public static final String GEO_FENCE_ENABLED 				= "GEO_FENCE_ENABLED";
@@ -78,5 +85,7 @@ public class Constant {
 	public static Integer GEO_FENCE_ALARM_VALUE					= 2;
 	public static final String GEO_FIX_OK						= "GEO_FIX";
 	public static Integer GEO_FIX_OK_VALUE						= 1;
+	public static final String BATTERY_EMPTY					= "BATTERY_EMPTY";
+	public static Integer BATTERY_EMPTY_VALUE					= 1;
 
 }
