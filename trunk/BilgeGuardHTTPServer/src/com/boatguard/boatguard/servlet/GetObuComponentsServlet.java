@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -19,7 +20,6 @@ import org.apache.commons.logging.LogFactory;
 import com.boatguard.boatguard.dao.ObuData;
 import com.boatguard.boatguard.objects.ObuComponent;
 import com.boatguard.boatguard.util.HttpLog;
-
 import com.google.gson.Gson;
 
 
@@ -66,7 +66,7 @@ public class GetObuComponentsServlet extends HttpServlet {
 		String obuid = (String) request.getParameter("obuid");
 		
 		ObuData obuData = new ObuData();
-		Map<Integer, ObuComponent> obuComponents = obuData.getComponents(obuid, gsmnum, serial);
+		LinkedHashMap<Integer, ObuComponent> obuComponents = obuData.getComponents(obuid, gsmnum, serial);
 		List<ObuComponent> obuComponentsList = new ArrayList<ObuComponent>();
 		
 		Iterator it = obuComponents.entrySet().iterator();
