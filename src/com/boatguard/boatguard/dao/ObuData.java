@@ -228,11 +228,11 @@ public class ObuData {
 		
 	}
 	
-	public Map<Integer, ObuComponent> getComponents(String obuid, String gsmnum, String serial) {
+	public LinkedHashMap<Integer, ObuComponent> getComponents(String obuid, String gsmnum, String serial) {
 		Connection con = null;
 		ResultSet rs = null;
 	    Statement stmt = null;
-	    Map<Integer, ObuComponent> obuComponents = new HashMap<Integer, ObuComponent>();
+	    LinkedHashMap<Integer, ObuComponent> obuComponents = new LinkedHashMap<Integer, ObuComponent>();
     	try {
     		con = DbManager.getConnection("config");
 
@@ -241,7 +241,7 @@ public class ObuData {
 	    			+ "		obu_components on (obus.uid = obu_components.id_obu) left join "
 	    			+ "		components on (obu_components.id_component = components.id) "
 	    			+ "where number = '" + gsmnum + "' or serial_number = '" + serial + "' or obus.uid = " + obuid + " "
-	    			+ "order by obu_components.id_component";
+	    			+ "order by components.ord";
 	    		
     		stmt = con.createStatement();   	
 	    	rs = stmt.executeQuery(sql);
