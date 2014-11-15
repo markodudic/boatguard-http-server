@@ -269,7 +269,7 @@ public class ObuData {
 	}	
 
 	/*
-	1234.1222,N,12345.1111,E,1,5,0,0,1,0,0,2F50,1A1B1C,2F50,00,00
+	1234.1222,N,12345.1111,E,1,5,0,N,N,N,D,2F50,1A1B1C,2F50,00,00
 	0.-LATITUDE
 	1.-N/S INDICATOR
 	2.-LONGITUDE
@@ -299,6 +299,10 @@ public class ObuData {
 		boolean isAdd = false;
 		
 	    try {
+	    	//fake zaradi kite, ko posilja takale podatke
+	    	//0000000000000000000000000000000,0,N,N,N,D,0091,002E95,0391,00,00,
+	    	data = data.replace("0000000000000000000000000000000", "0,N,0,E,0,0,0");
+	    	
 	    	String[] states = data.split(",");
 	    	//String dateState = states[Constant.OBU_DATE_VALUE];
 	    	//SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMddhhmmss");
