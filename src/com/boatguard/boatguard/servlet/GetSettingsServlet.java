@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -22,7 +23,6 @@ import com.boatguard.boatguard.objects.AppSetting;
 import com.boatguard.boatguard.objects.Setting;
 import com.boatguard.boatguard.objects.State;
 import com.boatguard.boatguard.util.HttpLog;
-
 import com.google.gson.Gson;
 
 
@@ -63,7 +63,7 @@ public class GetSettingsServlet extends HttpServlet {
 		HttpLog.afterHttp(request, null);
 		Gson gson = new Gson();
 		 
-		Map<Integer, Alarm> alarms = Cache.alarms;
+		LinkedHashMap<Integer, Alarm> alarms = Cache.alarms;
 		Iterator it = alarms.entrySet().iterator();
 		List<Alarm> alarmsList = new ArrayList<Alarm>();
 		while (it.hasNext()) {
@@ -72,7 +72,7 @@ public class GetSettingsServlet extends HttpServlet {
 		}
 		String alarmsJson = gson.toJson(alarmsList);
 		
-		Map<String, AppSetting> appSettings = Cache.appSettings;
+		LinkedHashMap<String, AppSetting> appSettings = Cache.appSettings;
 		it = appSettings.entrySet().iterator();
 		List<AppSetting> appSettingsList = new ArrayList<AppSetting>();
 		while (it.hasNext()) {
@@ -81,7 +81,7 @@ public class GetSettingsServlet extends HttpServlet {
 		}
 		String appSettingsJson = gson.toJson(appSettingsList);
 		
-		Map<String, State> states = Cache.statesByCode;
+		LinkedHashMap<String, State> states = Cache.statesByCode;
 		it = states.entrySet().iterator();
 		List<State> statesList = new ArrayList<State>();
 		while (it.hasNext()) {
@@ -90,7 +90,7 @@ public class GetSettingsServlet extends HttpServlet {
 		}
 		String statesJson = gson.toJson(statesList);
 		
-		Map<String, Setting> settings = Cache.settings;
+		LinkedHashMap<String, Setting> settings = Cache.settings;
 		it = settings.entrySet().iterator();
 		List<Setting> settingsList = new ArrayList<Setting>();
 		while (it.hasNext()) {
