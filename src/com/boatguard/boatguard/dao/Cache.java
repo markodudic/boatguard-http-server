@@ -1,11 +1,10 @@
 package com.boatguard.boatguard.dao;
 
-import java.lang.reflect.Field;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.HashMap;
-import java.util.Map;
+import java.util.LinkedHashMap;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -21,12 +20,12 @@ import com.boatguard.boatguard.util.Constant;
 
 public class Cache {
 	private static Log log = LogFactory.getLog(Cache.class); 
-	public static Map<Integer, Alarm> alarms = new HashMap<Integer, Alarm>();
-	public static Map<Integer, State> states = new HashMap<Integer, State>();
-	public static Map<String, State> statesByCode = new HashMap<String, State>();
-	public static Map<String, AppSetting> appSettings = new HashMap<String, AppSetting>();
-	public static Map<String, Setting> settings = new HashMap<String, Setting>();
-	public static Map<Integer, Component> components = new HashMap<Integer, Component>();
+	public static LinkedHashMap<Integer, Alarm> alarms = new LinkedHashMap<Integer, Alarm>();
+	public static LinkedHashMap<Integer, State> states = new LinkedHashMap<Integer, State>();
+	public static LinkedHashMap<String, State> statesByCode = new LinkedHashMap<String, State>();
+	public static LinkedHashMap<String, AppSetting> appSettings = new LinkedHashMap<String, AppSetting>();
+	public static LinkedHashMap<String, Setting> settings = new LinkedHashMap<String, Setting>();
+	public static LinkedHashMap<Integer, Component> components = new LinkedHashMap<Integer, Component>();
 
 	
 	public static boolean initCache() {
@@ -58,7 +57,7 @@ public class Cache {
     	try {
     		con = DbManager.getConnection("config");
 
-	    	String	sql = "select * from alarms";
+	    	String	sql = "select * from alarms order by id_state, id";
 	    		
     		stmt = con.createStatement();   	
 	    	rs = stmt.executeQuery(sql);
@@ -102,7 +101,7 @@ public class Cache {
     	try {
     		con = DbManager.getConnection("config");
 
-	    	String	sql = "select * from states";
+	    	String	sql = "select * from states order by id_component, id";
 	    		
     		stmt = con.createStatement();   	
 	    	rs = stmt.executeQuery(sql);
@@ -154,7 +153,7 @@ public class Cache {
     	try {
     		con = DbManager.getConnection("config");
 
-	    	String	sql = "select * from app_settings";
+	    	String	sql = "select * from app_settings order by id";
 	    		
     		stmt = con.createStatement();   	
 	    	rs = stmt.executeQuery(sql);
@@ -223,7 +222,7 @@ public class Cache {
     	try {
     		con = DbManager.getConnection("config");
 
-	    	String	sql = "select * from settings";
+	    	String	sql = "select * from settings order by id_component, id";
 	    		
     		stmt = con.createStatement();   	
 	    	rs = stmt.executeQuery(sql);
@@ -257,7 +256,7 @@ public class Cache {
     	try {
     		con = DbManager.getConnection("config");
 
-	    	String	sql = "select * from components";
+	    	String	sql = "select * from components order by id";
 	    		
     		stmt = con.createStatement();   	
 	    	rs = stmt.executeQuery(sql);
