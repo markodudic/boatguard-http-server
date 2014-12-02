@@ -554,12 +554,12 @@ public class ObuData {
 		try {
     		con = DbManager.getConnection("config");
     	    
-	    	String	sql = "select * "
-	    			+ "from states_data "
+	    	String	sql = "select states_data.*, states.ord "
+	    			+ "from states_data left join states on (states_data.id_state = states.id) "
 	    			+ "where id_obu = " + id + " " 
-	    			+ "order by date_state desc "
+	    			+ "order by date_state desc, ord asc "
 	    			+ "limit 1000";
-	    		
+	    	
     		stmt = con.createStatement();   	
     		rs = stmt.executeQuery(sql);
 			
