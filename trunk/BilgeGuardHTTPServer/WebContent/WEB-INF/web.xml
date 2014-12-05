@@ -132,7 +132,7 @@
     <url-pattern>/rpc</url-pattern>
   </servlet-mapping>
   
-  <servlet>
+  <!-- servlet>
     <servlet-name>CopyOldDataServlet</servlet-name>
     <servlet-class>com.boatguard.boatguard.servlet.CopyOldDataServlet</servlet-class>
 	 <init-param>
@@ -144,7 +144,7 @@
   <servlet-mapping>
     <servlet-name>CopyOldDataServlet</servlet-name>
     <url-pattern>/old</url-pattern>
-  </servlet-mapping>
+  </servlet-mapping-->
   
   
   <servlet>
