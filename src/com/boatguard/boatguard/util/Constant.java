@@ -17,6 +17,10 @@ public class Constant {
 	public static Integer STATE_ACCU_AH_VALUE					= 32;
 	public static final String STATE_ACCU_EMPTY					= "ACCU_EMPTY";
 	public static Integer STATE_ACCU_EMPTY_VALUE				= 34;
+	public static final String STATE_ACCU_DISCONNECTED			= "ACCU_DISCONNECT";
+	public static Integer STATE_ACCU_DISCONNECTED_VALUE			= 33;
+	public static final String STATE_GEO_FENCE					= "GEO_FENCE";
+	public static Integer STATE_GEO_FENCE_VALUE					= 10;
 	public static final String STATE_LAT 						= "LAT";
 	public static Integer STATE_LAT_VALUE						= 11;
 	public static final String STATE_LON	 					= "LON";
@@ -87,5 +91,18 @@ public class Constant {
 	public static Integer GEO_FIX_OK_VALUE						= 1;
 	public static final String BATTERY_EMPTY					= "BATTERY_EMPTY";
 	public static Integer BATTERY_EMPTY_VALUE					= 1;
+	public static final String ACCU_DISCONNECT					= "ACCU_DISCONNECT";
+	public static Integer ACCU_DISCONNECT_VALUE					= 0;
+	public static final String PUMP_OK							= "PUMP_OK";
+	public static Integer PUMP_OK_VALUE							= 0;
+	public static final String PUMP_PUMPING						= "PUMP_PUMPING";
+	public static Integer PUMP_PUMPING_VALUE					= 1;
+	public static final String PUMP_CLODGED						= "PUMP_CLODGED";
+	public static Integer PUMP_CLODGED_VALUE					= 2;
+	public static final String PUMP_DEMAGED						= "PUMP_DEMAGED";
+	public static Integer PUMP_DEMAGED_VALUE					= 3;
 
+	
+	
+	
 }

@@ -501,6 +501,40 @@ public class ObuData {
     	return obu;
 	}	
 
+	public int getObuFromUser(String originator, String text) {
+		Connection con = null;
+		ResultSet rs = null;
+	    Statement stmt = null;
+    	int id_obu = 0;
+    	try {
+    		con = DbManager.getConnection("config");
+
+    		if (text.contains("/")) {
+	    		String[] data = text.split("/");
+		    	String	sql = "select id_obu "
+		    			+ "from customers "
+		    			+ "where phone_number = '+" + originator + "' and upper(username) = '" + data[0].toUpperCase() + "' and upper(password) = '" + data[1].toUpperCase() + "'";
+		    		
+		    	stmt = con.createStatement();   	
+		    	rs = stmt.executeQuery(sql);
+	    		
+		    	if (rs.next()) {
+		    		id_obu = rs.getInt("id_obu");
+		    	}
+    		}
+	
+	    } catch (Exception theException) {
+	    	theException.printStackTrace();
+	    } finally {
+	    	try {
+	    		if (rs != null) rs.close();
+	    		if (stmt != null) stmt.close();
+	    		if (con != null) con.close();
+			} catch (Exception e) {}
+	    }	
+		
+    	return id_obu;
+	}	
 	
 	public LinkedHashMap<Integer, StateData> getObuData(int id) {
 		Connection con = null;
