@@ -12,6 +12,7 @@ public class AppSetting {
 	private String name;
 	private String value;
 	private String type;
+	private String desc;
 	
 	@Override
 	public String toString(){
@@ -41,6 +42,14 @@ public class AppSetting {
 	}
 	public void setType(String type) {
 		this.type = type;
+	}
+
+	public String getDesc() {
+		return desc;
+	}
+
+	public void setDesc(String desc) {
+		this.desc = desc;
 	}
 
 }

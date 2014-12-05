@@ -207,4 +207,15 @@
     <servlet-name>SetFriendsServlet</servlet-name>
     <url-pattern>/setfriends</url-pattern>
   </servlet-mapping>
+  
+  <servlet>
+    <servlet-name>GetObuDataSMSServlet</servlet-name>
+    <servlet-class>com.boatguard.boatguard.servlet.GetObuDataSMSServlet</servlet-class>
+    <load-on-startup>20</load-on-startup>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>GetObuDataSMSServlet</servlet-name>
+    <url-pattern>/getdatasms</url-pattern>
+  </servlet-mapping>
+    
 </web-app>

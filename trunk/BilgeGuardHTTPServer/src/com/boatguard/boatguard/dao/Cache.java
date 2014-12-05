@@ -129,6 +129,8 @@ public class Cache {
 	    	Constant.STATE_ACCU_NAPETOST_VALUE = Cache.statesByCode.get(Constant.STATE_ACCU_NAPETOST).getId();
 	    	Constant.STATE_ACCU_AH_VALUE = Cache.statesByCode.get(Constant.STATE_ACCU_AH).getId();
 	    	Constant.STATE_ACCU_EMPTY_VALUE = Cache.statesByCode.get(Constant.STATE_ACCU_EMPTY).getId();
+	    	Constant.STATE_GEO_FIX_VALUE = Cache.statesByCode.get(Constant.STATE_GEO_FIX).getId();
+	    	Constant.STATE_ACCU_DISCONNECTED_VALUE = Cache.statesByCode.get(Constant.STATE_ACCU_DISCONNECTED).getId();
 	    	
 	    	Constant.OBU_SETTINGS_GEO_FENCE_VALUE = Cache.statesByCode.get(Constant.OBU_SETTINGS_GEO_FENCE).getId();
 	    	Constant.OBU_SETTINGS_LON_VALUE = Cache.statesByCode.get(Constant.OBU_SETTINGS_LON).getId();
@@ -166,6 +168,7 @@ public class Cache {
 	    		appSetting.setName(rs.getString("name"));
 	    		appSetting.setValue(rs.getString("value"));
 	    		appSetting.setType(rs.getString("type"));
+	    		appSetting.setDesc(rs.getString("desc"));
 	    		appSettings.put(rs.getString("name"), appSetting);
 	    	}
 	    	
@@ -202,6 +205,11 @@ public class Cache {
 	    	Constant.GEO_FENCE_ENABLED_VALUE = Integer.parseInt(Cache.appSettings.get(Constant.GEO_FENCE_ENABLED).getValue());
 	    	Constant.GEO_FIX_OK_VALUE = Integer.parseInt(Cache.appSettings.get(Constant.GEO_FIX_OK).getValue());
 	    	Constant.BATTERY_EMPTY_VALUE = Integer.parseInt(Cache.appSettings.get(Constant.BATTERY_EMPTY).getValue());
+	    	Constant.ACCU_DISCONNECT_VALUE = Integer.parseInt(Cache.appSettings.get(Constant.ACCU_DISCONNECT).getValue());
+	    	Constant.PUMP_OK_VALUE = Integer.parseInt(Cache.appSettings.get(Constant.PUMP_OK).getValue());
+	    	Constant.PUMP_PUMPING_VALUE = Integer.parseInt(Cache.appSettings.get(Constant.PUMP_PUMPING).getValue());
+	    	Constant.PUMP_CLODGED_VALUE = Integer.parseInt(Cache.appSettings.get(Constant.PUMP_CLODGED).getValue());
+	    	Constant.PUMP_DEMAGED_VALUE = Integer.parseInt(Cache.appSettings.get(Constant.PUMP_DEMAGED).getValue());
 
 	
 	    } catch (Exception theException) {
