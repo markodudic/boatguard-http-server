@@ -8,6 +8,9 @@ public class Obu {
 	private int uid;
 	private String name;
 	private String number;
+	private String boat_manafacturer;
+	private String boat_model;
+	private String boat_country;
 	private String pin;
 	private String puk;
 	private String serial_number;
@@ -54,13 +57,31 @@ public class Obu {
 		return settings;
 	}
 	public void setSettings(Map<Integer, String> settings) {
-		settings = settings;
+		this.settings = settings;
 	}
 	public String getName() {
 		return name;
 	}
 	public void setName(String name) {
 		this.name = name;
+	}
+	public String getBoat_manafacturer() {
+		return boat_manafacturer;
+	}
+	public void setBoat_manafacturer(String boat_manafacturer) {
+		this.boat_manafacturer = boat_manafacturer;
+	}
+	public String getBoat_model() {
+		return boat_model;
+	}
+	public void setBoat_model(String boat_model) {
+		this.boat_model = boat_model;
+	}
+	public String getBoat_country() {
+		return boat_country;
+	}
+	public void setBoat_country(String boat_country) {
+		this.boat_country = boat_country;
 	}
 
 }
