@@ -11,6 +11,8 @@ public class Customer {
 		private String username;
 		private String password;
 		private String email;
+		private int birth_year;
+		private String country;
 		private Timestamp register_date;
 		private Timestamp last_visited;
 		private String app_version;
@@ -23,6 +25,9 @@ public class Customer {
 		private String active;
 		private String serial_number;
 		private String boat_name;
+		private String boat_manafacturer;
+		private String boat_model;
+		private String boat_country;
 		
 		public int getUid() {
 			return uid;
@@ -137,6 +142,36 @@ public class Customer {
 		}
 		public void setBoat_name(String boat_name) {
 			this.boat_name = boat_name;
+		}
+		public int getBirth_year() {
+			return birth_year;
+		}
+		public void setBirth_year(int birth_year) {
+			this.birth_year = birth_year;
+		}
+		public String getCountry() {
+			return country;
+		}
+		public void setCountry(String country) {
+			this.country = country;
+		}
+		public String getBoat_manafacturer() {
+			return boat_manafacturer;
+		}
+		public void setBoat_manafacturer(String boat_manafacturer) {
+			this.boat_manafacturer = boat_manafacturer;
+		}
+		public String getBoat_model() {
+			return boat_model;
+		}
+		public void setBoat_model(String boat_model) {
+			this.boat_model = boat_model;
+		}
+		public String getBoat_country() {
+			return boat_country;
+		}
+		public void setBoat_country(String boat_country) {
+			this.boat_country = boat_country;
 		}
 		
 	}

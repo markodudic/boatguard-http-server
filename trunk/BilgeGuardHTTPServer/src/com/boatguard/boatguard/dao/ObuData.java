@@ -1031,7 +1031,7 @@ public class ObuData {
     	try {
     		con = DbManager.getConnection("config");
 
-	    	String	sql = "select customers.*, obus.name boat_name, obus.serial_number "
+	    	String	sql = "select customers.*, obus.name boat_name, obus.serial_number, obus.boat_manafacturer, obus.boat_model, obus.boat_country "
 	    			+ "from customers left join obus on (customers.id_obu = obus.uid) "
 	    			+ "where id_obu = " + obuid;
 	    		
@@ -1046,6 +1046,8 @@ public class ObuData {
 	    		customer.setUsername(rs.getString("username"));
 	    		customer.setPassword(rs.getString("password"));
 	    		customer.setEmail(rs.getString("email"));
+	    		customer.setBirth_year(rs.getInt("birth_year"));
+	    		customer.setCountry(rs.getString("country"));
 	    		customer.setRegister_date(rs.getTimestamp("register_date"));
 	    		customer.setLast_visited(rs.getTimestamp("last_visited"));
 	    		customer.setApp_version(rs.getString("app_version"));
@@ -1058,6 +1060,9 @@ public class ObuData {
 	    		customer.setActive(rs.getString("active"));
 	    		customer.setSerial_number(rs.getString("serial_number"));
 	    		customer.setBoat_name(rs.getString("boat_name"));
+	    		customer.setBoat_manafacturer(rs.getString("boat_manafacturer"));
+	    		customer.setBoat_model(rs.getString("boat_model"));
+	    		customer.setBoat_country(rs.getString("boat_country"));
 	    	}
 	
 	    } catch (Exception theException) {
@@ -1087,13 +1092,20 @@ public class ObuData {
 			String sql = "update customers " + 
 			    		" set name = '" + customer.getName() + "'," +
 			    		" 	surname = '" + customer.getSurname() + "'," +
-			    		" 	email = '" + customer.getEmail() + "'" +
+			    		" 	email = '" + customer.getEmail() + "'," +
+			    		" 	birth_year = " + customer.getBirth_year() + "," +
+			    		" 	country = '" + customer.getCountry() + "'" +
 			    		" where id_obu = " + customer.getId_obu();
+			//System.out.println(sql);
 		    stmt.executeUpdate(sql);
 			
 			sql = "update obus " + 
-		    		" set name = '" + customer.getBoat_name() + "'" +
+		    		" set name = '" + customer.getBoat_name() + "'," +
+		    		" 	boat_manafacturer = '" + customer.getBoat_manafacturer() + "'," +
+		    		" 	boat_model = '" + customer.getBoat_model() + "'," +
+		    		" 	boat_country = '" + customer.getBoat_country() + "'" +
 		    		" where uid = " + customer.getId_obu();
+			//System.out.println(sql);
 			stmt.executeUpdate(sql);
 		} catch (Exception theException) {
 			theException.printStackTrace();
