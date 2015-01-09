@@ -19,6 +19,7 @@ public class Alarm {
 	private String message_short;
 	private String title;
 	private String action;
+	private String icon;
 	private String type;
 	private String format;
 	private int active;
@@ -125,6 +126,14 @@ public class Alarm {
 
 	public void setFormat(String format) {
 		this.format = format;
+	}
+
+	public String getIcon() {
+		return icon;
+	}
+
+	public void setIcon(String icon) {
+		this.icon = icon;
 	}
 
 
