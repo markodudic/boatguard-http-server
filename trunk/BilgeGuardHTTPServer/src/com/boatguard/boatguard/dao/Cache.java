@@ -79,6 +79,7 @@ public class Cache {
 	    		alarm.setAction(rs.getString("action"));
 	    		alarm.setType(rs.getString("type"));
 	    		alarm.setActive(rs.getInt("active"));
+	    		alarm.setIcon(rs.getString("icon"));
 	    		alarm.setFormat(rs.getString("format"));
 	    		alarms.put(rs.getInt("id"), alarm);
 	    	}
