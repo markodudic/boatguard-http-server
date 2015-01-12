@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 import java.sql.Timestamp;
 import java.text.DateFormat;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -557,11 +558,19 @@ public class ObuData {
 	    		StateData stateData = new StateData();
 	    		stateData.setId_state(rs.getInt("id_state"));
 	    		stateData.setId_obu(rs.getInt("id_obu"));
-	    		stateData.setValue(rs.getString("value"));
+	    		if ((rs.getInt("id_state") == Constant.STATE_ACCU_NAPETOST_VALUE) || 
+	    			(rs.getInt("id_state") == Constant.STATE_ACCU_TOK_VALUE) ||
+	    			(rs.getInt("id_state") == Constant.STATE_ACCU_AH_VALUE)) {
+		    		String f = new DecimalFormat("#.##").format(Float.parseFloat(rs.getString("value")));
+	    			stateData.setValue(f);	
+	    		}
+	    		else {
+	    			stateData.setValue(rs.getString("value"));	
+	    		}
 	    		stateData.setType(rs.getString("type"));
 	    		stateData.setDateState(rs.getTimestamp("date_state"));	
+	    		stateData.setDateString(Util.formatDate(rs.getTimestamp("date_state").getTime()));
 	    		statesData.put(rs.getInt("id_state"), stateData);
-	    		
 	    		//System.out.println(rs.getInt("id_state")+"+"+rs.getString("value"));
 	    	}
 		} catch (Exception theException) {
