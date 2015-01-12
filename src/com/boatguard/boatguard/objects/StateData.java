@@ -9,6 +9,7 @@ public class StateData {
 	private String value;
 	private String type;
 	private Timestamp dateState;
+	private String dateString;
 	
 	public int getId_state() {
 		return id_state;
@@ -40,8 +41,10 @@ public class StateData {
 	public void setDateState(Timestamp dateState) {
 		this.dateState = dateState;
 	}
-	
-	
-	
-
+	public String getDateString() {
+		return dateString;
+	}
+	public void setDateString(String dateString) {
+		this.dateString = dateString;
+	}
 }

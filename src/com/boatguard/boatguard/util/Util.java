@@ -1,5 +1,9 @@
 package com.boatguard.boatguard.util;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 
 
 public class Util {
@@ -24,5 +28,12 @@ public class Util {
 		x = (float) (x_ + x__);
 		return x;
 	}
+	
+    public static String formatDate(long dateToConvert)
+    {
+    	Date d = new Date(dateToConvert);
+    	DateFormat df = new SimpleDateFormat("MMM/dd/yyyy HH:mm");
+		return df.format(d).toUpperCase();
+    }	
 	
 }
