@@ -411,7 +411,12 @@ public class ObuData {
 				    			else stateValue = value + "";
 			    			}
 			    						    			
-		    				/*int stateAh = Integer.parseInt(stateValue, 16);
+			    			int empty = Integer.parseInt(obuSettings.get(Constant.OBU_SETTINGS_BATTERY_ALARM_LEVEL_VALUE));
+			    			sql = "insert into states_data (id_state, id_obu, value, date_state) " + 
+					    	   		"values ('" + Constant.STATE_ACCU_EMPTY_VALUE + "', " + obu.getUid() + ", '" + (Integer.parseInt(stateValue)<empty?Constant.BATTERY_EMPTY_VALUE:"0") + "', '" + dateState + "')";
+						    stmt.executeUpdate(sql);		        				
+
+						    /*int stateAh = Integer.parseInt(stateValue, 16);
 		    				int stateAhLast = Constant.APP_SETTINGS_NAPETOST_TOK_MAX_VALUE;
 		    				if (lastStateData.get(Constant.STATE_ROW_STATE) != null) {
 		    					String raw_state_last = lastStateData.get(Constant.STATE_ROW_STATE_VALUE).getValue();
