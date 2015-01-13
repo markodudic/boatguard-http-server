@@ -47,6 +47,10 @@ public class Constant {
 	public static Integer OBU_SETTINGS_BATTERY_ALARM_LEVEL_VALUE= 33;
 	public static final String OBU_SETTINGS_ANCHOR_DRIFTING		= "ANCHOR_DRIFTING";
 	public static Integer OBU_SETTINGS_ANCHOR_DRIFTING_VALUE	= 41;
+	public static final String OBU_SETTINGS_LIGHT				= "LIGHT";
+	public static Integer OBU_SETTINGS_LIGHT_VALUE				= 50;
+	public static final String OBU_SETTINGS_FAN					= "FAN";
+	public static Integer OBU_SETTINGS_FAN_VALUE				= 60;
 
 	//PARAMETRI
 	public static final String APP_SETTINGS_NAPETOST_TOK_MAX 	= "NAPETOST_TOK_MAX";
@@ -56,11 +60,13 @@ public class Constant {
 	public static final String APP_SETTINGS_ENERGIJA 			= "ENERGIJA";
 	public static Integer APP_SETTINGS_ENERGIJA_VALUE			= 30;
 	public static final String APP_SETTINGS_NAPETOST_KOEF1 		= "STATE_NAPETOST_KOEF1";
-	public static Double APP_SETTINGS_NAPETOST_KOEF1_VALUE		= 127.875;
+	public static Double APP_SETTINGS_NAPETOST_KOEF1_VALUE		= 83.25;
 	public static final String APP_SETTINGS_NAPETOST_KOEF2 		= "STATE_NAPETOST_KOEF2";
 	public static Double APP_SETTINGS_NAPETOST_KOEF2_VALUE		= 12.5;
 	public static final String APP_SETTINGS_NAPETOST_KOEF3 		= "STATE_NAPETOST_KOEF3";
 	public static Double APP_SETTINGS_NAPETOST_KOEF3_VALUE		= 11.29;
+	public static final String APP_SETTINGS_TOK_KOEF1 			= "STATE_TOK_KOEF1";
+	public static Double APP_SETTINGS_TOK_KOEF1_VALUE			= 20.7;
 
 	//POZICIJE V PODATKIH IZ OBUJA
 	public static final String OBU_PUMP_STATE 					= "OBU_PUMP_STATE";
