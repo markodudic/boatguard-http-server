@@ -110,7 +110,7 @@ public class ObuData {
     	try {
     		con = DbManager.getConnection("config");
 
-	    	String	sql = "select obu_settings.id_obu, obu_settings.id_setting, max(obu_settings.value) value, obu_settings.type, settings.code, app_settings.value "
+	    	String	sql = "select obu_settings.id_obu, obu_settings.id_setting, max(obu_settings.value) value, obu_settings.type, settings.code, app_settings.value value1 "
     				+ "from obus left join "
     				+ "	obu_settings on (obus.uid = obu_settings.id_obu) left join "
     				+ "	settings on (obu_settings.id_setting = settings.id)  left join "
@@ -338,16 +338,36 @@ public class ObuData {
 		    			if (state == null) continue;
 		    			
 			    		if (state.getId() == Constant.STATE_ACCU_TOK_VALUE){
-			    			Double stateTok = Double.parseDouble(Integer.parseInt(stateValue, 16)+"");
+			    			long A = Integer.parseInt(stateValue.substring(0,1), 16) * (16*16*16);
+				    		long B = Integer.parseInt(stateValue.substring(1,2), 16) * (16*16);
+				    		long C = Integer.parseInt(stateValue.substring(2,3), 16) * (16);
+				    		long D = Integer.parseInt(stateValue.substring(3,4), 16);
+				    			
+				    		stateValue = (A+B+C+D)/Constant.APP_SETTINGS_TOK_KOEF1_VALUE + "";
+				    		
+			    			/*Double stateTok = Double.parseDouble(Integer.parseInt(stateValue, 16)+"");
 			    			if (stateTok <= Constant.APP_SETTINGS_NAPETOST_TOK_MIN_VALUE) {
 		    					stateTok = 0.0;
 		    				} else {
 		    					stateTok = (3.0 / Constant.APP_SETTINGS_NAPETOST_TOK_MAX_VALUE) * stateTok;
 		    				}
-		    				stateValue = stateTok+"";	    				
+		    				stateValue = stateTok+"";*/	    				
 		    			}
 			    		else if (state.getId() == Constant.STATE_ACCU_NAPETOST_VALUE){
-			    			long val1 = Integer.parseInt(stateValue.substring(0,2), 16) * (256*256*256);
+			    			if (Integer.parseInt(stateValue.substring(0,1)) > 7) {
+			    				//ce je A>=8 je negativen tok (polnjenje) in prikazem tok=0
+			    				stateValue = "0";
+			    			}
+			    			else {
+				    			long A = Integer.parseInt(stateValue.substring(0,1), 16) * (16*16*16);
+				    			long B = Integer.parseInt(stateValue.substring(1,2), 16) * (16*16);
+				    			long C = Integer.parseInt(stateValue.substring(2,3), 16) * (16);
+				    			long D = Integer.parseInt(stateValue.substring(3,4), 16);
+				    			
+				    			stateValue = (A+B+C+D)/Constant.APP_SETTINGS_NAPETOST_KOEF1_VALUE +"";
+			    			}
+			    			
+			    			/*long val1 = Integer.parseInt(stateValue.substring(0,2), 16) * (256*256*256);
 			    			long val2 = Integer.parseInt(stateValue.substring(2,4), 16) * (256*256);
 			    			long val3 = Integer.parseInt(stateValue.substring(4,6), 16) * (256);
 			    			double energy = (val1 + val2 + val3) / 3600 / Constant.APP_SETTINGS_NAPETOST_KOEF3_VALUE;
@@ -364,7 +384,7 @@ public class ObuData {
 		        			sql = "insert into states_data (id_state, id_obu, value, date_state) " + 
 					    	   		"values ('" + Constant.STATE_ACCU_EMPTY_VALUE + "', " + obu.getUid() + ", '" + (Integer.parseInt(stateValue)<empty?Constant.BATTERY_EMPTY_VALUE:"0") + "', '" + dateState + "')";
 						    stmt.executeUpdate(sql);		        				
-		        					    				/*
+		        					 */   				/*
 		    				int stateTok = Integer.parseInt(states[Constant.OBU_ACCU_AH_VALUE], 16);
 		    				//ce je tok<APP_SETTING_TOK_MIN je napetost zadnja od takrat ko je tok>APP_SETTING_TOK_MIN
 		    				if ((lastStateData.get(Constant.STATE_ACCU_NAPETOST)!= null) && (stateTok <= Constant.APP_SETTINGS_NAPETOST_TOK_MIN_VALUE)) {
@@ -374,7 +394,24 @@ public class ObuData {
 		    				}*/
 		    			}
 			    		else if (state.getId() == Constant.STATE_ACCU_AH_VALUE){
-		    				int stateAh = Integer.parseInt(stateValue, 16);
+			    			long A = Integer.parseInt(stateValue.substring(0,1), 16) * (16*16*16*16*16*16*16);
+			    			long B = Integer.parseInt(stateValue.substring(1,2), 16) * (16*16*16*16*16*16);
+			    			long C = Integer.parseInt(stateValue.substring(2,3), 16) * (16*16*16*16*16);
+			    			long D = Integer.parseInt(stateValue.substring(3,4), 16) * (16*16*16*16);
+			    			long E = Integer.parseInt(stateValue.substring(4,5), 16) * (16*16*16);
+			    			long F = Integer.parseInt(stateValue.substring(5,6), 16) * (16*16);
+			    			
+			    			Double stateUsedEnergy = (A+B+C+D+E+F)/(3600 * Constant.APP_SETTINGS_TOK_KOEF1_VALUE);
+			    			
+			    			Map<Integer, String> obuSettings = obu.getSettings();
+			    			stateValue = "100";
+			    			if (stateUsedEnergy > 0) {
+			    				long value = (100 - Math.round((100 * stateUsedEnergy) / Float.parseFloat(obuSettings.get(Constant.OBU_SETTINGS_BATTERY_CAPACITY_VALUE))));
+				    			if (value < 0) stateValue = "0";
+				    			else stateValue = value + "";
+			    			}
+			    						    			
+		    				/*int stateAh = Integer.parseInt(stateValue, 16);
 		    				int stateAhLast = Constant.APP_SETTINGS_NAPETOST_TOK_MAX_VALUE;
 		    				if (lastStateData.get(Constant.STATE_ROW_STATE) != null) {
 		    					String raw_state_last = lastStateData.get(Constant.STATE_ROW_STATE_VALUE).getValue();
@@ -389,7 +426,7 @@ public class ObuData {
 		    					stateValue = "0";
 		    				} else {
 		    					stateValue = energija + "";
-		    				}
+		    				}*/
 		    			}
 			    		else if ((state.getId() == Constant.STATE_LON_VALUE) || (state.getId() == Constant.STATE_LAT_VALUE)) {
 			    			Integer geoFixValue = Integer.parseInt(states[Constant.OBU_GEO_FIX_VALUE]);
@@ -407,6 +444,17 @@ public class ObuData {
 			    				}
 			    			}		    		
 			    		}
+			    		
+			    		//INPUT DOOR
+			    		if (i == 17) {
+			    			if (Integer.parseInt(stateValue) == 1) { 
+			    				stateValue = "1";
+			    			}
+			    			else {
+			    				stateValue = "0";
+			    			}
+			    		}
+			    		
 			    		sql = "insert into states_data (id_state, id_obu, value, date_state) " + 
 		    	    		"values ('" + state.getId() + "', " + obu.getUid() + ", '" + stateValue + "', '" + dateState + "')";
 			    		stmt.executeUpdate(sql);
@@ -426,7 +474,7 @@ public class ObuData {
 	    			
 	   	    	stmt.executeUpdate(sql);
 	   	    	
-		    	//geo fence status prtepisem
+		    	//geo fence status prepisem
 	   	    	if (distance > Integer.parseInt( obuSettings.get(Constant.OBU_SETTINGS_GEO_DISTANCE_VALUE))) {
 		   	    	sql = "insert into states_data (id_state, id_obu, value, date_state) " + 
 		    	    		"values (" + Constant.OBU_SETTINGS_GEO_FENCE_VALUE + ", " + obu.getUid() + ", '" + Constant.GEO_FENCE_ALARM_VALUE + "', '" + dateState + "')";
@@ -435,7 +483,14 @@ public class ObuData {
 	   	    		sql = "insert into states_data (id_state, id_obu, value, date_state) " + 
 		    	    		"values (" + Constant.OBU_SETTINGS_GEO_FENCE_VALUE + ", " + obu.getUid() + ", '" + obuSettings.get(Constant.OBU_SETTINGS_GEO_FENCE_VALUE) + "', '" + dateState + "')";
 	   	    	}
+	   	    	stmt.executeUpdate(sql);
 	    			
+	    		//LIGHT & FAN STATE skopiram iz settinga
+   	    		sql = "insert into states_data (id_state, id_obu, value, date_state) " + 
+	    	    		"values (" + Constant.OBU_SETTINGS_LIGHT_VALUE + ", " + obu.getUid() + ", '" + obuSettings.get(Constant.OBU_SETTINGS_LIGHT_VALUE) + "', '" + dateState + "')";
+	   	    	stmt.executeUpdate(sql);
+   	    		sql = "insert into states_data (id_state, id_obu, value, date_state) " + 
+	    	    		"values (" + Constant.OBU_SETTINGS_FAN_VALUE + ", " + obu.getUid() + ", '" + obuSettings.get(Constant.OBU_SETTINGS_FAN_VALUE) + "', '" + dateState + "')";
 	   	    	stmt.executeUpdate(sql);
 	    	//}
 	    } catch (Exception theException) {

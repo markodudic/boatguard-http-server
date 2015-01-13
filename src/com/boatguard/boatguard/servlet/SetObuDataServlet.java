@@ -2,10 +2,7 @@ package com.boatguard.boatguard.servlet;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.logging.Logger;
 
 import javax.servlet.ServletException;
@@ -15,6 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.boatguard.boatguard.dao.ObuData;
 import com.boatguard.boatguard.objects.ObuSetting;
+import com.boatguard.boatguard.util.Constant;
 import com.boatguard.boatguard.util.HttpLog;
 
 
@@ -61,13 +59,34 @@ public class SetObuDataServlet extends HttpServlet {
 		List<ObuSetting> obuSettings = obuData.getObuSettingsForObu(null, gsmnum, serial);
 		
 		String settings = "";
+		String output = "0000";
+		String outputValues = "";
+		boolean light = false;
+		boolean fan = false;
+		
 		for (int i=0; i<obuSettings.size(); i++) {
 			ObuSetting obuSetting = obuSettings.get(i);
-	        settings += obuSetting.getValue();
+	        if (obuSetting.getId_setting() == Constant.OBU_SETTINGS_LIGHT_VALUE) {
+	        	output = "0401";
+	        	outputValues = "ff0000ff";
+	        	light = obuSetting.getValue().equals("1"); 
+	        }
+	        else if (obuSetting.getId_setting() == Constant.OBU_SETTINGS_FAN_VALUE) {
+	        	output = "0401";
+	        	outputValues = "ff0000ff";
+	        	fan = obuSetting.getValue().equals("1"); 
+	        }
+	        else {
+	        	settings += obuSetting.getValue();
+	        }
 		}
 		
-		//dodam se 000 in 000 za SteviloInputov in SteviloOutputov
-		settings += "0000";
+		if (light && fan) outputValues = "ff0003fc";
+		else if (light) outputValues = "ff0002fd";
+		else if (fan) outputValues = "ff0001fe";
+		
+		//dodam se 00 in 00 za SteviloInputov in SteviloOutputov
+		settings += output + outputValues;
 		//dodam se dolzino v HEXA
 		String len = Integer.toHexString(settings.length()).toUpperCase();
 		
