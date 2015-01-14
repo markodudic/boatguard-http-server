@@ -68,7 +68,7 @@ public class SetObuDataServlet extends HttpServlet {
 			ObuSetting obuSetting = obuSettings.get(i);
 	        if (obuSetting.getId_setting() == Constant.OBU_SETTINGS_LIGHT_VALUE) {
 	        	output = "0401";
-	        	outputValues = "ff0000ff";
+	        	outputValues = "FF0000FF";
 	        	light = obuSetting.getValue().equals("1"); 
 	        }
 	        else if (obuSetting.getId_setting() == Constant.OBU_SETTINGS_FAN_VALUE) {
