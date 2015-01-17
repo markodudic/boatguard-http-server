@@ -324,10 +324,11 @@ public class ObuData {
 		    				"values (" + Constant.STATE_ROW_STATE_VALUE + ", " + obu.getUid() + ", '" + data + "', '" + dateState + "')";
 		    		
 		    	stmt.executeUpdate(sql);
-		    	
+    			
 		    	for (int i=0;i<states.length;i++) {
 		    		if (Cache.states.get(i) != null) {
 		    			String stateValue = states[i];
+		    			System.out.println("stateValue="+stateValue);
 		    			
 		    			//TUKAJ JE SAM PREMAPIRANJE ZARADI KITE IZ D/N V 1/0 ZA PODATKE OD 7-10
 		    			if ((i>7) && (i<12)) {
@@ -335,6 +336,7 @@ public class ObuData {
 		    			}
 		    			
 		    			State state = obuStates.get(Cache.states.get(i).getId());
+		    			
 		    			if (state == null) continue;
 		    			
 			    		if (state.getId() == Constant.STATE_ACCU_TOK_VALUE){
@@ -451,19 +453,26 @@ public class ObuData {
 			    		}
 			    		
 			    		//INPUT DOOR
-			    		if (i == 17) {
-			    			if (Integer.parseInt(stateValue) == 1) { 
-			    				stateValue = "1";
-			    			}
-			    			else {
-			    				stateValue = "0";
-			    			}
-			    		}
+			    		if (obu.getFirmware() == Constant.FIRMWARE_2) {
+			    			if (i == 17) {
+			    				try {
+				    				if (Integer.parseInt(stateValue) == 1) { 
+					    				stateValue = "1";
+					    			}
+					    			else {
+					    				stateValue = "0";
+					    			}
+				    				
+			    				} catch (Exception e) {
+			    					continue;
+			    				}
+				    		}			    		
+			    		}	
 			    		
 			    		sql = "insert into states_data (id_state, id_obu, value, date_state) " + 
-		    	    		"values ('" + state.getId() + "', " + obu.getUid() + ", '" + stateValue + "', '" + dateState + "')";
+			    	    		"values ('" + state.getId() + "', " + obu.getUid() + ", '" + stateValue + "', '" + dateState + "')";
 			    		stmt.executeUpdate(sql);
-			    			
+			    		
 		    		}
 		    	}
 		    
@@ -491,12 +500,14 @@ public class ObuData {
 	   	    	stmt.executeUpdate(sql);
 	    			
 	    		//LIGHT & FAN STATE skopiram iz settinga
-   	    		sql = "insert into states_data (id_state, id_obu, value, date_state) " + 
-	    	    		"values (" + Constant.OBU_SETTINGS_LIGHT_VALUE + ", " + obu.getUid() + ", '" + obuSettings.get(Constant.OBU_SETTINGS_LIGHT_VALUE) + "', '" + dateState + "')";
-	   	    	stmt.executeUpdate(sql);
-   	    		sql = "insert into states_data (id_state, id_obu, value, date_state) " + 
-	    	    		"values (" + Constant.OBU_SETTINGS_FAN_VALUE + ", " + obu.getUid() + ", '" + obuSettings.get(Constant.OBU_SETTINGS_FAN_VALUE) + "', '" + dateState + "')";
-	   	    	stmt.executeUpdate(sql);
+	    		if (obu.getFirmware() == Constant.FIRMWARE_2) {
+	   	    		sql = "insert into states_data (id_state, id_obu, value, date_state) " + 
+		    	    		"values (" + Constant.OBU_SETTINGS_LIGHT_VALUE + ", " + obu.getUid() + ", '" + obuSettings.get(Constant.OBU_SETTINGS_LIGHT_VALUE) + "', '" + dateState + "')";
+		   	    	stmt.executeUpdate(sql);
+	   	    		sql = "insert into states_data (id_state, id_obu, value, date_state) " + 
+		    	    		"values (" + Constant.OBU_SETTINGS_FAN_VALUE + ", " + obu.getUid() + ", '" + obuSettings.get(Constant.OBU_SETTINGS_FAN_VALUE) + "', '" + dateState + "')";
+		   	    	stmt.executeUpdate(sql);
+	    		}
 	    	//}
 	    } catch (Exception theException) {
 	    	theException.printStackTrace();
@@ -532,6 +543,7 @@ public class ObuData {
 	    		obu.setPin(rs.getString("pin"));
 	    		obu.setPuk(rs.getString("puk"));
 	    		obu.setSerial_number(rs.getString("serial_number"));
+	    		obu.setFirmware(rs.getInt("firmware"));
 	    		obu.setActive(rs.getInt("active"));	    		
 	    	}
 	    	
@@ -815,7 +827,6 @@ public class ObuData {
 	        			}
 	        			else if (stateData.getId_state() == Constant.STATE_ACCU_NAPETOST_VALUE) {
 		        			alarmValue = Integer.parseInt(((ObuSetting)obuSettings.get(Constant.OBU_SETTINGS_BATTERY_ALARM_LEVEL_VALUE)).getValue());	
-		        			System.out.println("alarmValue="+alarmValue);
 		        			
 	        			}
 	        		} else {

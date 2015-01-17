@@ -14,6 +14,7 @@ public class Obu {
 	private String pin;
 	private String puk;
 	private String serial_number;
+	private int firmware;
 	private int active;
 	public Map<Integer, String> settings = new HashMap<Integer, String>();
 	
@@ -52,6 +53,12 @@ public class Obu {
 	}
 	public void setActive(int active) {
 		this.active = active;
+	}
+	public int getFirmware() {
+		return firmware;
+	}
+	public void setFirmware(int firmware) {
+		this.firmware = firmware;
 	}
 	public Map<Integer, String> getSettings() {
 		return settings;
