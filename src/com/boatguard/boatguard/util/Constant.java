@@ -108,7 +108,9 @@ public class Constant {
 	public static final String PUMP_DEMAGED						= "PUMP_DEMAGED";
 	public static Integer PUMP_DEMAGED_VALUE					= 3;
 
-	
+	//Firmware
+	public static final int FIRMWARE_1							= 1;
+	public static final int FIRMWARE_2							= 2;
 	
 	
 }
