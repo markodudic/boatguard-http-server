@@ -84,7 +84,7 @@ public class SetObuDataServlet extends HttpServlet {
 		        }
 		        else if (obuSetting.getId_setting() == Constant.OBU_SETTINGS_FAN_VALUE) {
 		        	output = "0401";
-		        	outputValues = "ff0000ff";
+		        	outputValues = "FF0000FF";
 		        	fan = obuSetting.getValue().equals("1"); 
 		        }
 		        else {
@@ -92,9 +92,9 @@ public class SetObuDataServlet extends HttpServlet {
 		        }
 			}
 			
-			if (light && fan) outputValues = "ff0003fc";
-			else if (light) outputValues = "ff0002fd";
-			else if (fan) outputValues = "ff0001fe";
+			if (light && fan) outputValues = "FF0003FC";
+			else if (light) outputValues = "FF0002FD";
+			else if (fan) outputValues = "FF0001FC";
 			
 			//dodam se 00 in 00 za SteviloInputov in SteviloOutputov
 			settings += output + outputValues;			
