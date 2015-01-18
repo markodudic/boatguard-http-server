@@ -94,7 +94,7 @@ public class SetObuDataServlet extends HttpServlet {
 			
 			if (light && fan) outputValues = "FF0003FC";
 			else if (light) outputValues = "FF0002FD";
-			else if (fan) outputValues = "FF0001FC";
+			else if (fan) outputValues = "FF0001FE";
 			
 			//dodam se 00 in 00 za SteviloInputov in SteviloOutputov
 			settings += output + outputValues;			
