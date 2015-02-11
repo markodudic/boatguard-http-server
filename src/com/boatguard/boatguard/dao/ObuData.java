@@ -1172,6 +1172,7 @@ public class ObuData {
 			String sql = "update customers " + 
 			    		" set name = '" + customer.getName() + "'," +
 			    		" 	surname = '" + customer.getSurname() + "'," +
+			    		" 	password = '" + customer.getPassword() + "'," +
 			    		" 	email = '" + customer.getEmail() + "'," +
 			    		" 	birth_year = " + customer.getBirth_year() + "," +
 			    		" 	country = '" + customer.getCountry() + "'" +
