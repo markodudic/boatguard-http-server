@@ -33,6 +33,9 @@ import com.boatguard.boatguard.objects.State;
 import com.boatguard.boatguard.objects.StateData;
 import com.boatguard.boatguard.util.Constant;
 import com.boatguard.boatguard.util.Util;
+import com.google.android.gcm.server.Message;
+import com.google.android.gcm.server.Result;
+import com.google.android.gcm.server.Sender;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -328,7 +331,7 @@ public class ObuData {
 		    	for (int i=0;i<states.length;i++) {
 		    		if (Cache.states.get(i) != null) {
 		    			String stateValue = states[i];
-		    			System.out.println("stateValue="+stateValue);
+		    			//System.out.println("stateValue="+stateValue);
 		    			
 		    			//TUKAJ JE SAM PREMAPIRANJE ZARADI KITE IZ D/N V 1/0 ZA PODATKE OD 7-10
 		    			if ((i>7) && (i<12)) {
@@ -918,6 +921,23 @@ public class ObuData {
 					MailClient.sendMail(email_to, title, msg);
 				}	
 				
+				//GCM
+				Sender sender = new Sender("AIzaSyCqFRqsD4W9SC1urN5k5njvIzUKDmAM46Y");
+				Message gcmMsg = new Message.Builder()
+					.addData("alarmid", alarmid+"")
+					.addData("title", title)
+		    		.addData("message", msg)
+				    .addData("date",  date_alarm+"")
+				    .addData("sound",  sound+"")
+				    .addData("vibrate",  vibrate+"")
+				    .build();
+				//Result result = sender.send(gcmMsg, "APA91bEH_nYQXfR4Wu6DA7AU9il_43yPVZEhYSbZGKvjN1XP6M52dV2H0MfA5niWcBA5ZztHrEF0cUZfxK5-OQNh0qd5RVcZGFVq_QmtKUTM975SX6MB4_C1sx55tvuWfEqWsMi3W1e_84VeJtFcunVCYt0YThizC-TEv34nFtS1PjcX6VSJ9Iw", 5);
+				Result result = sender.send(gcmMsg, "APA91bFxZlnttUpd21hj_i7_RkVlN2sD1jU6ooRj5fAKhpexMkDlVbma7Hk_QDt4x3cwRbFSP_LdKfM8_VMsChyN_TKkwd66laQbPk_FdXCIekBhSmyF5whHJ4Fkvss5VETNdho4OmByb4p8BbO0GjrjB6Ac0a-4MdKFxDzNGu6zbR3ZwfWclqw", 5);
+				
+
+				System.out.println("GCM RESULT="+result);
+				
+
 		    	sql = "insert into alarm_data (id_alarm, id_obu, value, message, message_short, title, action, type, sound, vibrate, send_customer, send_friends, date_alarm, active) " + 
 		    			"values (" + alarmid + ", " + obuid + ", '" + stateValue + "', '" + msg + "', '" + messageShort + "', '" + title + "', '" + action + "', '" + type + "', " + sound + ", " + vibrate + ", " + sendCustomer + ", " + sendFriends + ", '" + date_alarm + "', " + active + ")";
 		    		
