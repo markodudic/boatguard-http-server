@@ -942,10 +942,11 @@ public class ObuData {
 		    	while (rs.next()) {
 		    		devices.add(rs.getString("gcm_registration_id"));
 		    	}
+		    	
 		    	if (devices.size() > 0) {
 		    		MulticastResult result = sender.send(gcmMsg, devices, 5);
 
-		    		//System.out.println("GCM RESULT="+result);
+		    		System.out.println("GCM RESULT="+result);
 		    	}
 		    	
 		    	sql = "insert into alarm_data (id_alarm, id_obu, value, message, message_short, title, action, type, sound, vibrate, send_customer, send_friends, date_alarm, active) " + 
