@@ -14,14 +14,14 @@ public class Customer {
 		private int birth_year;
 		private String country;
 		private Timestamp register_date;
-		private Timestamp last_visited;
+		/*private Timestamp last_visited;
 		private String app_version;
 		private String phone_number;
 		private String phone_model;
 		private String phone_platform;
 		private String phone_platform_version;
 		private String phone_uuid;
-		private String home_network;
+		private String home_network;*/
 		private String active;
 		private String serial_number;
 		private String boat_name;
@@ -77,7 +77,7 @@ public class Customer {
 		public void setRegister_date(Timestamp register_date) {
 			this.register_date = register_date;
 		}
-		public Timestamp getLast_visited() {
+		/*public Timestamp getLast_visited() {
 			return last_visited;
 		}
 		public void setLast_visited(Timestamp last_visited) {
@@ -107,12 +107,6 @@ public class Customer {
 		public void setHome_network(String home_network) {
 			this.home_network = home_network;
 		}
-		public String getActive() {
-			return active;
-		}
-		public void setActive(String active) {
-			this.active = active;
-		}
 		public String getPhone_number() {
 			return phone_number;
 		}
@@ -130,6 +124,12 @@ public class Customer {
 		}
 		public void setPhone_uuid(String phone_uuid) {
 			this.phone_uuid = phone_uuid;
+		}*/
+		public String getActive() {
+			return active;
+		}
+		public void setActive(String active) {
+			this.active = active;
 		}
 		public String getSerial_number() {
 			return serial_number;

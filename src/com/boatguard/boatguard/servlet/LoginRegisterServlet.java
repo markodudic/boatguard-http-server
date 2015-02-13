@@ -60,21 +60,21 @@ public class LoginRegisterServlet extends HttpServlet {
 		String username = (String) request.getParameter("username");
 		String password = (String) request.getParameter("password");
 		String obuSn = (String) request.getParameter("obu_sn");
-		String deviceName = (String) request.getParameter("device_name");
+		/*String deviceName = (String) request.getParameter("device_name");
 		String devicePlatform = (String) request.getParameter("device_platform");
 		String deviceVersion = (String) request.getParameter("device_version");
 		String deviceUuid = (String) request.getParameter("device_uuid");
 		String phoneNumber = (String) request.getParameter("phone_number");
-		String appVersion = (String) request.getParameter("app_version");
+		String appVersion = (String) request.getParameter("app_version");*/
 
 				
 				
 		ObuData obuData = new ObuData();
 		String result = "";
 		if (type.equalsIgnoreCase("login")) {
-			result = obuData.login(username, password, obuSn, deviceName, devicePlatform, deviceVersion, deviceUuid, phoneNumber, appVersion);
+			result = obuData.login(username, password, obuSn);
 		} else {
-			result = obuData.register(username, password, obuSn, deviceName, devicePlatform, deviceVersion, deviceUuid, phoneNumber, appVersion);
+			result = obuData.register(username, password, obuSn);
 		}
 
 		OutputStream out = null;
