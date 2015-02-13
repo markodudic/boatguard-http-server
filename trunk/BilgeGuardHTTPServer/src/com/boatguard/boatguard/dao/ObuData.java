@@ -24,6 +24,7 @@ import com.boatguard.boatguard.comm.SmsClient;
 import com.boatguard.boatguard.objects.Alarm;
 import com.boatguard.boatguard.objects.AlarmData;
 import com.boatguard.boatguard.objects.Customer;
+import com.boatguard.boatguard.objects.Device;
 import com.boatguard.boatguard.objects.Friend;
 import com.boatguard.boatguard.objects.Obu;
 import com.boatguard.boatguard.objects.ObuAlarm;
@@ -34,7 +35,7 @@ import com.boatguard.boatguard.objects.StateData;
 import com.boatguard.boatguard.util.Constant;
 import com.boatguard.boatguard.util.Util;
 import com.google.android.gcm.server.Message;
-import com.google.android.gcm.server.Result;
+import com.google.android.gcm.server.MulticastResult;
 import com.google.android.gcm.server.Sender;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -931,13 +932,22 @@ public class ObuData {
 				    .addData("sound",  sound+"")
 				    .addData("vibrate",  vibrate+"")
 				    .build();
-				//Result result = sender.send(gcmMsg, "APA91bEH_nYQXfR4Wu6DA7AU9il_43yPVZEhYSbZGKvjN1XP6M52dV2H0MfA5niWcBA5ZztHrEF0cUZfxK5-OQNh0qd5RVcZGFVq_QmtKUTM975SX6MB4_C1sx55tvuWfEqWsMi3W1e_84VeJtFcunVCYt0YThizC-TEv34nFtS1PjcX6VSJ9Iw", 5);
-				Result result = sender.send(gcmMsg, "APA91bFxZlnttUpd21hj_i7_RkVlN2sD1jU6ooRj5fAKhpexMkDlVbma7Hk_QDt4x3cwRbFSP_LdKfM8_VMsChyN_TKkwd66laQbPk_FdXCIekBhSmyF5whHJ4Fkvss5VETNdho4OmByb4p8BbO0GjrjB6Ac0a-4MdKFxDzNGu6zbR3ZwfWclqw", 5);
 				
+				sql = "select * "
+    				+ "from devices "
+    				+ "where id_obu = " + obuid;
+				rs = stmt.executeQuery(sql);
+		    	
+				List<String> devices = new ArrayList<String>(); 
+		    	while (rs.next()) {
+		    		devices.add(rs.getString("gcm_registration_id"));
+		    	}
+		    	if (devices.size() > 0) {
+		    		MulticastResult result = sender.send(gcmMsg, devices, 5);
 
-				System.out.println("GCM RESULT="+result);
-				
-
+		    		//System.out.println("GCM RESULT="+result);
+		    	}
+		    	
 		    	sql = "insert into alarm_data (id_alarm, id_obu, value, message, message_short, title, action, type, sound, vibrate, send_customer, send_friends, date_alarm, active) " + 
 		    			"values (" + alarmid + ", " + obuid + ", '" + stateValue + "', '" + msg + "', '" + messageShort + "', '" + title + "', '" + action + "', '" + type + "', " + sound + ", " + vibrate + ", " + sendCustomer + ", " + sendFriends + ", '" + date_alarm + "', " + active + ")";
 		    		
@@ -1149,14 +1159,14 @@ public class ObuData {
 	    		customer.setBirth_year(rs.getInt("birth_year"));
 	    		customer.setCountry(rs.getString("country"));
 	    		customer.setRegister_date(rs.getTimestamp("register_date"));
-	    		customer.setLast_visited(rs.getTimestamp("last_visited"));
+	    		/*customer.setLast_visited(rs.getTimestamp("last_visited"));
 	    		customer.setApp_version(rs.getString("app_version"));
 	    		customer.setPhone_number(rs.getString("phone_number"));
 	    		customer.setPhone_model(rs.getString("phone_model"));
 	    		customer.setPhone_platform(rs.getString("phone_platform"));
 	    		customer.setPhone_platform_version(rs.getString("phone_platform_version"));
 	    		customer.setPhone_uuid(rs.getString("phone_uuid"));
-	    		customer.setHome_network(rs.getString("home_network"));
+	    		customer.setHome_network(rs.getString("home_network"));*/
 	    		customer.setActive(rs.getString("active"));
 	    		customer.setSerial_number(rs.getString("serial_number"));
 	    		customer.setBoat_name(rs.getString("boat_name"));
@@ -1216,11 +1226,49 @@ public class ObuData {
 				if (con != null) con.close();
 			} catch (Exception e) {}
 		}		
-        
-		
-	}
+ 	}
 
-	
+	public void setDevice(String data) {
+		Gson gson = new Gson();
+		Device device = gson.fromJson(data, Device.class);
+		
+		Connection con = null;
+		Statement stmt = null;
+		try {
+	    	con = DbManager.getConnection("config");
+			stmt = con.createStatement();   	
+
+			String sql = "insert into devices (id_obu, gcm_registration_id, phone_model, phone_platform, phone_platform_version, phone_uuid, app_version, last_visited) " + 
+			    		" values (" + device.getId_obu() + ", '" + 
+			    					device.getGcm_registration_id() + "', '" +
+			    					device.getPhone_model() + "', '" +
+			    					device.getPhone_platform() + "', '" +
+			    					device.getPhone_platform_version() + "', '" +
+			    					device.getPhone_uuid() + "', '" +
+			    					device.getApp_version() + "', " +
+			    					"now())" +
+						" on duplicate key update " +
+			    		"	id_obu = " + device.getId_obu() + ", " +
+	    				"	gcm_registration_id = '" + device.getGcm_registration_id() + "', " +
+	    				"	phone_model = '" + device.getPhone_model() + "', " +
+	    				"	phone_platform = '" + device.getPhone_platform() + "', " +
+	    				"	phone_platform_version = '" + device.getPhone_platform_version() + "', " +
+	    				"	phone_uuid = '" + device.getPhone_uuid() + "', " +
+	    				"	app_version = '" + device.getApp_version() + "', " +
+	    				"	last_visited = now() ";
+			
+			//System.out.println(sql);
+		    stmt.executeUpdate(sql);
+
+		} catch (Exception theException) {
+			theException.printStackTrace();
+		} finally {
+			try {
+				if (stmt != null) stmt.close();
+				if (con != null) con.close();
+			} catch (Exception e) {}
+		}		
+	}	
 	public List<Friend> getFriends(int customerid) {
 		Connection con = null;
 		ResultSet rs = null;
@@ -1303,7 +1351,7 @@ public class ObuData {
 	}
 	
 	
-	public String login(String username, String password, String obuSerialNumber, String deviceName, String devicePlatform, String deviceVersion, String deviceUuid, String phoneNumber, String appVersion) {
+	public String login(String username, String password, String obuSerialNumber) {
 		
 		Connection con = null;
 		ResultSet rs = null;
@@ -1333,7 +1381,7 @@ public class ObuData {
 	    		obu.setActive(rs.getInt("active"));
 				obuS = gson.toJson(obu);
 
-	    		setLoginData(username, deviceName, devicePlatform, deviceVersion, deviceUuid, phoneNumber, appVersion);
+	    		//setLoginData(username, deviceName, devicePlatform, deviceVersion, deviceUuid, phoneNumber, appVersion);
 	    	} else {
 	    		Error error = new Error(Error.LOGIN_ERROR, Error.LOGIN_ERROR_CODE, Error.LOGIN_ERROR_MSG);
 				errorS = gson.toJson(error);
@@ -1356,7 +1404,7 @@ public class ObuData {
 		
 	}
 
-	public String register(String username, String password, String obuSerialNumber, String deviceName, String devicePlatform, String deviceVersion, String deviceUuid, String phoneNumber, String appVersion) {
+	public String register(String username, String password, String obuSerialNumber) {
 		
 		Connection con = null;
 		ResultSet rs = null;
@@ -1393,7 +1441,7 @@ public class ObuData {
 		    			"where serial_number = " + obuSerialNumber;
 		    	stmt.executeUpdate(sql);
 
-		    	result = login(username, password, obuSerialNumber, deviceName, devicePlatform, deviceVersion, deviceUuid, phoneNumber, appVersion);
+		    	//result = login(username, password, obuSerialNumber, deviceName, devicePlatform, deviceVersion, deviceUuid, phoneNumber, appVersion);
 	    	}
 			
 	
@@ -1416,7 +1464,7 @@ public class ObuData {
 	}
 
 	
-	public void setLoginData(String username, String deviceName, String devicePlatform, String deviceVersion, String deviceUuid, String phoneNumber, String appVersion){
+	/*public void setLoginData(String username, String deviceName, String devicePlatform, String deviceVersion, String deviceUuid, String phoneNumber, String appVersion){
 		Connection con = null;
 		Statement stmt = null;
 		
@@ -1444,7 +1492,7 @@ public class ObuData {
 	    		if (con != null) con.close();
 			} catch (Exception e) {}
 	    }
-	}
+	}*/
 
 	public void confirmAlarm(int alarmid, int obuid) {
 		Connection con = null;

@@ -209,9 +209,19 @@
   </servlet-mapping>
   
   <servlet>
+    <servlet-name>SetDeviceServlet</servlet-name>
+    <servlet-class>com.boatguard.boatguard.servlet.SetDeviceServlet</servlet-class>
+    <load-on-startup>20</load-on-startup>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>SetDeviceServlet</servlet-name>
+    <url-pattern>/setdevice</url-pattern>
+  </servlet-mapping>
+  
+  <servlet>
     <servlet-name>GetObuDataSMSServlet</servlet-name>
     <servlet-class>com.boatguard.boatguard.servlet.GetObuDataSMSServlet</servlet-class>
-    <load-on-startup>20</load-on-startup>
+    <load-on-startup>21</load-on-startup>
   </servlet>
   <servlet-mapping>
     <servlet-name>GetObuDataSMSServlet</servlet-name>
