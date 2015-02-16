@@ -48,7 +48,7 @@ public class SmsClient {
 
 	    	String	sql = "insert into smsserver_out (recipient, text, create_date) " + 
 	    				"select friends.number, '" + message + "', now() "
-	    				+ "from customers left join friends on (friends.id_customer = customers.id) " +
+	    				+ "from customers left join friends on (friends.id_customer = customers.uid) " +
 	    				"where customers.id_obu = " + obuid +
 	    				"	and friends.active = 1";
 	    		
