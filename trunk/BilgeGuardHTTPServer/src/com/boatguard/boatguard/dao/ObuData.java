@@ -667,6 +667,8 @@ public class ObuData {
 		ResultSet rs = null;
 	    Statement stmt = null;
 	    List<StateData> statesData = new ArrayList<StateData>();
+	    String statesDataWithoutDate = "";
+	    String statesDataWithoutDateLast = "";
 	    List<List<StateData>> historyData = new ArrayList<List<StateData>>();
 		
 	    Timestamp lastD = null;
@@ -675,9 +677,9 @@ public class ObuData {
     	    
 	    	String	sql = "select states_data.*, states.ord "
 	    			+ "from states_data left join states on (states_data.id_state = states.id) "
-	    			+ "where id_obu = " + id + " " 
-	    			+ "order by date_state desc, ord asc "
-	    			+ "limit 1000";
+	    			+ "where id_obu = " + id + " and history = 1 and date_state > date_add(now(), interval -1 week)" 
+	    			+ "order by date_state desc, ord asc ";
+	    			//+ "limit 5000";
 	    	
     		stmt = con.createStatement();   	
     		rs = stmt.executeQuery(sql);
@@ -686,22 +688,33 @@ public class ObuData {
 	    		Timestamp d = rs.getTimestamp("date_state");
 	    		if (lastD==null || !d.equals(lastD)) {
 	    			if (lastD!=null) {
-	    				historyData.add(statesData);
+	    				if (!statesDataWithoutDateLast.equals(statesDataWithoutDate)) {
+		    				historyData.add(statesData);
+		    				statesDataWithoutDateLast = statesDataWithoutDate;
+	    	    		}
 	    			}
 		    		statesData = new ArrayList<StateData>();
+		    		statesDataWithoutDate = "";
 	    			lastD = d;
 	    		}
-	    	    StateData stateData = new StateData();
+	    		StateData stateData = new StateData();
 	    		stateData.setId_state(rs.getInt("id_state"));
 	    		stateData.setId_obu(rs.getInt("id_obu"));
-	    		stateData.setValue(rs.getString("value"));
-	    		stateData.setType(rs.getString("type"));
+	    		if ((rs.getInt("id_state") == Constant.STATE_ACCU_TOK_VALUE) || (rs.getInt("id_state") == Constant.STATE_ACCU_NAPETOST_VALUE)) {
+	    			stateData.setValue(Math.round(Float.parseFloat(rs.getString("value")))+"");	    			
+	    		}
+	    		else {
+	    			stateData.setValue(rs.getString("value"));
+	    		}
 	    		stateData.setDateState(rs.getTimestamp("date_state"));	
 	    		statesData.add(stateData);
+	    		
+	    		statesDataWithoutDate += stateData.getId_state() + ":" + stateData.getValue() +";";
+	    		
 	    	}
-			if (lastD!=null) {
+			/*if (lastD!=null) {
 				historyData.add(statesData);
-			}
+			}*/
 		} catch (Exception theException) {
 	    	theException.printStackTrace();
 	    } finally {
