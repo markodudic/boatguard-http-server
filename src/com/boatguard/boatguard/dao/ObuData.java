@@ -709,7 +709,9 @@ public class ObuData {
 	    		stateData.setDateState(rs.getTimestamp("date_state"));	
 	    		statesData.add(stateData);
 	    		
-	    		statesDataWithoutDate += stateData.getId_state() + ":" + stateData.getValue() +";";
+	    		if ((rs.getInt("id_state") != Constant.STATE_LAT_VALUE) && (rs.getInt("id_state") != Constant.STATE_LON_VALUE)) {
+	    			statesDataWithoutDate += stateData.getId_state() + ":" + stateData.getValue() +";";
+	    		}
 	    		
 	    	}
 			/*if (lastD!=null) {
