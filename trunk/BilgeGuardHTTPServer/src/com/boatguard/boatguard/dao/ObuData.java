@@ -1003,7 +1003,9 @@ public class ObuData {
 	    		if (messageStr.length > 1) {
 	    			for (int i=1; i<messageStr.length; i++) {
 	    				String par = messageStr[i];
-	    				message = message.replaceAll("%"+par+"%", rs.getString(par));
+	    				if (rs.getString(par) != null) {
+	    					message = message.replaceAll("%"+par+"%", rs.getString(par));
+	    				}
 	    				i++;
 	    			}
 	    		}
@@ -1367,7 +1369,7 @@ public class ObuData {
 	}
 	
 	
-	public String login(String username, String password, String obuSerialNumber) {
+	public String login(String username, String password, String obuSerialNumber, String sessionId) {
 		
 		Connection con = null;
 		ResultSet rs = null;
@@ -1414,13 +1416,13 @@ public class ObuData {
 			} catch (Exception e) {}
 	    }	
 		
-		String result = "{\"obu\":"+obuS+",\"error\":"+errorS+"}";
+		String result = "{\"obu\":"+obuS+",\"sessionId\":"+sessionId+",\"error\":"+errorS+"}";
     	return result;
 
 		
 	}
 
-	public String register(String username, String password, String obuSerialNumber) {
+	public String register(String username, String password, String obuSerialNumber, String sessionId) {
 		
 		Connection con = null;
 		ResultSet rs = null;
@@ -1457,7 +1459,7 @@ public class ObuData {
 		    			"where serial_number = " + obuSerialNumber;
 		    	stmt.executeUpdate(sql);
 
-		    	//result = login(username, password, obuSerialNumber, deviceName, devicePlatform, deviceVersion, deviceUuid, phoneNumber, appVersion);
+		    	result = login(username, password, obuSerialNumber, sessionId);
 	    	}
 			
 	

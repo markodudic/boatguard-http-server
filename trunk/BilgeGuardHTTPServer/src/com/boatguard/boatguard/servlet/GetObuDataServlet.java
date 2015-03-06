@@ -44,7 +44,7 @@ public class GetObuDataServlet extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		System.out.println("SERVLET GET");		
+		System.out.println("GetObuDataServlet GET");		
 		doPost(request, response);
 	}
 
@@ -56,11 +56,13 @@ public class GetObuDataServlet extends HttpServlet {
 	 *      
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		System.out.println("SERVLET POST");		
+		System.out.println("GetObuDataServlet POST:"+request.getSession().getId());		
 
 		HttpLog.afterHttp(request, null);
 
 		String obuid = (String) request.getParameter("obuid");
+		String sessionid = (String) request.getParameter("sessionid");
+		System.out.println("sessionid="+sessionid);
 		
 		ObuData obuData = new ObuData();
 		LinkedHashMap<Integer, StateData> stateData = obuData.getObuData(Integer.parseInt(obuid));

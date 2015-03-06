@@ -52,8 +52,11 @@ public class LoginRegisterServlet extends HttpServlet {
 	 *      
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		System.out.println("SERVLET POST");		
-
+		System.out.println("LoginRegisterServlet POST:"+request.getSession().getId());		
+		
+		request.getSession().setMaxInactiveInterval(-1);
+		String sessionId = request.getSession().getId();
+		
 		HttpLog.afterHttp(request, null);
 
 		String type = (String) request.getParameter("type");
@@ -72,9 +75,9 @@ public class LoginRegisterServlet extends HttpServlet {
 		ObuData obuData = new ObuData();
 		String result = "";
 		if (type.equalsIgnoreCase("login")) {
-			result = obuData.login(username, password, obuSn);
+			result = obuData.login(username, password, obuSn, sessionId);
 		} else {
-			result = obuData.register(username, password, obuSn);
+			result = obuData.register(username, password, obuSn, sessionId);
 		}
 
 		OutputStream out = null;
