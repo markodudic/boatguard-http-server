@@ -14,7 +14,7 @@ import com.boatguard.boatguard.dao.ObuData;
 import com.boatguard.boatguard.util.HttpLog;
 
 
-public class SetFriendsServlet extends HttpServlet {
+public class SetFriendsServlet extends InitServlet {
 
 	static Logger log = Logger.getLogger(SetFriendsServlet.class.getName());
 
@@ -43,8 +43,7 @@ public class SetFriendsServlet extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		System.out.println("SERVLET POST");		
-
-		HttpLog.afterHttp(request, null);
+		super.doPost(request, response);
 
 		String data = (String) request.getParameter("data");
 		

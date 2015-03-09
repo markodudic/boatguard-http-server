@@ -147,7 +147,7 @@
   </servlet-mapping-->
   
   
-  <servlet>
+  <!-- servlet>
     <servlet-name>SendSMSServlet</servlet-name>
     <servlet-class>com.boatguard.boatguard.servlet.SendSMSServlet</servlet-class>
     <load-on-startup>14</load-on-startup>
@@ -155,7 +155,7 @@
   <servlet-mapping>
     <servlet-name>SendSMSServlet</servlet-name>
     <url-pattern>/sendSms</url-pattern>
-  </servlet-mapping>  
+  </servlet-mapping-->  
 
   
   <servlet>

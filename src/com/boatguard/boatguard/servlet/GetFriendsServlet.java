@@ -21,7 +21,7 @@ import com.google.gson.Gson;
 
 
 
-public class GetFriendsServlet extends HttpServlet {
+public class GetFriendsServlet extends InitServlet {
 
 	Locale locale = Locale.getDefault();
 	
@@ -53,9 +53,8 @@ public class GetFriendsServlet extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		System.out.println("SERVLET POST");		
+		super.doPost(request, response);
 		
-		HttpLog.afterHttp(request, null);
-
 		String customerid = (String) request.getParameter("customerid");
 		
 		ObuData obuData = new ObuData();

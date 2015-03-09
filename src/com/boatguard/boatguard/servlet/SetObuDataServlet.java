@@ -17,7 +17,7 @@ import com.boatguard.boatguard.util.Constant;
 import com.boatguard.boatguard.util.HttpLog;
 
 
-public class SetObuDataServlet extends HttpServlet {
+public class SetObuDataServlet extends InitServlet {
 
 	static Logger log = Logger.getLogger(SetObuDataServlet.class.getName());
 
@@ -44,8 +44,7 @@ public class SetObuDataServlet extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		System.out.println("SERVLET POST");		
-
-		HttpLog.afterHttp(request, null);
+		super.doPost(request, response);
 
 		String gsmnum = (String) request.getParameter("gsmnum");
 		String serial = (String) request.getParameter("serial");

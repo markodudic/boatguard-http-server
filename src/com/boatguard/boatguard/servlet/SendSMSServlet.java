@@ -1,3 +1,8 @@
+//********************************************
+//NE UPORABLJA SE VEČ
+//********************************************
+
+
 package com.boatguard.boatguard.servlet;
 
 import java.io.IOException;
