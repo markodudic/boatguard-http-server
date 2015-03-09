@@ -33,7 +33,7 @@ import com.google.gson.Gson;
 
 
 
-public class GetObuDataSMSServlet extends HttpServlet {
+public class GetObuDataSMSServlet extends InitServlet {
 
 	Locale locale = Locale.getDefault();
 	
@@ -65,8 +65,7 @@ public class GetObuDataSMSServlet extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		System.out.println("SERVLET POST");		
-
-		HttpLog.afterHttp(request, null);
+		super.doPost(request, response);
 
 		String originator = (String) request.getParameter("originator");
 		String text = (String) request.getParameter("text");

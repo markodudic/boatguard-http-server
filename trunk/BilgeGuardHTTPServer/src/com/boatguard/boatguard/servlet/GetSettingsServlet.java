@@ -27,7 +27,7 @@ import com.google.gson.Gson;
 
 
 
-public class GetSettingsServlet extends HttpServlet {
+public class GetSettingsServlet extends InitServlet {
 
 	Locale locale = Locale.getDefault();
 	
@@ -59,8 +59,8 @@ public class GetSettingsServlet extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		System.out.println("SERVLET POST");		
+		super.doPost(request, response);
 
-		HttpLog.afterHttp(request, null);
 		Gson gson = new Gson();
 		 
 		LinkedHashMap<Integer, Alarm> alarms = Cache.alarms;

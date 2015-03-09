@@ -24,7 +24,7 @@ import com.google.gson.Gson;
 
 
 
-public class GetObuComponentsServlet extends HttpServlet {
+public class GetObuComponentsServlet extends InitServlet {
 
 	Locale locale = Locale.getDefault();
 	
@@ -58,8 +58,7 @@ public class GetObuComponentsServlet extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		System.out.println("SERVLET POST");		
-
-		HttpLog.afterHttp(request, null);
+		super.doPost(request, response);
 
 		String gsmnum = (String) request.getParameter("gsmnum");
 		String serial = (String) request.getParameter("serial");

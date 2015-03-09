@@ -14,7 +14,7 @@ import com.boatguard.boatguard.dao.ObuData;
 import com.boatguard.boatguard.util.HttpLog;
 
 
-public class SetDeviceServlet extends HttpServlet {
+public class SetDeviceServlet extends InitServlet {
 
 	static Logger log = Logger.getLogger(SetDeviceServlet.class.getName());
 
@@ -43,9 +43,8 @@ public class SetDeviceServlet extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		System.out.println("SERVLET POST SetDeviceServlet");		
+		super.doPost(request, response);
 		
-		HttpLog.afterHttp(request, null);
-
 		String data = (String) request.getParameter("data");
 		
 		StringBuilder sb = new StringBuilder();

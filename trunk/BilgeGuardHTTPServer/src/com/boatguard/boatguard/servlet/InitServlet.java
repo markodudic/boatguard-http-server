@@ -20,11 +20,15 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.util.Locale;
 import java.util.Properties;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -32,17 +36,20 @@ import org.apache.log4j.PropertyConfigurator;
 
 import si.bisoft.commons.dbpool.DbManager;
 import si.bisoft.commons.dbpool.DbPoolingConfig;
+
 import com.boatguard.boatguard.comm.MailClient;
 import com.boatguard.boatguard.dao.Cache;
+import com.boatguard.boatguard.util.HttpLog;
 
 public class InitServlet extends HttpServlet implements javax.servlet.Servlet {
 
+	Locale locale = Locale.getDefault();
 	private static Log log = LogFactory.getLog(InitServlet.class);
   
 	public static String realPath = "WebContent/";
 	//public static Properties mainSettings;
 	//public static MailClient mailClient;
-
+	private static String sessionID;
 	
 	public void init(ServletConfig conf) throws ServletException {
 		try {
@@ -90,6 +97,7 @@ public class InitServlet extends HttpServlet implements javax.servlet.Servlet {
 			mailClient.transport_protocol=settings.getProperty("mail.transport_protocol");
 			mailClient.use_ssl=settings.getProperty("mail.use_ssl");
 			
+			sessionID=settings.getProperty("session.id");			
 					
 			System.out.println(cfg);
 			// setting DB pooling manager
@@ -109,6 +117,32 @@ public class InitServlet extends HttpServlet implements javax.servlet.Servlet {
 		}
 	}     
 
+	protected void doGet(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+	}
+
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		System.out.println("InitServlet POST:"+request.getSession().getId());		
+		HttpLog.afterHttp(request, null);
+
+		String sessionid = (String) request.getParameter("sessionid");
+		System.out.println("sessionid="+sessionid);
+		
+		if ((sessionid != null) && (!sessionid.equals(sessionID)) && (!sessionid.equals(request.getSession().getId()))) {
+			//login
+			String data = "{\"error\":1,\"error_desc\":\"NOT LOGGED\"}";
+			
+	    	OutputStream out = null;
+	    	response.setContentType("text/plain");
+			response.setHeader("Content-disposition", null);
+			response.setHeader("Access-Control-Allow-Origin", "*");
+			out = response.getOutputStream();
+			out.write(data.getBytes());
+			out.flush();
+			out.close();    	
+			
+		}
+	}
 	
 }
 

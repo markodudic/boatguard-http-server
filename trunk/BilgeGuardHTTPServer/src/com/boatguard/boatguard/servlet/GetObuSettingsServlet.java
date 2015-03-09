@@ -25,7 +25,7 @@ import com.boatguard.boatguard.util.HttpLog;
 
 
 
-public class GetObuSettingsServlet extends HttpServlet {
+public class GetObuSettingsServlet extends InitServlet {
 
 	Locale locale = Locale.getDefault();
 	
@@ -59,8 +59,7 @@ public class GetObuSettingsServlet extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		System.out.println("SERVLET POST");		
-
-		HttpLog.afterHttp(request, null);
+		super.doPost(request, response);
 
 		String gsmnum = (String) request.getParameter("gsmnum");
 		String serial = (String) request.getParameter("serial");

@@ -1,3 +1,7 @@
+//********************************************
+//NE UPORABLJA SE VEČ
+//********************************************
+
 package com.boatguard.boatguard.servlet;
 
 import it.sauronsoftware.cron4j.Scheduler;

@@ -25,7 +25,7 @@ import com.google.gson.Gson;
 
 
 
-public class GetObuDataServlet extends HttpServlet {
+public class GetObuDataServlet extends InitServlet {
 
 	Locale locale = Locale.getDefault();
 	
@@ -56,13 +56,10 @@ public class GetObuDataServlet extends HttpServlet {
 	 *      
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		System.out.println("GetObuDataServlet POST:"+request.getSession().getId());		
-
-		HttpLog.afterHttp(request, null);
-
+		System.out.println("GetObuDataServlet POST");		
+		super.doPost(request, response);
+		
 		String obuid = (String) request.getParameter("obuid");
-		String sessionid = (String) request.getParameter("sessionid");
-		System.out.println("sessionid="+sessionid);
 		
 		ObuData obuData = new ObuData();
 		LinkedHashMap<Integer, StateData> stateData = obuData.getObuData(Integer.parseInt(obuid));
