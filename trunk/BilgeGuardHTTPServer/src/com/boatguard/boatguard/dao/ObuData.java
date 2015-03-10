@@ -1417,7 +1417,7 @@ public class ObuData {
 			} catch (Exception e) {}
 	    }	
 		
-		String result = "{\"obu\":"+obuS+",\"sessionId\":"+sessionId+",\"error\":"+errorS+"}";
+		String result = "{\"obu\":"+obuS+",\"sessionId\":\""+sessionId+"\",\"error\":"+errorS+"}";
     	return result;
 
 		
