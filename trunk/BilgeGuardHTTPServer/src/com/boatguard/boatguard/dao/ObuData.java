@@ -832,7 +832,8 @@ public class ObuData {
 		        String state = stateData.getValue();
 		        		
 		        if (stateData.getId_state() == alarm.getId_state()) {
-			        int alarmValue = 0;
+		        	
+		        	int alarmValue = 0;
 		        	if (alarm.getValue().equals("obu_settings")) {
 		        		ObuData obuData = new ObuData();
 		        		Map<Integer, ObuSetting> obuSettings = obuData.getObuSettings(obu.getUid()+"", null, null);
@@ -854,7 +855,7 @@ public class ObuData {
 		        	
 		        	if (alarm.getFormat().equals("N")) {
 		        		boolean setAlarm = false;
-			        	if (alarm.getOperand().equals("=")){
+		        		if (alarm.getOperand().equals("=")){
 			        		if (Integer.parseInt(stateData.getValue()) == alarmValue) {
 		            			setAlarm = true;
 		            		}
@@ -884,11 +885,11 @@ public class ObuData {
 				            			setAlarm = false;
 				            		}
 					        	} else if (alarm.getPrevious().equals(">")){
-				            		if (Integer.parseInt(stateDataPrevious.getValue()) < alarmValue) {
+				            		if (Integer.parseInt(stateDataPrevious.getValue()) <= alarmValue) {
 				            			setAlarm = false;
 				            		}
 					        	} else if (alarm.getPrevious().equals("<")){
-					            	if (Integer.parseInt(stateDataPrevious.getValue()) > alarmValue) {
+					            	if (Integer.parseInt(stateDataPrevious.getValue()) >= alarmValue) {
 				            			setAlarm = false;
 				            		}
 					        	}
