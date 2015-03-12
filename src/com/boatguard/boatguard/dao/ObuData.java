@@ -23,6 +23,7 @@ import com.boatguard.boatguard.comm.MailClient;
 import com.boatguard.boatguard.comm.SmsClient;
 import com.boatguard.boatguard.objects.Alarm;
 import com.boatguard.boatguard.objects.AlarmData;
+import com.boatguard.boatguard.objects.BatterySetting;
 import com.boatguard.boatguard.objects.Customer;
 import com.boatguard.boatguard.objects.Device;
 import com.boatguard.boatguard.objects.Friend;
@@ -309,10 +310,6 @@ public class ObuData {
 	    	data = data.replace("0000000000000000000000000000000", "0,N,0,E,0,0,0");
 	    	
 	    	String[] states = data.split(",");
-	    	//String dateState = states[Constant.OBU_DATE_VALUE];
-	    	//SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMddhhmmss");
-	        //Date parsedDate = dateFormat.parse(dateState);
-	        //Timestamp tsDS = new java.sql.Timestamp(parsedDate.getTime());
 	    	
 	    	DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	    	Date today = Calendar.getInstance().getTime();        
@@ -330,6 +327,7 @@ public class ObuData {
 		    	stmt.executeUpdate(sql);
     			
 		    	for (int i=0;i<states.length;i++) {
+		    		boolean insert = true;
 		    		if (Cache.states.get(i) != null) {
 		    			String stateValue = states[i];
 		    			//System.out.println("stateValue="+stateValue);
@@ -349,15 +347,7 @@ public class ObuData {
 				    		long C = Integer.parseInt(stateValue.substring(2,3), 16) * (16);
 				    		long D = Integer.parseInt(stateValue.substring(3,4), 16);
 				    			
-				    		stateValue = (A+B+C+D)/Constant.APP_SETTINGS_TOK_KOEF1_VALUE + "";
-				    		
-			    			/*Double stateTok = Double.parseDouble(Integer.parseInt(stateValue, 16)+"");
-			    			if (stateTok <= Constant.APP_SETTINGS_NAPETOST_TOK_MIN_VALUE) {
-		    					stateTok = 0.0;
-		    				} else {
-		    					stateTok = (3.0 / Constant.APP_SETTINGS_NAPETOST_TOK_MAX_VALUE) * stateTok;
-		    				}
-		    				stateValue = stateTok+"";*/	    				
+				    		stateValue = (A+B+C+D)/Constant.APP_SETTINGS_TOK_KOEF1_VALUE + ""; 				
 		    			}
 			    		else if (state.getId() == Constant.STATE_ACCU_NAPETOST_VALUE){
 			    			if (Integer.parseInt(stateValue.substring(0,1)) > 7) {
@@ -370,37 +360,28 @@ public class ObuData {
 				    			long C = Integer.parseInt(stateValue.substring(2,3), 16) * (16);
 				    			long D = Integer.parseInt(stateValue.substring(3,4), 16);
 				    			
-				    			stateValue = (A+B+C+D)/Constant.APP_SETTINGS_NAPETOST_KOEF1_VALUE +"";
+				    			String stateNapetost = stateValue;
+				    			//stateValue = (A+B+C+D)/Constant.APP_SETTINGS_NAPETOST_KOEF1_VALUE +"";
+				    			HashMap<String, BatterySetting> batterySetting = Cache.batterySettings.get(obu.getId_battery_settings());
+				    			stateValue = (A+B+C+D)/batterySetting.get(stateValue).getKoef() +"";
+				    			
+				    			//procente izracunam iz napetosti in ne iz porabe
+				    			String procent = batterySetting.get(stateNapetost).getPercent() +"";
+				    			Map<Integer, String> obuSettings = obu.getSettings();
+				    			
+				    			int empty = Integer.parseInt(obuSettings.get(Constant.OBU_SETTINGS_BATTERY_ALARM_LEVEL_VALUE));
+				    			sql = "insert into states_data (id_state, id_obu, value, date_state) " + 
+						    	   		"values ('" + Constant.STATE_ACCU_EMPTY_VALUE + "', " + obu.getUid() + ", '" + (Integer.parseInt(procent)<empty?Constant.BATTERY_EMPTY_VALUE:"0") + "', '" + dateState + "')";
+							    stmt.executeUpdate(sql);		        				
+					    		sql = "insert into states_data (id_state, id_obu, value, date_state) " + 
+					    	    		"values ('" + Constant.STATE_ACCU_AH_VALUE + "', " + obu.getUid() + ", '" + procent + "', '" + dateState + "')";
+					    		stmt.executeUpdate(sql);
+				    			
 			    			}
-			    			
-			    			/*long val1 = Integer.parseInt(stateValue.substring(0,2), 16) * (256*256*256);
-			    			long val2 = Integer.parseInt(stateValue.substring(2,4), 16) * (256*256);
-			    			long val3 = Integer.parseInt(stateValue.substring(4,6), 16) * (256);
-			    			double energy = (val1 + val2 + val3) / 3600 / Constant.APP_SETTINGS_NAPETOST_KOEF3_VALUE;
-		    				Map<Integer, ObuSetting> obuSettings = getObuSettings(obu.getUid()+"", null, null);
-		        			int capacity = Integer.parseInt(((ObuSetting)obuSettings.get(Constant.OBU_SETTINGS_BATTERY_CAPACITY_VALUE)).getValue());
-		        			if (energy < capacity) {
-		        				stateValue = (100 - Math.round((energy / capacity) * 100)) + "";
-		        			}
-		        			else {
-		        				stateValue = "0";
-		        			}
-		        			
-		        			int empty = Integer.parseInt(((ObuSetting)obuSettings.get(Constant.OBU_SETTINGS_BATTERY_ALARM_LEVEL_VALUE)).getValue());
-		        			sql = "insert into states_data (id_state, id_obu, value, date_state) " + 
-					    	   		"values ('" + Constant.STATE_ACCU_EMPTY_VALUE + "', " + obu.getUid() + ", '" + (Integer.parseInt(stateValue)<empty?Constant.BATTERY_EMPTY_VALUE:"0") + "', '" + dateState + "')";
-						    stmt.executeUpdate(sql);		        				
-		        					 */   				/*
-		    				int stateTok = Integer.parseInt(states[Constant.OBU_ACCU_AH_VALUE], 16);
-		    				//ce je tok<APP_SETTING_TOK_MIN je napetost zadnja od takrat ko je tok>APP_SETTING_TOK_MIN
-		    				if ((lastStateData.get(Constant.STATE_ACCU_NAPETOST)!= null) && (stateTok <= Constant.APP_SETTINGS_NAPETOST_TOK_MIN_VALUE)) {
-		    					stateValue = Integer.parseInt(lastStateData.get(Constant.STATE_ACCU_NAPETOST_VALUE).getValue()) + "";
-		    				} else {
-		    					stateValue = Math.round((stateNapetost / Constant.APP_SETTINGS_NAPETOST_KOEF1_VALUE) * Constant.APP_SETTINGS_NAPETOST_KOEF2_VALUE)+"";
-		    				}*/
 		    			}
 			    		else if (state.getId() == Constant.STATE_ACCU_AH_VALUE){
-			    			long A = Integer.parseInt(stateValue.substring(0,1), 16) * (16*16*16*16*16*16*16);
+			    			insert = false;
+			    			/*long A = Integer.parseInt(stateValue.substring(0,1), 16) * (16*16*16*16*16*16*16);
 			    			long B = Integer.parseInt(stateValue.substring(1,2), 16) * (16*16*16*16*16*16);
 			    			long C = Integer.parseInt(stateValue.substring(2,3), 16) * (16*16*16*16*16);
 			    			long D = Integer.parseInt(stateValue.substring(3,4), 16) * (16*16*16*16);
@@ -420,24 +401,7 @@ public class ObuData {
 			    			int empty = Integer.parseInt(obuSettings.get(Constant.OBU_SETTINGS_BATTERY_ALARM_LEVEL_VALUE));
 			    			sql = "insert into states_data (id_state, id_obu, value, date_state) " + 
 					    	   		"values ('" + Constant.STATE_ACCU_EMPTY_VALUE + "', " + obu.getUid() + ", '" + (Integer.parseInt(stateValue)<empty?Constant.BATTERY_EMPTY_VALUE:"0") + "', '" + dateState + "')";
-						    stmt.executeUpdate(sql);		        				
-
-						    /*int stateAh = Integer.parseInt(stateValue, 16);
-		    				int stateAhLast = Constant.APP_SETTINGS_NAPETOST_TOK_MAX_VALUE;
-		    				if (lastStateData.get(Constant.STATE_ROW_STATE) != null) {
-		    					String raw_state_last = lastStateData.get(Constant.STATE_ROW_STATE_VALUE).getValue();
-		    					stateAhLast = Integer.parseInt(raw_state_last.split(",")[1], 16);
-		    					//int stateAhLast = Integer.parseInt(stateDataLast.get(Constant.STATE_ACCU_AH_VALUE;
-		    				}
-		    				double stateNapetost = Integer.parseInt(states[Constant.OBU_ACCU_TOK_VALUE], 16) / Constant.APP_SETTINGS_NAPETOST_KOEF1_VALUE;
-		    				
-		    				int napetost_percent = (int) Math.round(stateNapetost * Constant.APP_SETTINGS_NAPETOST_KOEF2_VALUE);
-		    				Double energija = (double) ((napetost_percent/100) * Constant.APP_SETTINGS_ENERGIJA_VALUE) - ((0.01/10240)*(stateAh-stateAhLast));
-		    				if (energija<0) {
-		    					stateValue = "0";
-		    				} else {
-		    					stateValue = energija + "";
-		    				}*/
+						    stmt.executeUpdate(sql);*/		        				
 		    			}
 			    		else if ((state.getId() == Constant.STATE_LON_VALUE) || (state.getId() == Constant.STATE_LAT_VALUE)) {
 			    			Integer geoFixValue = Integer.parseInt(states[Constant.OBU_GEO_FIX_VALUE]);
@@ -473,10 +437,11 @@ public class ObuData {
 				    		}			    		
 			    		}	
 			    		
-			    		sql = "insert into states_data (id_state, id_obu, value, date_state) " + 
-			    	    		"values ('" + state.getId() + "', " + obu.getUid() + ", '" + stateValue + "', '" + dateState + "')";
-			    		stmt.executeUpdate(sql);
-			    		
+			    		if (insert) {
+				    		sql = "insert into states_data (id_state, id_obu, value, date_state) " + 
+				    	    		"values ('" + state.getId() + "', " + obu.getUid() + ", '" + stateValue + "', '" + dateState + "')";
+				    		stmt.executeUpdate(sql);
+			    		}
 		    		}
 		    	}
 		    
@@ -548,6 +513,7 @@ public class ObuData {
 	    		obu.setPuk(rs.getString("puk"));
 	    		obu.setSerial_number(rs.getString("serial_number"));
 	    		obu.setFirmware(rs.getInt("firmware"));
+	    		obu.setId_battery_settings(rs.getInt("id_battery_settings"));
 	    		obu.setActive(rs.getInt("active"));	    		
 	    	}
 	    	
@@ -830,7 +796,6 @@ public class ObuData {
 		        ObuAlarm obuAlarm = obuAlarms.get(i);
 		        Alarm alarm = Cache.alarms.get(obuAlarm.getId_alarm());
 		        String state = stateData.getValue();
-		        		
 		        if (stateData.getId_state() == alarm.getId_state()) {
 		        	
 		        	int alarmValue = 0;
@@ -845,14 +810,13 @@ public class ObuData {
 		        			}
 		        			alarmValue = Integer.parseInt(((ObuSetting)obuSettings.get(Constant.OBU_SETTINGS_GEO_DISTANCE_VALUE)).getValue());	        				
 	        			}
-	        			else if (stateData.getId_state() == Constant.STATE_ACCU_NAPETOST_VALUE) {
+	        			else if (stateData.getId_state() == Constant.STATE_ACCU_AH_VALUE) {
 		        			alarmValue = Integer.parseInt(((ObuSetting)obuSettings.get(Constant.OBU_SETTINGS_BATTERY_ALARM_LEVEL_VALUE)).getValue());	
 		        			
 	        			}
-	        		} else {
+				    } else {
 	        			alarmValue = Integer.parseInt(alarm.getValue());
 	        		}
-		        	
 		        	if (alarm.getFormat().equals("N")) {
 		        		boolean setAlarm = false;
 		        		if (alarm.getOperand().equals("=")){
