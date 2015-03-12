@@ -10,11 +10,11 @@ public class Constant {
 	public static final String STATE_PUMP_STATE 				= "PUMP_STATE";
 	public static Integer STATE_PUMP_STATE_VALUE				= 20;
 	public static final String STATE_ACCU_NAPETOST 				= "ACCU_NAPETOST";
-	public static Integer STATE_ACCU_NAPETOST_VALUE				= 30;
+	public static Integer STATE_ACCU_NAPETOST_VALUE				= 32;
 	public static final String STATE_ACCU_TOK 					= "ACCU_TOK";
 	public static Integer STATE_ACCU_TOK_VALUE					= 31;
 	public static final String STATE_ACCU_AH 					= "ACCU_AH";
-	public static Integer STATE_ACCU_AH_VALUE					= 32;
+	public static Integer STATE_ACCU_AH_VALUE					= 30;
 	public static final String STATE_ACCU_EMPTY					= "ACCU_EMPTY";
 	public static Integer STATE_ACCU_EMPTY_VALUE				= 34;
 	public static final String STATE_ACCU_DISCONNECTED			= "ACCU_DISCONNECT";

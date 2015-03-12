@@ -5,7 +5,6 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -14,6 +13,7 @@ import si.bisoft.commons.dbpool.DbManager;
 
 import com.boatguard.boatguard.objects.Alarm;
 import com.boatguard.boatguard.objects.AppSetting;
+import com.boatguard.boatguard.objects.BatterySetting;
 import com.boatguard.boatguard.objects.Component;
 import com.boatguard.boatguard.objects.Setting;
 import com.boatguard.boatguard.objects.State;
@@ -27,6 +27,7 @@ public class Cache {
 	public static LinkedHashMap<String, AppSetting> appSettings = new LinkedHashMap<String, AppSetting>();
 	public static LinkedHashMap<String, Setting> settings = new LinkedHashMap<String, Setting>();
 	public static LinkedHashMap<Integer, Component> components = new LinkedHashMap<Integer, Component>();
+	public static LinkedHashMap<Integer, HashMap<String, BatterySetting>> batterySettings = new LinkedHashMap<Integer, HashMap<String, BatterySetting>>();
 
 	
 	public static boolean initCache() {
@@ -43,6 +44,7 @@ public class Cache {
 			cacheAppSettings();
 			cacheAlarms();
 			cacheSettings();
+			cacheBatterySettings();
 			log.debug("STOP RESET CACHE ");
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -291,4 +293,55 @@ public class Cache {
 	    }
 		
 	}	
+	
+	private static void cacheBatterySettings() {
+		Connection con = null;
+		ResultSet rs = null;
+	    Statement stmt = null;
+    	try {
+    		con = DbManager.getConnection("config");
+
+	    	String	sql = "select * from battery_settings order by id";
+	    		
+    		stmt = con.createStatement();   	
+	    	rs = stmt.executeQuery(sql);
+	    	batterySettings.clear();	
+	    	HashMap<String, BatterySetting> batterySetting = new HashMap<String, BatterySetting>();
+	    	
+	    	int id = -1;
+	    	int id_prev = -1;
+	    	boolean prvic = true;
+	    	
+	    	while (rs.next()) {
+	    		id = rs.getInt("id");
+	    		BatterySetting bs = new BatterySetting();
+	    		bs.setId(id);
+	    		bs.setKoef(rs.getDouble("koef"));
+	    		bs.setPercent(rs.getInt("percent"));
+	    		bs.setValue(rs.getString("value"));
+	    		bs.setVolt(rs.getDouble("volt"));
+	    		
+	    		batterySetting.put(rs.getString("value"), bs);
+	    		if (id != id_prev) {
+	    	    	if (!prvic) {
+	    	    		batterySettings.put(id, batterySetting);
+	    	    	}
+	    	    	id_prev = id;
+	    	    	prvic = false;
+	    		}
+	    	}
+	    	
+	    	batterySettings.put(id, batterySetting);
+	
+	    } catch (Exception theException) {
+	    	theException.printStackTrace();
+	    } finally {
+	    	try {
+	    		if (rs != null) rs.close();
+	    		if (stmt != null) stmt.close();
+	    		if (con != null) con.close();
+			} catch (Exception e) {}
+	    }
+		
+	}		
 }

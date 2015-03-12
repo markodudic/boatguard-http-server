@@ -15,6 +15,7 @@ public class Obu {
 	private String puk;
 	private String serial_number;
 	private int firmware;
+	private int id_battery_settings;
 	private int active;
 	public Map<Integer, String> settings = new HashMap<Integer, String>();
 	
@@ -90,5 +91,10 @@ public class Obu {
 	public void setBoat_country(String boat_country) {
 		this.boat_country = boat_country;
 	}
-
+	public int getId_battery_settings() {
+		return id_battery_settings;
+	}
+	public void setId_battery_settings(int id_battery_settings) {
+		this.id_battery_settings = id_battery_settings;
+	}
 }
