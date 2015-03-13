@@ -35,5 +35,13 @@ public class Util {
     	DateFormat df = new SimpleDateFormat("MMM/dd/yyyy HH:mm");
 		return df.format(d).toUpperCase();
     }	
-	
+
+    public static long hexaToDec(String value) {  
+		long A = Integer.parseInt(value.substring(0,1), 16) * (16*16*16);
+		long B = Integer.parseInt(value.substring(1,2), 16) * (16*16);
+		long C = Integer.parseInt(value.substring(2,3), 16) * (16);
+		long D = Integer.parseInt(value.substring(3,4), 16);
+		
+		return (A+B+C+D);
+    }
 }

@@ -16,6 +16,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import si.bisoft.commons.dbpool.DbManager;
 
@@ -342,12 +343,7 @@ public class ObuData {
 		    			if (state == null) continue;
 		    			
 			    		if (state.getId() == Constant.STATE_ACCU_TOK_VALUE){
-			    			long A = Integer.parseInt(stateValue.substring(0,1), 16) * (16*16*16);
-				    		long B = Integer.parseInt(stateValue.substring(1,2), 16) * (16*16);
-				    		long C = Integer.parseInt(stateValue.substring(2,3), 16) * (16);
-				    		long D = Integer.parseInt(stateValue.substring(3,4), 16);
-				    			
-				    		stateValue = (A+B+C+D)/Constant.APP_SETTINGS_TOK_KOEF1_VALUE + ""; 				
+			    			stateValue = Util.hexaToDec(stateValue)/Constant.APP_SETTINGS_TOK_KOEF1_VALUE + ""; 				
 		    			}
 			    		else if (state.getId() == Constant.STATE_ACCU_NAPETOST_VALUE){
 			    			if (Integer.parseInt(stateValue.substring(0,1)) > 7) {
@@ -355,15 +351,27 @@ public class ObuData {
 			    				stateValue = "0";
 			    			}
 			    			else {
-				    			long A = Integer.parseInt(stateValue.substring(0,1), 16) * (16*16*16);
-				    			long B = Integer.parseInt(stateValue.substring(1,2), 16) * (16*16);
-				    			long C = Integer.parseInt(stateValue.substring(2,3), 16) * (16);
-				    			long D = Integer.parseInt(stateValue.substring(3,4), 16);
-				    			
-				    			String stateNapetost = stateValue;
-				    			//stateValue = (A+B+C+D)/Constant.APP_SETTINGS_NAPETOST_KOEF1_VALUE +"";
 				    			HashMap<String, BatterySetting> batterySetting = Cache.batterySettings.get(obu.getId_battery_settings());
-				    			stateValue = (A+B+C+D)/batterySetting.get(stateValue).getKoef() +"";
+				    			if (batterySetting.get(stateValue) == null) {
+				    				//interpoliram vrednost hexa
+				    				Set<String> keys = batterySetting.keySet();
+				    				long min_diff = 99999;
+				    				String newValue = stateValue;
+				    				Iterator it = keys.iterator();
+				    				while (it.hasNext()) {
+				    					String keyS = (String)it.next();
+				    					long key = Util.hexaToDec(keyS);
+				    			        long value = Util.hexaToDec(stateValue);
+					    				
+				    			        if (Math.abs(value - key) < min_diff) {
+			    							newValue = keyS;
+			    							min_diff = Math.abs(value - key);
+			    						}
+				    				}
+				    				stateValue = newValue;
+				    			}
+				    			String stateNapetost = stateValue;
+				    			stateValue = Util.hexaToDec(stateValue)/batterySetting.get(stateValue).getKoef() +"";
 				    			
 				    			//procente izracunam iz napetosti in ne iz porabe
 				    			String procent = batterySetting.get(stateNapetost).getPercent() +"";
