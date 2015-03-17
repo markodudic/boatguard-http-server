@@ -134,11 +134,13 @@ public class Cache {
 	    	Constant.STATE_ACCU_EMPTY_VALUE = Cache.statesByCode.get(Constant.STATE_ACCU_EMPTY).getId();
 	    	Constant.STATE_GEO_FIX_VALUE = Cache.statesByCode.get(Constant.STATE_GEO_FIX).getId();
 	    	Constant.STATE_ACCU_DISCONNECTED_VALUE = Cache.statesByCode.get(Constant.STATE_ACCU_DISCONNECTED).getId();
+	    	Constant.STATE_ANCHOR_VALUE = Cache.statesByCode.get(Constant.STATE_ANCHOR).getId();
 	    	
 	    	Constant.OBU_SETTINGS_GEO_FENCE_VALUE = Cache.statesByCode.get(Constant.OBU_SETTINGS_GEO_FENCE).getId();
 	    	Constant.OBU_SETTINGS_LON_VALUE = Cache.statesByCode.get(Constant.OBU_SETTINGS_LON).getId();
 	    	Constant.OBU_SETTINGS_LAT_VALUE = Cache.statesByCode.get(Constant.OBU_SETTINGS_LAT).getId();
 	    	Constant.OBU_SETTINGS_GEO_DISTANCE_VALUE = Cache.statesByCode.get(Constant.OBU_SETTINGS_GEO_DISTANCE).getId();	    	
+	    	Constant.OBU_SETTINGS_ANCHOR_VALUE = Cache.statesByCode.get(Constant.OBU_SETTINGS_ANCHOR).getId();	    	
 	    	Constant.OBU_SETTINGS_ANCHOR_DRIFTING_VALUE = Cache.statesByCode.get(Constant.OBU_SETTINGS_ANCHOR_DRIFTING).getId();	    	
 	    } catch (Exception theException) {
 	    	theException.printStackTrace();
@@ -213,6 +215,7 @@ public class Cache {
 	    	Constant.PUMP_PUMPING_VALUE = Integer.parseInt(Cache.appSettings.get(Constant.PUMP_PUMPING).getValue());
 	    	Constant.PUMP_CLODGED_VALUE = Integer.parseInt(Cache.appSettings.get(Constant.PUMP_CLODGED).getValue());
 	    	Constant.PUMP_DEMAGED_VALUE = Integer.parseInt(Cache.appSettings.get(Constant.PUMP_DEMAGED).getValue());
+	    	Constant.ANCHOR_ENABLED_VALUE = Integer.parseInt(Cache.appSettings.get(Constant.ANCHOR_ENABLED).getValue());
 
 	
 	    } catch (Exception theException) {

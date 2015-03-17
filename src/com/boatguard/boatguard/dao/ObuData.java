@@ -427,6 +427,12 @@ public class ObuData {
 			    				}
 			    			}		    		
 			    		}
+			    		else if (state.getId() == Constant.STATE_ANCHOR_VALUE){
+			    			Map<Integer, String> obuSettings = obu.getSettings();
+			    			if (obuSettings.get(Constant.OBU_SETTINGS_ANCHOR_VALUE).equals(Constant.ANCHOR_ENABLED_VALUE+"")) {
+								stateValue = Constant.ANCHOR_ENABLED_VALUE + "";
+			    			}
+			    		}
 			    		
 			    		//INPUT DOOR
 			    		if (obu.getFirmware() == Constant.FIRMWARE_2) {
