@@ -27,6 +27,8 @@ public class Constant {
 	public static Integer STATE_LON_VALUE						= 12;
 	public static final String STATE_GEO_FIX 					= "GEO_FIX";
 	public static Integer STATE_GEO_FIX_VALUE					= 14;
+	public static final String STATE_ANCHOR 					= "ANCHOR";
+	public static Integer STATE_ANCHOR_VALUE					= 40;
 
 	//OBU SETTINGS ID
 	public static final String OBU_SETTINGS_REFRESH_TIME 		= "REFRESH_TIME";
@@ -45,6 +47,8 @@ public class Constant {
 	public static Integer OBU_SETTINGS_BATTERY_CAPACITY_VALUE	= 32;
 	public static final String OBU_SETTINGS_BATTERY_ALARM_LEVEL = "BATTERY_ALARM_LEVEL";
 	public static Integer OBU_SETTINGS_BATTERY_ALARM_LEVEL_VALUE= 33;
+	public static final String OBU_SETTINGS_ANCHOR				= "ANCHOR";
+	public static Integer OBU_SETTINGS_ANCHOR_VALUE				= 40;
 	public static final String OBU_SETTINGS_ANCHOR_DRIFTING		= "ANCHOR_DRIFTING";
 	public static Integer OBU_SETTINGS_ANCHOR_DRIFTING_VALUE	= 41;
 	public static final String OBU_SETTINGS_LIGHT				= "LIGHT";
@@ -107,6 +111,8 @@ public class Constant {
 	public static Integer PUMP_CLODGED_VALUE					= 2;
 	public static final String PUMP_DEMAGED						= "PUMP_DEMAGED";
 	public static Integer PUMP_DEMAGED_VALUE					= 3;
+	public static final String ANCHOR_ENABLED					= "ANCHOR_ENABLED";
+	public static Integer ANCHOR_ENABLED_VALUE					= 1;
 
 	//Firmware
 	public static final int FIRMWARE_1							= 1;
