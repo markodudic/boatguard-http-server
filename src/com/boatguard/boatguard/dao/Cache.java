@@ -327,7 +327,8 @@ public class Cache {
 	    		batterySetting.put(rs.getString("value"), bs);
 	    		if (id != id_prev) {
 	    	    	if (!prvic) {
-	    	    		batterySettings.put(id, batterySetting);
+	    	    		batterySettings.put(id_prev, batterySetting);
+	    	    		batterySetting.clear();
 	    	    	}
 	    	    	id_prev = id;
 	    	    	prvic = false;
@@ -335,7 +336,6 @@ public class Cache {
 	    	}
 	    	
 	    	batterySettings.put(id, batterySetting);
-	
 	    } catch (Exception theException) {
 	    	theException.printStackTrace();
 	    } finally {
