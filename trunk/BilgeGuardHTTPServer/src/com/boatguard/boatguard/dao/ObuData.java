@@ -351,8 +351,8 @@ public class ObuData {
 			    				stateValue = "0";
 			    			}
 			    			else {
-				    			HashMap<String, BatterySetting> batterySetting = Cache.batterySettings.get(obu.getId_battery_settings());
-				    			if (batterySetting.get(stateValue) == null) {
+			    				HashMap<String, BatterySetting> batterySetting = Cache.batterySettings.get(obu.getId_battery_settings());
+			    				if (batterySetting.get(stateValue) == null) {
 				    				//interpoliram vrednost hexa
 				    				Set<String> keys = batterySetting.keySet();
 				    				long min_diff = 99999;
@@ -370,13 +370,13 @@ public class ObuData {
 				    				}
 				    				stateValue = newValue;
 				    			}
-				    			String stateNapetost = stateValue;
-				    			stateValue = Util.hexaToDec(stateValue)/batterySetting.get(stateValue).getKoef() +"";
+			    				//String stateNapetost = stateValue;
+				    			//stateValue = Util.hexaToDec(stateValue)/batterySetting.get(stateValue).getKoef() +"";
 				    			
 				    			//procente izracunam iz napetosti in ne iz porabe
-				    			String procent = batterySetting.get(stateNapetost).getPercent() +"";
+				    			String procent = batterySetting.get(stateValue).getPercent() +"";
 				    			Map<Integer, String> obuSettings = obu.getSettings();
-				    			
+			    				
 				    			int empty = Integer.parseInt(obuSettings.get(Constant.OBU_SETTINGS_BATTERY_ALARM_LEVEL_VALUE));
 				    			sql = "insert into states_data (id_state, id_obu, value, date_state) " + 
 						    	   		"values ('" + Constant.STATE_ACCU_EMPTY_VALUE + "', " + obu.getUid() + ", '" + (Integer.parseInt(procent)<empty?Constant.BATTERY_EMPTY_VALUE:"0") + "', '" + dateState + "')";
