@@ -370,13 +370,13 @@ public class ObuData {
 				    				}
 				    				stateValue = newValue;
 				    			}
-			    				//String stateNapetost = stateValue;
+				    			//String stateNapetost = stateValue;
 				    			//stateValue = Util.hexaToDec(stateValue)/batterySetting.get(stateValue).getKoef() +"";
 				    			
 				    			//procente izracunam iz napetosti in ne iz porabe
 				    			String procent = batterySetting.get(stateValue).getPercent() +"";
 				    			Map<Integer, String> obuSettings = obu.getSettings();
-			    				
+				    			
 				    			int empty = Integer.parseInt(obuSettings.get(Constant.OBU_SETTINGS_BATTERY_ALARM_LEVEL_VALUE));
 				    			sql = "insert into states_data (id_state, id_obu, value, date_state) " + 
 						    	   		"values ('" + Constant.STATE_ACCU_EMPTY_VALUE + "', " + obu.getUid() + ", '" + (Integer.parseInt(procent)<empty?Constant.BATTERY_EMPTY_VALUE:"0") + "', '" + dateState + "')";
@@ -385,6 +385,7 @@ public class ObuData {
 					    	    		"values ('" + Constant.STATE_ACCU_AH_VALUE + "', " + obu.getUid() + ", '" + procent + "', '" + dateState + "')";
 					    		stmt.executeUpdate(sql);
 				    			
+				    			stateValue = batterySetting.get(stateValue).getVolt() + "";
 			    			}
 		    			}
 			    		else if (state.getId() == Constant.STATE_ACCU_AH_VALUE){
