@@ -343,25 +343,26 @@ public class ObuData {
 		    			if (state == null) continue;
 		    			
 			    		if (state.getId() == Constant.STATE_ACCU_TOK_VALUE){
-			    			stateValue = Util.hexaToDec(stateValue)/Constant.APP_SETTINGS_TOK_KOEF1_VALUE + ""; 				
+			    			stateValue = Util.hexaToDec(stateValue)/Constant.APP_SETTINGS_TOK_KOEF1_VALUE + ""; 	
+			    			stateValue = new DecimalFormat("#.##").format(Float.parseFloat(stateValue));
 		    			}
 			    		else if (state.getId() == Constant.STATE_ACCU_NAPETOST_VALUE){
-			    			if (Integer.parseInt(stateValue.substring(0,1)) > 7) {
+			    			/*if (Integer.parseInt(stateValue.substring(0,1)) > 7) {
 			    				//ce je A>=8 je negativen tok (polnjenje) in prikazem tok=0
 			    				stateValue = "0";
 			    			}
-			    			else {
+			    			else {*/
 			    				HashMap<String, BatterySetting> batterySetting = Cache.batterySettings.get(obu.getId_battery_settings());
+			    				long value = Util.hexaToDec(stateValue);
 			    				if (batterySetting.get(stateValue) == null) {
 				    				//interpoliram vrednost hexa
 				    				Set<String> keys = batterySetting.keySet();
 				    				long min_diff = 99999;
 				    				String newValue = stateValue;
 				    				Iterator it = keys.iterator();
-				    				while (it.hasNext()) {
+			    			        while (it.hasNext()) {
 				    					String keyS = (String)it.next();
 				    					long key = Util.hexaToDec(keyS);
-				    			        long value = Util.hexaToDec(stateValue);
 					    				
 				    			        if (Math.abs(value - key) < min_diff) {
 			    							newValue = keyS;
@@ -385,8 +386,14 @@ public class ObuData {
 					    	    		"values ('" + Constant.STATE_ACCU_AH_VALUE + "', " + obu.getUid() + ", '" + procent + "', '" + dateState + "')";
 					    		stmt.executeUpdate(sql);
 				    			
-				    			stateValue = batterySetting.get(stateValue).getVolt() + "";
-			    			}
+				    			if (value > Constant.APP_SETTINGS_NAPETOST_MAX_VALUE) {
+				    				stateValue = "MAX";			    				
+				    			}
+				    			else {
+				    				stateValue = batterySetting.get(stateValue).getVolt() + "";
+				    				stateValue = new DecimalFormat("#.##").format(Float.parseFloat(stateValue));
+				    			}
+			    			//}
 		    			}
 			    		else if (state.getId() == Constant.STATE_ACCU_AH_VALUE){
 			    			insert = false;
@@ -615,7 +622,7 @@ public class ObuData {
 	    		StateData stateData = new StateData();
 	    		stateData.setId_state(rs.getInt("id_state"));
 	    		stateData.setId_obu(rs.getInt("id_obu"));
-	    		if ((rs.getInt("id_state") == Constant.STATE_ACCU_NAPETOST_VALUE) || 
+	    		/*if ((rs.getInt("id_state") == Constant.STATE_ACCU_NAPETOST_VALUE) || 
 	    			(rs.getInt("id_state") == Constant.STATE_ACCU_TOK_VALUE) ||
 	    			(rs.getInt("id_state") == Constant.STATE_ACCU_AH_VALUE)) {
 		    		String f = new DecimalFormat("#.##").format(Float.parseFloat(rs.getString("value")));
@@ -623,7 +630,8 @@ public class ObuData {
 	    		}
 	    		else {
 	    			stateData.setValue(rs.getString("value"));	
-	    		}
+	    		}*/
+	    		stateData.setValue(rs.getString("value"));	
 	    		stateData.setType(rs.getString("type"));
 	    		stateData.setDateState(rs.getTimestamp("date_state"));	
 	    		stateData.setDateString(Util.formatDate(rs.getTimestamp("date_state").getTime()));
