@@ -135,6 +135,7 @@ public class Cache {
 	    	Constant.STATE_GEO_FIX_VALUE = Cache.statesByCode.get(Constant.STATE_GEO_FIX).getId();
 	    	Constant.STATE_ACCU_DISCONNECTED_VALUE = Cache.statesByCode.get(Constant.STATE_ACCU_DISCONNECTED).getId();
 	    	Constant.STATE_ANCHOR_VALUE = Cache.statesByCode.get(Constant.STATE_ANCHOR).getId();
+	    	Constant.STATE_ANCHOR_DRIFTING_VALUE = Cache.statesByCode.get(Constant.STATE_ANCHOR_DRIFTING).getId();
 	    	
 	    	Constant.OBU_SETTINGS_GEO_FENCE_VALUE = Cache.statesByCode.get(Constant.OBU_SETTINGS_GEO_FENCE).getId();
 	    	Constant.OBU_SETTINGS_LON_VALUE = Cache.statesByCode.get(Constant.OBU_SETTINGS_LON).getId();

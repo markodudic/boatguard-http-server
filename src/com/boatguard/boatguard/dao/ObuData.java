@@ -134,6 +134,9 @@ public class ObuData {
 	    		obuSetting.setId_setting(rs.getInt("id_setting"));
 	    		String v = rs.getString("value");
     			if (rs.getInt("id_setting") == Constant.OBU_SETTINGS_REFRESH_TIME_VALUE) {
+    				if (hasAlarm(Integer.parseInt(obuid))) {
+    					v = (Constant.APP_SETTINGS_ALARM_REFRESH_TIME_VALUE / 60 / 1000) + "";
+    				}
 	    			while (v.length()<2) {
 	    				v = '0' + v;
 	    			}
@@ -172,6 +175,16 @@ public class ObuData {
     	return obuSettings;
 	}	
 
+	private boolean hasAlarm(int obuid) {
+		Map<Integer, StateData> obuStates = getObuData(obuid);
+		return (Integer.parseInt(obuStates.get(Constant.STATE_GEO_FENCE_VALUE).getValue()) == 2 ||
+				Integer.parseInt(obuStates.get(Constant.STATE_PUMP_STATE_VALUE).getValue()) > 0 ||
+				Integer.parseInt(obuStates.get(Constant.STATE_ACCU_EMPTY_VALUE).getValue()) == 1 ||
+				Integer.parseInt(obuStates.get(Constant.STATE_ANCHOR_DRIFTING_VALUE).getValue()) == 2
+				);
+		
+	}
+	
 	private void setEnergy(String obuid, int set) {
 		Connection con = null;
 		Statement stmt = null;

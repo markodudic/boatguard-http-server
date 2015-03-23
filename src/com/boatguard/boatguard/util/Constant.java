@@ -29,6 +29,8 @@ public class Constant {
 	public static Integer STATE_GEO_FIX_VALUE					= 14;
 	public static final String STATE_ANCHOR 					= "ANCHOR";
 	public static Integer STATE_ANCHOR_VALUE					= 40;
+	public static final String STATE_ANCHOR_DRIFTING 			= "ANCHOR_DRIFTING";
+	public static Integer STATE_ANCHOR_DRIFTING_VALUE			= 41;
 
 	//OBU SETTINGS ID
 	public static final String OBU_SETTINGS_REFRESH_TIME 		= "REFRESH_TIME";
@@ -73,7 +75,9 @@ public class Constant {
 	public static Double APP_SETTINGS_TOK_KOEF1_VALUE			= 20.7;
 	public static final String APP_SETTINGS_NAPETOST_MAX		= "STATE_NAPETOST_MAX";
 	public static Integer APP_SETTINGS_NAPETOST_MAX_VALUE		= 784;
-
+	public static final String APP_SETTINGS_ALARM_REFRESH_TIME	= "ALARM_REFRESH_TIME";
+	public static Integer APP_SETTINGS_ALARM_REFRESH_TIME_VALUE	= 120000;
+	
 	//POZICIJE V PODATKIH IZ OBUJA
 	public static final String OBU_PUMP_STATE 					= "OBU_PUMP_STATE";
 	public static Integer OBU_PUMP_STATE_VALUE					= 4;
