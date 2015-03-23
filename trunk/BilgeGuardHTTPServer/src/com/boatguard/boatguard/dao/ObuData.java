@@ -448,7 +448,7 @@ public class ObuData {
 				    			
 				    			int empty = Integer.parseInt(obuSettings.get(Constant.OBU_SETTINGS_BATTERY_ALARM_LEVEL_VALUE));
 					    		sql = "insert into states_data (id_state, id_obu, value, date_state) " + 
-							       		"values ('" + Constant.STATE_ACCU_EMPTY_VALUE + "', " + obu.getUid() + ", '" + (Integer.parseInt(stateValue)<empty?Constant.BATTERY_EMPTY_VALUE:"0") + "', '" + dateState + "')";
+							       		"values ('" + Constant.STATE_ACCU_EMPTY_VALUE + "', " + obu.getUid() + ", '" + (Integer.parseInt(stateValue)<empty&&!isTok?Constant.BATTERY_EMPTY_VALUE:"0") + "', '" + dateState + "')";
 								stmt.executeUpdate(sql);	
 			    			}
 		    			}
