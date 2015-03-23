@@ -419,8 +419,7 @@ public class ObuData {
 						    		stmt.executeUpdate(sql);
 			    				}
 			    				
-			    				System.out.println(value+":"+Constant.APP_SETTINGS_NAPETOST_MAX_VALUE);
-				    			if (value > Constant.APP_SETTINGS_NAPETOST_MAX_VALUE) {
+			    				if (value > Constant.APP_SETTINGS_NAPETOST_MAX_VALUE) {
 				    				stateValue = "MAX";			    				
 				    		    	setEnergy(obu.getUid()+"", 1);
 				    			}
@@ -443,14 +442,18 @@ public class ObuData {
 					    			else stateValue = value + "";
 				    			}
 				    			int stateValueDiff = Integer.parseInt(lastStateData.get(state.getId()).getValue()) - Integer.parseInt(stateValue);
+				    			
+				    			if (stateValueDiff > 0) {
+				    				int empty = Integer.parseInt(obuSettings.get(Constant.OBU_SETTINGS_BATTERY_ALARM_LEVEL_VALUE));
+					    			sql = "insert into states_data (id_state, id_obu, value, date_state) " + 
+							    	   		"values ('" + Constant.STATE_ACCU_EMPTY_VALUE + "', " + obu.getUid() + ", '" + (Integer.parseInt(stateValue)<empty?Constant.BATTERY_EMPTY_VALUE:"0") + "', '" + dateState + "')";
+								    stmt.executeUpdate(sql);	
+				    			}
+							    
 				    			if (stateValueDiff < 0) stateValue = "0";
 				    			else if (stateValueDiff > 100) stateValue = "100";
 				    			else stateValue = stateValueDiff + "";
-				    			
-				    			int empty = Integer.parseInt(obuSettings.get(Constant.OBU_SETTINGS_BATTERY_ALARM_LEVEL_VALUE));
-				    			sql = "insert into states_data (id_state, id_obu, value, date_state) " + 
-						    	   		"values ('" + Constant.STATE_ACCU_EMPTY_VALUE + "', " + obu.getUid() + ", '" + (Integer.parseInt(stateValue)<empty?Constant.BATTERY_EMPTY_VALUE:"0") + "', '" + dateState + "')";
-							    stmt.executeUpdate(sql);		        				
+
 			    			}
 		    			}
 			    		else if ((state.getId() == Constant.STATE_LON_VALUE) || (state.getId() == Constant.STATE_LAT_VALUE)) {
@@ -514,10 +517,11 @@ public class ObuData {
 	   	    	stmt.executeUpdate(sql);
 	   	    	
 		    	//geo fence status prepisem
-	   	    	if (distance > Integer.parseInt( obuSettings.get(Constant.OBU_SETTINGS_GEO_DISTANCE_VALUE))) {
+	   	    	if (distance > Integer.parseInt( obuSettings.get(Constant.OBU_SETTINGS_GEO_DISTANCE_VALUE)) &&
+	   	    			Integer.parseInt(obuSettings.get(Constant.OBU_SETTINGS_GEO_FENCE_VALUE)) == Constant.GEO_FENCE_ENABLED_VALUE) {
 		   	    	sql = "insert into states_data (id_state, id_obu, value, date_state) " + 
 		    	    		"values (" + Constant.OBU_SETTINGS_GEO_FENCE_VALUE + ", " + obu.getUid() + ", '" + Constant.GEO_FENCE_ALARM_VALUE + "', '" + dateState + "')";
-    			}
+		   	    }
 	   	    	else {
 	   	    		sql = "insert into states_data (id_state, id_obu, value, date_state) " + 
 		    	    		"values (" + Constant.OBU_SETTINGS_GEO_FENCE_VALUE + ", " + obu.getUid() + ", '" + obuSettings.get(Constant.OBU_SETTINGS_GEO_FENCE_VALUE) + "', '" + dateState + "')";
@@ -862,7 +866,7 @@ public class ObuData {
 		        		Map<Integer, ObuSetting> obuSettings = obuData.getObuSettings(obu.getUid()+"", null, null);
 	        			state = ((ObuSetting)obuSettings.get(Constant.OBU_SETTINGS_GEO_FENCE_VALUE)).getValue();
 	        			
-				        if (stateData.getId_state() == Constant.OBU_SETTINGS_GEO_FENCE_VALUE){
+				        if (stateData.getId_state() == Constant.OBU_SETTINGS_GEO_DISTANCE_VALUE){
 		        			if (Integer.parseInt(state) == Constant.GEO_FENCE_DISABLED_VALUE){
 	        					continue;
 		        			}
@@ -870,11 +874,14 @@ public class ObuData {
 	        			}
 	        			else if (stateData.getId_state() == Constant.STATE_ACCU_AH_VALUE) {
 		        			alarmValue = Integer.parseInt(((ObuSetting)obuSettings.get(Constant.OBU_SETTINGS_BATTERY_ALARM_LEVEL_VALUE)).getValue());	
-		        			
+		        			if (alarmValue == 0) {
+		        				continue;
+		        			}
 	        			}
 				    } else {
 	        			alarmValue = Integer.parseInt(alarm.getValue());
 	        		}
+		        	
 		        	if (alarm.getFormat().equals("N")) {
 		        		boolean setAlarm = false;
 		        		if (alarm.getOperand().equals("=")){
@@ -960,7 +967,12 @@ public class ObuData {
 					MailClient.sendMail(email_to, title, msg);
 				}	
 				
-				//GCM
+		    	sql = "insert into alarm_data (id_alarm, id_obu, value, message, message_short, title, action, type, sound, vibrate, send_customer, send_friends, date_alarm, active) " + 
+		    			"values (" + alarmid + ", " + obuid + ", '" + stateValue + "', '" + msg + "', '" + messageShort + "', '" + title + "', '" + action + "', '" + type + "', " + sound + ", " + vibrate + ", " + sendCustomer + ", " + sendFriends + ", '" + date_alarm + "', " + active + ")";
+		    		
+		    	stmt.executeUpdate(sql);
+
+		    	//GCM
 				Sender sender = new Sender("AIzaSyCqFRqsD4W9SC1urN5k5njvIzUKDmAM46Y");
 				Message gcmMsg = new Message.Builder()
 					.addData("alarmid", alarmid+"")
@@ -983,14 +995,7 @@ public class ObuData {
 		    	
 		    	if (devices.size() > 0) {
 		    		MulticastResult result = sender.send(gcmMsg, devices, 5);
-
-		    		System.out.println("GCM RESULT="+result);
-		    	}
-		    	
-		    	sql = "insert into alarm_data (id_alarm, id_obu, value, message, message_short, title, action, type, sound, vibrate, send_customer, send_friends, date_alarm, active) " + 
-		    			"values (" + alarmid + ", " + obuid + ", '" + stateValue + "', '" + msg + "', '" + messageShort + "', '" + title + "', '" + action + "', '" + type + "', " + sound + ", " + vibrate + ", " + sendCustomer + ", " + sendFriends + ", '" + date_alarm + "', " + active + ")";
-		    		
-		    	stmt.executeUpdate(sql);
+		    	}	    	
 	    	}
 	    	
 	    } catch (Exception theException) {
