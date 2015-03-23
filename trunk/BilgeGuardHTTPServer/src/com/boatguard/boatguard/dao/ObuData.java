@@ -869,7 +869,7 @@ public class ObuData {
 	        			}
 	        			else if (stateData.getId_state() == Constant.STATE_ACCU_AH_VALUE) {
 		        			alarmValue = Integer.parseInt(((ObuSetting)obuSettings.get(Constant.OBU_SETTINGS_BATTERY_ALARM_LEVEL_VALUE)).getValue());	
-		        			if (Integer.parseInt(stateData.getValue()) == 0) {
+		        			if (Float.parseFloat(obuLast.get(Constant.STATE_ACCU_TOK_VALUE).getValue()) != 0) {
 		        				continue;
 		        			}
 	        			}
