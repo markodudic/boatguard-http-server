@@ -419,6 +419,7 @@ public class ObuData {
 						    		stmt.executeUpdate(sql);
 			    				}
 			    				
+			    				System.out.println(value+":"+Constant.APP_SETTINGS_NAPETOST_MAX_VALUE);
 				    			if (value > Constant.APP_SETTINGS_NAPETOST_MAX_VALUE) {
 				    				stateValue = "MAX";			    				
 				    		    	setEnergy(obu.getUid()+"", 1);
