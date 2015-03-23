@@ -195,6 +195,7 @@ public class Cache {
 	    	Constant.APP_SETTINGS_NAPETOST_KOEF1_VALUE = Double.parseDouble(Cache.appSettings.get(Constant.APP_SETTINGS_NAPETOST_KOEF1).getValue());
 	    	Constant.APP_SETTINGS_NAPETOST_KOEF2_VALUE = Double.parseDouble(Cache.appSettings.get(Constant.APP_SETTINGS_NAPETOST_KOEF2).getValue());
 	    	Constant.APP_SETTINGS_NAPETOST_KOEF3_VALUE = Double.parseDouble(Cache.appSettings.get(Constant.APP_SETTINGS_NAPETOST_KOEF3).getValue());
+	    	Constant.APP_SETTINGS_NAPETOST_MAX_VALUE = Integer.parseInt(Cache.appSettings.get(Constant.APP_SETTINGS_NAPETOST_MAX).getValue());
 	    	
 	    	Constant.OBU_PUMP_STATE_VALUE = Integer.parseInt(Cache.appSettings.get(Constant.OBU_PUMP_STATE).getValue());
 	    	Constant.OBU_ACCU_NAPETOST_VALUE = Integer.parseInt(Cache.appSettings.get(Constant.OBU_ACCU_NAPETOST).getValue());
