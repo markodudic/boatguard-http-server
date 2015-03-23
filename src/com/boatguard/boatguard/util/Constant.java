@@ -71,6 +71,8 @@ public class Constant {
 	public static Double APP_SETTINGS_NAPETOST_KOEF3_VALUE		= 11.29;
 	public static final String APP_SETTINGS_TOK_KOEF1 			= "STATE_TOK_KOEF1";
 	public static Double APP_SETTINGS_TOK_KOEF1_VALUE			= 20.7;
+	public static final String APP_SETTINGS_NAPETOST_MAX 		= "STATE_NAPETOST_MAX";
+	public static Integer APP_SETTINGS_NAPETOST_MAX_VALUE		= 784;
 
 	//POZICIJE V PODATKIH IZ OBUJA
 	public static final String OBU_PUMP_STATE 					= "OBU_PUMP_STATE";
