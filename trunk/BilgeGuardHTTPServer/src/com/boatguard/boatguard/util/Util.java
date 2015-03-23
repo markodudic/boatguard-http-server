@@ -44,4 +44,16 @@ public class Util {
 		
 		return (A+B+C+D);
     }
+
+    public static long hexaToDecLong(String value) {  
+		long A = Integer.parseInt(value.substring(0,1), 16) * (16*16*16*16*16*16*16);
+		long B = Integer.parseInt(value.substring(1,2), 16) * (16*16*16*16*16*16);
+		long C = Integer.parseInt(value.substring(2,3), 16) * (16*16*16*16*16);
+		long D = Integer.parseInt(value.substring(3,4), 16) * (16*16*16*16);
+		long E = Integer.parseInt(value.substring(4,5), 16) * (16*16*16);
+		long F = Integer.parseInt(value.substring(5,6), 16) * (16*16);
+		
+		return (A+B+C+D+E+F);
+    }
+
 }

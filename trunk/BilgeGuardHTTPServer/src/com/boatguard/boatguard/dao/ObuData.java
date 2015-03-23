@@ -157,11 +157,7 @@ public class ObuData {
 	    	}
 	    	
 			//reset energy reset - za test zakomentirano da lahko kita testira
-			String sqls = "update obu_settings " +
-						"set value = 0 " +
-						"where id_obu = " + obuid + " and " +
-						"	id_setting = " + Constant.OBU_SETTINGS_BATTERY_ENERGY_RESET_VALUE;
-			stmt.executeUpdate(sqls);
+	    	setEnergy(obuid, 0);
 	
 	    } catch (Exception theException) {
 	    	theException.printStackTrace();
@@ -176,6 +172,29 @@ public class ObuData {
     	return obuSettings;
 	}	
 
+	private void setEnergy(String obuid, int set) {
+		Connection con = null;
+		Statement stmt = null;
+	    try {
+    		con = DbManager.getConnection("config");
+    		stmt = con.createStatement();   	
+	    	//reset energy reset - za test zakomentirano da lahko kita testira
+    		String sqls = "update obu_settings " +
+						"set value = " + set + " " +
+						"where id_obu = " + obuid + " and " +
+						"	id_setting = " + Constant.OBU_SETTINGS_BATTERY_ENERGY_RESET_VALUE;
+    		stmt.executeUpdate(sqls);
+	
+	    } catch (Exception theException) {
+	    	theException.printStackTrace();
+	    } finally {
+	    	try {
+	    		if (stmt != null) stmt.close();
+	    		if (con != null) con.close();
+			} catch (Exception e) {}
+	    }			
+	}
+	
 	public void setObuSettings(String data) {
 		Gson gson = new Gson();
 		Type listType = new TypeToken<List<ObuSetting>>(){}.getType();
@@ -304,6 +323,7 @@ public class ObuData {
 		Map<Integer, State> obuStates = getStates(obu.getUid());
 		lastStateData = getObuData(obu.getUid());
 		boolean isAdd = false;
+		boolean isTok = false;
 		
 	    try {
 	    	//fake zaradi kite, ko posilja takale podatke
@@ -318,7 +338,7 @@ public class ObuData {
 	    	//if (lastStateData.get(Constant.STATE_ROW_STATE_VALUE)==null || tsDS.after(lastStateData.get(Constant.STATE_ROW_STATE_VALUE).getDateState())) {
 	    		//Map<Integer, StateData> stateDataLast = getStateData(obu.getId());
 	    		isAdd = true;
-		    	
+    			
 		    	con = DbManager.getConnection("config");
 				stmt = con.createStatement();   	
 	 
@@ -339,12 +359,23 @@ public class ObuData {
 		    			}
 		    			
 		    			State state = obuStates.get(Cache.states.get(i).getId());
-		    			
 		    			if (state == null) continue;
 		    			
 			    		if (state.getId() == Constant.STATE_ACCU_TOK_VALUE){
+			    			String prefix = "-";
+			    			if (Integer.parseInt(stateValue.substring(1,2)) == 8) {
+			    				stateValue = stateValue.substring(0,1) + "0" + stateValue.substring(2,4);
+			    				prefix = "+";
+			    			}
 			    			stateValue = Util.hexaToDec(stateValue)/Constant.APP_SETTINGS_TOK_KOEF1_VALUE + ""; 	
 			    			stateValue = new DecimalFormat("#.##").format(Float.parseFloat(stateValue));
+			    			if (stateValue.equals("0")) {
+			    				setEnergy(obu.getUid()+"", 1);
+			    			}
+			    			else {
+				    			stateValue = prefix + stateValue;
+				    			isTok = true;
+			    			}
 		    			}
 			    		else if (state.getId() == Constant.STATE_ACCU_NAPETOST_VALUE){
 			    			/*if (Integer.parseInt(stateValue.substring(0,1)) > 7) {
@@ -374,20 +405,23 @@ public class ObuData {
 				    			//String stateNapetost = stateValue;
 				    			//stateValue = Util.hexaToDec(stateValue)/batterySetting.get(stateValue).getKoef() +"";
 				    			
-				    			//procente izracunam iz napetosti in ne iz porabe
-				    			String procent = batterySetting.get(stateValue).getPercent() +"";
-				    			Map<Integer, String> obuSettings = obu.getSettings();
-				    			
-				    			int empty = Integer.parseInt(obuSettings.get(Constant.OBU_SETTINGS_BATTERY_ALARM_LEVEL_VALUE));
-				    			sql = "insert into states_data (id_state, id_obu, value, date_state) " + 
-						    	   		"values ('" + Constant.STATE_ACCU_EMPTY_VALUE + "', " + obu.getUid() + ", '" + (Integer.parseInt(procent)<empty?Constant.BATTERY_EMPTY_VALUE:"0") + "', '" + dateState + "')";
-							    stmt.executeUpdate(sql);		        				
-					    		sql = "insert into states_data (id_state, id_obu, value, date_state) " + 
-					    	    		"values ('" + Constant.STATE_ACCU_AH_VALUE + "', " + obu.getUid() + ", '" + procent + "', '" + dateState + "')";
-					    		stmt.executeUpdate(sql);
-				    			
+				    			//procente izracunam iz napetosti in ne iz porabe. če je tok=0
+			    				if (!isTok) {
+					    			String procent = batterySetting.get(stateValue).getPercent() +"";
+					    			Map<Integer, String> obuSettings = obu.getSettings();
+					    			
+					    			int empty = Integer.parseInt(obuSettings.get(Constant.OBU_SETTINGS_BATTERY_ALARM_LEVEL_VALUE));
+					    			sql = "insert into states_data (id_state, id_obu, value, date_state) " + 
+							    	   		"values ('" + Constant.STATE_ACCU_EMPTY_VALUE + "', " + obu.getUid() + ", '" + (Integer.parseInt(procent)<empty?Constant.BATTERY_EMPTY_VALUE:"0") + "', '" + dateState + "')";
+								    stmt.executeUpdate(sql);		        				
+						    		sql = "insert into states_data (id_state, id_obu, value, date_state) " + 
+						    	    		"values ('" + Constant.STATE_ACCU_AH_VALUE + "', " + obu.getUid() + ", '" + procent + "', '" + dateState + "')";
+						    		stmt.executeUpdate(sql);
+			    				}
+			    				
 				    			if (value > Constant.APP_SETTINGS_NAPETOST_MAX_VALUE) {
 				    				stateValue = "MAX";			    				
+				    		    	setEnergy(obu.getUid()+"", 1);
 				    			}
 				    			else {
 				    				stateValue = batterySetting.get(stateValue).getVolt() + "";
@@ -396,28 +430,27 @@ public class ObuData {
 			    			//}
 		    			}
 			    		else if (state.getId() == Constant.STATE_ACCU_AH_VALUE){
-			    			insert = false;
-			    			/*long A = Integer.parseInt(stateValue.substring(0,1), 16) * (16*16*16*16*16*16*16);
-			    			long B = Integer.parseInt(stateValue.substring(1,2), 16) * (16*16*16*16*16*16);
-			    			long C = Integer.parseInt(stateValue.substring(2,3), 16) * (16*16*16*16*16);
-			    			long D = Integer.parseInt(stateValue.substring(3,4), 16) * (16*16*16*16);
-			    			long E = Integer.parseInt(stateValue.substring(4,5), 16) * (16*16*16);
-			    			long F = Integer.parseInt(stateValue.substring(5,6), 16) * (16*16);
-			    			
-			    			Double stateUsedEnergy = (A+B+C+D+E+F)/(3600 * Constant.APP_SETTINGS_TOK_KOEF1_VALUE);
-			    			
-			    			Map<Integer, String> obuSettings = obu.getSettings();
-			    			stateValue = "100";
-			    			if (stateUsedEnergy > 0) {
-			    				long value = (100 - Math.round((100 * stateUsedEnergy) / Float.parseFloat(obuSettings.get(Constant.OBU_SETTINGS_BATTERY_CAPACITY_VALUE))));
-				    			if (value < 0) stateValue = "0";
-				    			else stateValue = value + "";
+			    			insert = isTok;
+			    			if (isTok) {				    			
+				    			Double stateUsedEnergy = Util.hexaToDecLong(stateValue)/(3600 * Constant.APP_SETTINGS_TOK_KOEF1_VALUE);
+				    			
+				    			Map<Integer, String> obuSettings = obu.getSettings();
+				    			stateValue = "100";
+				    			if (stateUsedEnergy > 0) {
+				    				long value = (100 - Math.round((100 * stateUsedEnergy) / Float.parseFloat(obuSettings.get(Constant.OBU_SETTINGS_BATTERY_CAPACITY_VALUE))));
+					    			if (value < 0) stateValue = "0";
+					    			else stateValue = value + "";
+				    			}
+				    			int stateValueDiff = Integer.parseInt(lastStateData.get(state.getId()).getValue()) - Integer.parseInt(stateValue);
+				    			if (stateValueDiff < 0) stateValue = "0";
+				    			else if (stateValueDiff > 100) stateValue = "100";
+				    			else stateValue = stateValueDiff + "";
+				    			
+				    			int empty = Integer.parseInt(obuSettings.get(Constant.OBU_SETTINGS_BATTERY_ALARM_LEVEL_VALUE));
+				    			sql = "insert into states_data (id_state, id_obu, value, date_state) " + 
+						    	   		"values ('" + Constant.STATE_ACCU_EMPTY_VALUE + "', " + obu.getUid() + ", '" + (Integer.parseInt(stateValue)<empty?Constant.BATTERY_EMPTY_VALUE:"0") + "', '" + dateState + "')";
+							    stmt.executeUpdate(sql);		        				
 			    			}
-			    						    			
-			    			int empty = Integer.parseInt(obuSettings.get(Constant.OBU_SETTINGS_BATTERY_ALARM_LEVEL_VALUE));
-			    			sql = "insert into states_data (id_state, id_obu, value, date_state) " + 
-					    	   		"values ('" + Constant.STATE_ACCU_EMPTY_VALUE + "', " + obu.getUid() + ", '" + (Integer.parseInt(stateValue)<empty?Constant.BATTERY_EMPTY_VALUE:"0") + "', '" + dateState + "')";
-						    stmt.executeUpdate(sql);*/		        				
 		    			}
 			    		else if ((state.getId() == Constant.STATE_LON_VALUE) || (state.getId() == Constant.STATE_LAT_VALUE)) {
 			    			Integer geoFixValue = Integer.parseInt(states[Constant.OBU_GEO_FIX_VALUE]);
@@ -689,12 +722,13 @@ public class ObuData {
 	    		StateData stateData = new StateData();
 	    		stateData.setId_state(rs.getInt("id_state"));
 	    		stateData.setId_obu(rs.getInt("id_obu"));
-	    		if ((rs.getInt("id_state") == Constant.STATE_ACCU_TOK_VALUE) || (rs.getInt("id_state") == Constant.STATE_ACCU_NAPETOST_VALUE)) {
+	    		/*if ((rs.getInt("id_state") == Constant.STATE_ACCU_TOK_VALUE) || (rs.getInt("id_state") == Constant.STATE_ACCU_NAPETOST_VALUE)) {
 	    			stateData.setValue(Math.round(Float.parseFloat(rs.getString("value")))+"");	    			
 	    		}
 	    		else {
 	    			stateData.setValue(rs.getString("value"));
-	    		}
+	    		}*/
+	    		stateData.setValue(rs.getString("value"));
 	    		stateData.setDateState(rs.getTimestamp("date_state"));	
 	    		statesData.add(stateData);
 	    		
