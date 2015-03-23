@@ -442,18 +442,14 @@ public class ObuData {
 					    			else stateValue = value + "";
 				    			}
 				    			int stateValueDiff = Integer.parseInt(lastStateData.get(state.getId()).getValue()) - Integer.parseInt(stateValue);
-				    			
-				    			if (stateValueDiff > 0) {
-				    				int empty = Integer.parseInt(obuSettings.get(Constant.OBU_SETTINGS_BATTERY_ALARM_LEVEL_VALUE));
-					    			sql = "insert into states_data (id_state, id_obu, value, date_state) " + 
-							    	   		"values ('" + Constant.STATE_ACCU_EMPTY_VALUE + "', " + obu.getUid() + ", '" + (Integer.parseInt(stateValue)<empty?Constant.BATTERY_EMPTY_VALUE:"0") + "', '" + dateState + "')";
-								    stmt.executeUpdate(sql);	
-				    			}
-							    
 				    			if (stateValueDiff < 0) stateValue = "0";
 				    			else if (stateValueDiff > 100) stateValue = "100";
 				    			else stateValue = stateValueDiff + "";
-
+				    			
+				    			int empty = Integer.parseInt(obuSettings.get(Constant.OBU_SETTINGS_BATTERY_ALARM_LEVEL_VALUE));
+					    		sql = "insert into states_data (id_state, id_obu, value, date_state) " + 
+							       		"values ('" + Constant.STATE_ACCU_EMPTY_VALUE + "', " + obu.getUid() + ", '" + (Integer.parseInt(stateValue)<empty?Constant.BATTERY_EMPTY_VALUE:"0") + "', '" + dateState + "')";
+								stmt.executeUpdate(sql);	
 			    			}
 		    			}
 			    		else if ((state.getId() == Constant.STATE_LON_VALUE) || (state.getId() == Constant.STATE_LAT_VALUE)) {
@@ -865,8 +861,7 @@ public class ObuData {
 		        		ObuData obuData = new ObuData();
 		        		Map<Integer, ObuSetting> obuSettings = obuData.getObuSettings(obu.getUid()+"", null, null);
 	        			state = ((ObuSetting)obuSettings.get(Constant.OBU_SETTINGS_GEO_FENCE_VALUE)).getValue();
-	        			
-				        if (stateData.getId_state() == Constant.OBU_SETTINGS_GEO_DISTANCE_VALUE){
+	        			if (stateData.getId_state() == Constant.OBU_SETTINGS_GEO_DISTANCE_VALUE){
 		        			if (Integer.parseInt(state) == Constant.GEO_FENCE_DISABLED_VALUE){
 	        					continue;
 		        			}
@@ -874,7 +869,7 @@ public class ObuData {
 	        			}
 	        			else if (stateData.getId_state() == Constant.STATE_ACCU_AH_VALUE) {
 		        			alarmValue = Integer.parseInt(((ObuSetting)obuSettings.get(Constant.OBU_SETTINGS_BATTERY_ALARM_LEVEL_VALUE)).getValue());	
-		        			if (alarmValue == 0) {
+		        			if (Integer.parseInt(stateData.getValue()) == 0) {
 		        				continue;
 		        			}
 	        			}
