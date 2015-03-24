@@ -1002,9 +1002,10 @@ public class ObuData {
 				    .addData("vibrate",  vibrate+"")
 				    .build();
 				
-				sql = "select * "
+				sql = "select gcm_registration_id, phone_uuid, max(last_visited) "
     				+ "from devices "
-    				+ "where id_obu = " + obuid;
+    				+ "where id_obu = " + obuid + " "
+    				+ "group by phone_uuid";
 				rs = stmt.executeQuery(sql);
 		    	
 				List<String> devices = new ArrayList<String>(); 
