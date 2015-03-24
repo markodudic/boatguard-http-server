@@ -219,8 +219,15 @@ public class ObuData {
 	    	con = DbManager.getConnection("config");
 			stmt = con.createStatement();   	
 			int obuId = 0;
+			boolean setLocation = false;
 			for (int i = 0; i < obuSettings.size(); i++) {
 				ObuSetting obuSetting = (ObuSetting) obuSettings.get(i);
+				if  (obuSetting.getCode().equals(Constant.OBU_SETTINGS_LAT)) {
+					setLocation = obuSetting.getValue().equals("SET");
+				}
+				if  (obuSetting.getCode().equals(Constant.OBU_SETTINGS_LAT) || obuSetting.getCode().equals(Constant.OBU_SETTINGS_LON)) {
+					continue;
+				}
 				obuId = obuSetting.getId_obu();
 				
 		    	String sql = "update obu_settings " + 
@@ -231,30 +238,32 @@ public class ObuData {
 					    	
 			}
 			
-			//set current location
-			String sqls = "update obu_settings " +
+			if (setLocation) {
+				//set current location
+				String sqls = "update obu_settings " +
+							"set value = (select value " +
+										"from states_data " +
+										"where id_obu = " + obuId +
+										"		and id_state = " + Constant.OBU_SETTINGS_LAT_VALUE +
+										" order by date_state desc " +
+										"limit 1) " +
+							"where id_setting = " + Constant.OBU_SETTINGS_LAT_VALUE +
+							"		and id_obu = " + obuId;
+				
+				stmt.executeUpdate(sqls);
+	
+				sqls = "update obu_settings " +
 						"set value = (select value " +
 									"from states_data " +
 									"where id_obu = " + obuId +
-									"		and id_state = " + Constant.OBU_SETTINGS_LAT_VALUE +
+									"		and id_state = " + Constant.OBU_SETTINGS_LON_VALUE +
 									" order by date_state desc " +
 									"limit 1) " +
-						"where id_setting = " + Constant.OBU_SETTINGS_LAT_VALUE;
+						"where id_setting = " + Constant.OBU_SETTINGS_LON_VALUE +
+						"		and id_obu = " + obuId;
 			
-			stmt.executeUpdate(sqls);
-
-			sqls = "update obu_settings " +
-					"set value = (select value " +
-								"from states_data " +
-								"where id_obu = " + obuId +
-								"		and id_state = " + Constant.OBU_SETTINGS_LON_VALUE +
-								" order by date_state desc " +
-								"limit 1) " +
-					"where id_setting = " + Constant.OBU_SETTINGS_LON_VALUE;
-		
-			stmt.executeUpdate(sqls);
-			
-			//updetam lokacijo
+				stmt.executeUpdate(sqls);
+			}
 		} catch (Exception theException) {
 			theException.printStackTrace();
 		} finally {
