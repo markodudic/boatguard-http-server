@@ -457,12 +457,14 @@ public class ObuData {
 				    			Double stateUsedEnergy = Util.hexaToDecLong(stateValue)/(3600 * Constant.APP_SETTINGS_TOK_KOEF1_VALUE);
 				    			
 				    			Map<Integer, String> obuSettings = obu.getSettings();
-				    			stateValue = "100";
+				    			stateValue = "0";
 				    			if (stateUsedEnergy > 0) {
-				    				long value = (100 - Math.round((100 * stateUsedEnergy) / Float.parseFloat(obuSettings.get(Constant.OBU_SETTINGS_BATTERY_CAPACITY_VALUE))));
-					    			if (value < 0) stateValue = "0";
+				    				//long value = (100 - Math.round((100 * stateUsedEnergy) / Float.parseFloat(obuSettings.get(Constant.OBU_SETTINGS_BATTERY_CAPACITY_VALUE))));
+				    				long value = Math.round((100 * stateUsedEnergy) / Float.parseFloat(obuSettings.get(Constant.OBU_SETTINGS_BATTERY_CAPACITY_VALUE)));
+				    				if (value < 0) stateValue = "0";
 					    			else stateValue = value + "";
 				    			}
+				    			
 				    			int stateValueDiff = Integer.parseInt(lastStateData.get(state.getId()).getValue()) - Integer.parseInt(stateValue);
 				    			if (stateValueDiff < 0) stateValue = "0";
 				    			else if (stateValueDiff > 100) stateValue = "100";
@@ -891,9 +893,9 @@ public class ObuData {
 	        			}
 	        			else if (stateData.getId_state() == Constant.STATE_ACCU_AH_VALUE) {
 		        			alarmValue = Integer.parseInt(((ObuSetting)obuSettings.get(Constant.OBU_SETTINGS_BATTERY_ALARM_LEVEL_VALUE)).getValue());	
-		        			if (Float.parseFloat(obuLast.get(Constant.STATE_ACCU_TOK_VALUE).getValue()) != 0) {
-		        				continue;
-		        			}
+		        			//if (Float.parseFloat(obuLast.get(Constant.STATE_ACCU_TOK_VALUE).getValue()) != 0) {
+		        			//	continue;
+		        			//}
 	        			}
 				    } else {
 	        			alarmValue = Integer.parseInt(alarm.getValue());
