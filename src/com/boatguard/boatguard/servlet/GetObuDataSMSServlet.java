@@ -31,7 +31,13 @@ import com.boatguard.boatguard.util.Constant;
 import com.boatguard.boatguard.util.HttpLog;
 import com.google.gson.Gson;
 
-
+/********************************
+ * Get obu data with sms. Send SMS to server number: +38640715054 with content username/pass of the obu.
+ * Sender number must be from the customers.phone_number 
+ * 
+ * @author Marko
+ *
+ */
 
 public class GetObuDataSMSServlet extends InitServlet {
 
