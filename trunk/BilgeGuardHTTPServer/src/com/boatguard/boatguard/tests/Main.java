@@ -27,6 +27,8 @@ public class Main {
 	private final static int bilgePumpState = Constant.PUMP_CLODGED_VALUE; //0-ok;1-pumping;2-clodged;3-dry;4-servis
 	private final static int anchorEnabledState = Constant.ANCHOR_ENABLED_VALUE; //1-da;0-NE
 	private final static int anchorDriftingState = Constant.ANCHOR_ENABLED_VALUE; //1-da;0-NE
+	private final static int batteryState = Constant.ACCU_DISCONNECT_VALUE; //1-da;0-NE
+	private final static String batteryAHValue = "03FF"; //glej tabelo battery settings
 	
 	private final static String geoFenceLat = "01402.5046";
 	private final static String geoFenceLon = "4626.0058";
@@ -43,17 +45,18 @@ public class Main {
         System.out.println("START!");
         
         main.setSettings(geoFenceEnabled, geoFenceLat, geoFenceLon);
-        main.setStates(bilgePumpState, anchorEnabledState==1?"D":"N", anchorDriftingState==1?"D":"N", geoFenceLat, geoFenceLon); 
+        main.setStates(bilgePumpState, anchorEnabledState==1?"D":"N", anchorDriftingState==1?"D":"N", geoFenceLat, geoFenceLon, batteryState==1?"D":"N", batteryAHValue); 
         main.getObuData();
 		System.out.println("*****TEST RESULTS*****");
         main.checkBilgePump();
         main.checkAnchor();
         main.checkGeoFence();
+        main.checkBattery();
     }
 
-    private void setStates(int pumpState, String anchorState, String anchorDrifting, String lat, String lon) {
+    private void setStates(int pumpState, String anchorState, String anchorDrifting, String lat, String lon, String batteryState, String batteryAHValue) {
 		System.out.println("*****TEST START*****");
-    	String url = server + "setdata?serial="+serialObu+"&data="+lon+",N,"+lat+",E,1,16,0,"+pumpState+",N,"+anchorState+","+anchorDrifting+",D,0000,000000,03FF,00,00,";
+    	String url = server + "setdata?serial="+serialObu+"&data="+lon+",N,"+lat+",E,1,16,0,"+pumpState+",N,"+anchorState+","+anchorDrifting+","+batteryState+",0000,000000,"+batteryAHValue+",00,00,";
 		main.sendPost(url);
     }
 
@@ -81,7 +84,7 @@ public class Main {
     		System.out.println("*****BILGE PUMP TEST OK*****");
     	}
     	else {
-    		System.out.println("!!!!!!BILGEBILGE PUMP TEST NI OK!!!!!!");    		
+    		System.out.println("!!!!!!BILGE PUMP TEST NI OK!!!!!!");    		
     	}
     }
 
@@ -130,7 +133,7 @@ public class Main {
     		System.out.println(geoFenceEnabled+": " + Constant.GEO_FENCE_ALARM);
     	}
     	
-    	
+     	
     	
     	if (Integer.parseInt(geoFenceState.getValue()) == geoFenceResult) {
     		System.out.println("*****GEO FENCE TEST OK*****");
@@ -140,6 +143,42 @@ public class Main {
     	}
     }
     
+    private void checkBattery() {
+    	ObuState obuState = obuStates.get(Constant.STATE_ACCU_DISCONNECTED_VALUE);
+    	if (Integer.parseInt(obuState.getValue()) == Constant.ACCU_DISCONNECT_VALUE) {
+    		System.out.println(batteryState+": NOT "+Constant.ACCU_DISCONNECT);
+    	}
+    	else if (Integer.parseInt(obuState.getValue()) != Constant.STATE_ACCU_DISCONNECTED_VALUE) {
+    		System.out.println(batteryState+":"+Constant.ACCU_DISCONNECT);
+    	}
+
+    	if (Integer.parseInt(obuState.getValue()) == batteryState) {
+    		System.out.println("*****BATTERY DISCONNECTED TEST OK*****");
+    	}
+    	else {
+    		System.out.println("!!!!!!BATTERY DISCONNECTED TEST NI OK!!!!!!");    		
+    	}
+    	
+    	obuState = obuStates.get(Constant.STATE_ACCU_EMPTY_VALUE);
+    	ObuState obuState1 = obuStates.get(Constant.STATE_ACCU_AH_VALUE);
+    	int alarm = Integer.parseInt(obuSettings.get(Constant.OBU_SETTINGS_BATTERY_ALARM_LEVEL_VALUE).getValue());
+    	if ((Integer.parseInt(obuState.getValue()) == Constant.BATTERY_EMPTY_VALUE) && 
+    		(Integer.parseInt(obuState1.getValue())<Integer.parseInt(obuSettings.get(Constant.OBU_SETTINGS_BATTERY_ALARM_LEVEL_VALUE).getValue()))) {
+    		System.out.println(batteryAHValue+": EMPTY: "+obuState.getValue()+": ALARM: "+alarm+": "+Constant.BATTERY_EMPTY);
+    		System.out.println("*****BATTERY EMPTY TEST OK*****");
+    		return;
+    	}
+    	else if ((Integer.parseInt(obuState.getValue()) != Constant.BATTERY_EMPTY_VALUE) && 
+    			 (Integer.parseInt(obuState1.getValue())>Integer.parseInt(obuSettings.get(Constant.OBU_SETTINGS_BATTERY_ALARM_LEVEL_VALUE).getValue()))) {
+    		System.out.println(batteryAHValue+": EMPTY: "+obuState.getValue()+": ALARM: "+alarm+": NOT "+Constant.BATTERY_EMPTY);
+    		System.out.println("*****BATTERY EMPTY TEST OK*****");
+    		return;
+    	}
+    	
+		System.out.println("!!!!!!BATTERY EMPTY TEST NI OK!!!!!! "+batteryAHValue+": EMPTY: "+obuState.getValue()+": ALARM: "+alarm);    		
+
+    }
+
     private void getObuData() {
     	String url = server + "getdata?obuid="+idObu;
     	getData(main.sendPost(url));
