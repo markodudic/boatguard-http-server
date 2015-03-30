@@ -624,6 +624,47 @@ public class ObuData {
     	return obu;
 	}	
 
+	public LinkedHashMap<Integer, Obu> getObus() {
+		Connection con = null;
+		ResultSet rs = null;
+	    Statement stmt = null;
+	    LinkedHashMap<Integer, Obu> obus = new LinkedHashMap<Integer, Obu>();
+		
+    	try {
+    		con = DbManager.getConnection("config");
+
+	    	String	sql = "select * from obus";
+	    		
+    		stmt = con.createStatement();   	
+	    	rs = stmt.executeQuery(sql);
+    		
+	    	while (rs.next()) {
+	    		Obu obu = new Obu();
+	    		obu.setUid(rs.getInt("uid"));
+	    		obu.setName(rs.getString("name"));
+	    		obu.setNumber(rs.getString("number"));
+	    		obu.setPin(rs.getString("pin"));
+	    		obu.setPuk(rs.getString("puk"));
+	    		obu.setSerial_number(rs.getString("serial_number"));
+	    		obu.setFirmware(rs.getInt("firmware"));
+	    		obu.setId_battery_settings(rs.getInt("id_battery_settings"));
+	    		obu.setActive(rs.getInt("active"));	
+	    		obus.put(rs.getInt("uid"), obu);
+	    	}
+	    		
+	    } catch (Exception theException) {
+	    	theException.printStackTrace();
+	    } finally {
+	    	try {
+	    		if (rs != null) rs.close();
+	    		if (stmt != null) stmt.close();
+	    		if (con != null) con.close();
+			} catch (Exception e) {}
+	    }	
+		
+    	return obus;
+	}	
+
 	public int getObuFromUser(String originator, String text) {
 		Connection con = null;
 		ResultSet rs = null;
