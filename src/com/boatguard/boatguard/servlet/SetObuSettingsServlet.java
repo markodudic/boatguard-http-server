@@ -45,8 +45,6 @@ public class SetObuSettingsServlet extends InitServlet {
 		System.out.println("SERVLET POST");		
 		super.doPost(request, response);
 
-		String data = (String) request.getParameter("data");
-		
 		StringBuilder sb = new StringBuilder();
 	    BufferedReader reader = request.getReader();
 	    try {
@@ -57,7 +55,7 @@ public class SetObuSettingsServlet extends InitServlet {
 	    } finally {
 	        reader.close();
 	    }
-        
+	    
 		ObuData obuData = new ObuData();
 		obuData.setObuSettings(sb.toString());
 		
