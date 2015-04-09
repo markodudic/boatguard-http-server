@@ -5,6 +5,7 @@ import java.io.OutputStream;
 import java.util.List;
 import java.util.Locale;
 
+import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -16,7 +17,6 @@ import org.apache.commons.logging.LogFactory;
 import com.boatguard.boatguard.dao.ObuData;
 import com.boatguard.boatguard.objects.Friend;
 import com.boatguard.boatguard.util.HttpLog;
-
 import com.google.gson.Gson;
 
 
@@ -28,7 +28,7 @@ public class GetFriendsServlet extends InitServlet {
 	//static Logger log = Logger.getLogger(ObuSettingsServlet.class.getName());
 	private static Log log = LogFactory.getLog(GetFriendsServlet.class);
 
-	public void init() throws ServletException
+	public void init(ServletConfig conf) throws ServletException
 	{
 	}
  

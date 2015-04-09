@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.logging.Logger;
 
+import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -18,7 +19,7 @@ public class SetCustomerServlet extends InitServlet {
 
 	static Logger log = Logger.getLogger(SetCustomerServlet.class.getName());
 
-	public void init() throws ServletException
+	public void init(ServletConfig conf) throws ServletException
 	{
 	}
 	/*

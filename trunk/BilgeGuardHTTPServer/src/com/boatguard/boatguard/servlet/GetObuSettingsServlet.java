@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -17,7 +18,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import com.google.gson.Gson;
-
 import com.boatguard.boatguard.dao.ObuData;
 import com.boatguard.boatguard.objects.Alarm;
 import com.boatguard.boatguard.objects.ObuSetting;
@@ -32,7 +32,7 @@ public class GetObuSettingsServlet extends InitServlet {
 	//static Logger log = Logger.getLogger(ObuSettingsServlet.class.getName());
 	private static Log log = LogFactory.getLog(GetObuSettingsServlet.class);
 
-	public void init() throws ServletException
+	public void init(ServletConfig conf) throws ServletException
 	{
 	}
  

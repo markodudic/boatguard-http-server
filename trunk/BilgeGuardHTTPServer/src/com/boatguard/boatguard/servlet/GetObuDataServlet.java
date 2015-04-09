@@ -10,6 +10,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
+import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -32,7 +33,7 @@ public class GetObuDataServlet extends InitServlet {
 	//static Logger log = Logger.getLogger(ObuSettingsServlet.class.getName());
 	private static Log log = LogFactory.getLog(GetObuDataServlet.class);
 
-	public void init() throws ServletException
+	public void init(ServletConfig conf) throws ServletException
 	{
 	}
  

@@ -57,7 +57,9 @@ public class InitServlet extends HttpServlet implements javax.servlet.Servlet {
 			
 			String realPath = getServletContext().getRealPath("/");
 			String pf = "WebContent/";
-			String log4jFile = getInitParameter("config-log4j-file");
+			//String log4jFile = getInitParameter("config-log4j-file");
+			String log4jFile = getServletContext().getInitParameter("config-log4j-file");
+			
 			if (!new File("WebContent/"+log4jFile).exists()) {
 				pf = realPath;
 			}
@@ -65,7 +67,8 @@ public class InitServlet extends HttpServlet implements javax.servlet.Servlet {
 			
 			
 			String df = "WebContent/";
-			String configFile = getInitParameter("config-init-file");
+			//String configFile = getInitParameter("config-init-file");
+			String configFile = getServletContext().getInitParameter("config-init-file");
 			if (!new File("WebContent/"+configFile).exists()) {
 				df = realPath;
 			}

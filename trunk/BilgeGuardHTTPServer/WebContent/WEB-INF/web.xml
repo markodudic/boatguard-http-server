@@ -6,17 +6,27 @@
     <param-name>webAppRootKey</param-name>
     <param-value>boatguard</param-value>
   </context-param>
+  
+  <context-param>
+    <param-name>config-init-file</param-name>
+    <param-value>/WEB-INF/config.properties</param-value>
+  </context-param>
+  <context-param>
+    <param-name>config-log4j-file</param-name>
+    <param-value>/WEB-INF/log4j.properties</param-value>
+  </context-param>
+  
   <servlet>
     <servlet-name>InitServlet</servlet-name>
     <servlet-class>com.boatguard.boatguard.servlet.InitServlet</servlet-class>
-    <init-param>
+    <!--  init-param>
       <param-name>config-init-file</param-name>
       <param-value>/WEB-INF/config.properties</param-value>
     </init-param>
     <init-param>
       <param-name>config-log4j-file</param-name>
       <param-value>/WEB-INF/log4j.properties</param-value>
-    </init-param>
+    </init-param-->
     <load-on-startup>1</load-on-startup>
   </servlet>
   
