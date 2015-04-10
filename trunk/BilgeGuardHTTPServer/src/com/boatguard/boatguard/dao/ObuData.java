@@ -1525,9 +1525,8 @@ public class ObuData {
 
 	    	String	sql = "select customers.uid customer_id, obus.* "
 	    			+ "from customers left join obus on (customers.id_obu = obus.uid) "
-	    			+ "where (UPPER(username) = UPPER('" + username + "') and serial_number = " + obuSerialNumber + " and obus.active=1) OR "
-	    					+ "NOT EXISTS (select uid from obus where serial_number = " + obuSerialNumber + ")";
-	    		
+	    			+ "where (UPPER(username) = UPPER('" + username + "') and serial_number = '" + obuSerialNumber + "' and obus.active=1) OR "
+	    					+ "NOT EXISTS (select uid from obus where serial_number = '" + obuSerialNumber + "')";
 	    	stmt = con.createStatement();   	
 	    	rs = stmt.executeQuery(sql);
 	    	
@@ -1540,12 +1539,12 @@ public class ObuData {
 		    	sql = "insert into customers (username, password, register_date, active, id_obu) " 
 		    			+ "select '" + username + "', '" + password + "', now(), 1, uid "
 		    			+ "from obus "
-		    			+ "where serial_number = " + obuSerialNumber;
+		    			+ "where serial_number = '" + obuSerialNumber + "'";
 		    	stmt.executeUpdate(sql);
 	    		
 		    	sql = "update obus " + 
 		    			"set active = 1 " +
-		    			"where serial_number = " + obuSerialNumber;
+		    			"where serial_number = '" + obuSerialNumber + "'";
 		    	stmt.executeUpdate(sql);
 
 		    	result = login(username, password, obuSerialNumber, sessionId);
