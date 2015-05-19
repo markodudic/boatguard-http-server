@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+    <meta charset="utf-8">
+    <title>BOATGUARD location</title>
+	<script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
+	<script src="js/samples.js"></script>
+	<link rel="stylesheet" media="screen" href="http://handsontable.com/dist/handsontable.full.css">
+	<link rel="stylesheet" media="screen" href="css/samples.css">
+	<link rel="stylesheet" href="css/bg.css"/>
+	<script src="js/settings.js"></script>
+
+	<link rel="shortcut icon" href="./img/fav.png" type="image/x-icon"/>
+	
+<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAi1_iBErRoU5bIfNEMy8aR06sHWBu6xCI"></script>
+
+    <script type="text/javascript">
+    if (!localStorage.getItem("logged")) {
+    	window.location.replace("index.html");   
+    }
+    	
+    function initialize() {
+	  	  ajax('/boatguard/getdata', 'GET', '', function(res) {
+			  	var parsedJSON = JSON.parse(res.response);
+			  	var myLatlng;
+			  	var infowindow = new google.maps.InfoWindow();
+			  	var bounds = new google.maps.LatLngBounds();
+			  	
+		        var map = new google.maps.Map(document.getElementById('map-canvas'), {
+				      zoom: 10,
+				      mapTypeId: google.maps.MapTypeId.ROADMAP
+				    });
+				
+			  	for (var i=0;i<parsedJSON.length;i++) {
+		            var lat = 0;
+		            var lon = 0;
+		            var states = parsedJSON[i].states;
+		            for (var ii=0;ii<states.length;ii++) {
+				        if (states[ii].id_state == 11) {
+				        	lon = states[ii].value;
+				        }
+				        if (states[ii].id_state == 12) {
+				        	lat = states[ii].value;
+				        }		            
+				    }
+		            
+			    	var latF = Math.floor(lat/100);
+			    	var latD = (lat/100 - latF)/0.6;
+					lat = latF + latD;
+					var lonF = Math.floor(lon/100);
+					var lonD = (lon/100 - lonF)/0.6;
+					lon = lonF + lonD;
+						
+					var marker = new google.maps.Marker({
+			    	      position: new google.maps.LatLng(lat, lon),
+			    	      map: map,
+			    	      title: 'Last location'
+			    	});  	
+			        google.maps.event.addListener(marker, 'click', (function(marker, i) {
+			          return function() {
+			            infowindow.setContent(parsedJSON[i].obu.serial_number);
+			            infowindow.open(map, marker);
+			          }
+			        })(marker, i));
+				      
+					bounds.extend(marker.position);	            
+		        }
+			  	map.fitBounds(bounds);
+		  });
+    	
+      }
+      google.maps.event.addDomListener(window, 'load', initialize);
+      
+      function back() {
+    	  window.location.replace("/boatguard/index.html");
+      }
+    </script>
+    
+</head>
+<body>
+
+<h2>OBU ALL LOCATIONS</h2>
+
+	<button onclick="back();">Back</button>
+	<p></p>
+	<div id="map-canvas"></div>
+</body>
+</html>

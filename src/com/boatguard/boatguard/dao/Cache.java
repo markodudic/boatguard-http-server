@@ -219,6 +219,8 @@ public class Cache {
 	    	Constant.PUMP_DEMAGED_VALUE = Integer.parseInt(Cache.appSettings.get(Constant.PUMP_DEMAGED).getValue());
 	    	Constant.ANCHOR_ENABLED_VALUE = Integer.parseInt(Cache.appSettings.get(Constant.ANCHOR_ENABLED).getValue());
 
+	    	Constant.SERVER_SETTINGS_USERNAME_VALUE = Cache.appSettings.get(Constant.SERVER_SETTINGS_USERNAME).getValue();
+	    	Constant.SERVER_SETTINGS_PASSWORD_VALUE = Cache.appSettings.get(Constant.SERVER_SETTINGS_PASSWORD).getValue();
 	
 	    } catch (Exception theException) {
 	    	theException.printStackTrace();

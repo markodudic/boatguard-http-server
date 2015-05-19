@@ -124,5 +124,9 @@ public class Constant {
 	public static final int FIRMWARE_1							= 1;
 	public static final int FIRMWARE_2							= 2;
 	
-	
+	//Server
+	public static final String SERVER_SETTINGS_USERNAME			= "USERNAME";
+	public static String SERVER_SETTINGS_USERNAME_VALUE			= "boat";
+	public static final String SERVER_SETTINGS_PASSWORD			= "PASSWORD";
+	public static String SERVER_SETTINGS_PASSWORD_VALUE			= "guard";
 }

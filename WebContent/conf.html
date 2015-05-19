@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+    <meta charset="utf-8">
+    <title>BOATGUARD conf</title>
+	<script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
+	<script src="http://handsontable.com/dist/handsontable.full.js"></script>
+	<script src="js/samples.js"></script>
+	<script src="js/conf.js"></script>
+	<script src="js/settings.js"></script>
+	      
+	<link rel="stylesheet" media="screen" href="http://handsontable.com/dist/handsontable.full.css">
+	<link rel="stylesheet" media="screen" href="css/samples.css">
+	<link rel="stylesheet" href="css/bg.css"/>
+
+	<link rel="shortcut icon" href="./img/fav.png" type="image/x-icon"/>
+	
+</head>
+<body>
+
+	<h2>OBU CONFIGURATION</h2>
+	
+	<p></p>
+	
+	<button name="load" id="load">Update</button>
+	<button onclick="window.history.back();">Back</button>
+	<pre id="exampleconsole" class="console">Data updated</pre>
+	<div id="example" class="handsontable"></div>
+
+  <p>
+  	<button name="dump" data-dump="#example" data-instance="hot" title="Prints current data source to Firebug/Chrome Dev Tools">Save</button>
+  </p>
+</body>
+</html>

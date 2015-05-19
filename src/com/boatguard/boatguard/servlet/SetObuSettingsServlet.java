@@ -56,8 +56,7 @@ public class SetObuSettingsServlet extends InitServlet {
 	    } finally {
 	        reader.close();
 	    }
-	    
-		ObuData obuData = new ObuData();
+	    ObuData obuData = new ObuData();
 		obuData.setObuSettings(sb.toString());
 		
     	OutputStream out = null;

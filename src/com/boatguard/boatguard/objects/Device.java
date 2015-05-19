@@ -6,6 +6,7 @@ public class Device {
 		
 		private int uid;
 		private int id_obu;
+		private int id_customer;
 		private String gcm_registration_id;
 		private Timestamp last_visited;
 		private String app_version;
@@ -27,6 +28,12 @@ public class Device {
 		}
 		public void setId_obu(int id_obu) {
 			this.id_obu = id_obu;
+		}		
+		public int getId_customer() {
+			return id_customer;
+		}
+		public void setId_customer(int id_customer) {
+			this.id_customer = id_customer;
 		}
 		public String getGcm_registration_id() {
 			return gcm_registration_id;

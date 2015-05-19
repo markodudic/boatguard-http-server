@@ -1,0 +1,7 @@
+body {background: white; margin: 20px;}
+h2 {margin: 20px 0;}
+#map-canvas {
+        height: 100%;
+        margin: 0px;
+        padding: 0px
+      }

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-2">
+	<title>BOATGUARD admin</title>
+	
+	<script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
+	<script src="http://handsontable.com/dist/handsontable.full.js"></script>
+	<script src="js/samples.js"></script>
+	<script src="js/index.js"></script>
+	<script src="js/settings.js"></script>
+	      
+	<link rel="stylesheet" media="screen" href="http://handsontable.com/dist/handsontable.full.css">
+	<link rel="stylesheet" media="screen" href="css/samples.css">
+	<link rel="stylesheet" href="css/bg.css"/>
+	
+	<link rel="shortcut icon" href="./img/fav.png" type="image/x-icon"/>
+
+</head>
+<body>
+
+
+<section id="login">
+	<table border="0" cellspacing="0" cellpadding="4" align="center">
+		<tr>
+			<td colspan=2>
+				<img src="./img/ic_logotype_day.png" width="300">
+			</td>
+		</tr>
+		<tr>
+			<td>Uporabni&#353;ko ime</td>
+			<td><input type="text" id="username" size="20"></td>
+		</tr>
+		<tr>
+			<td>Geslo</td>
+			<td><input type="password" id="password" size="20"></td>
+		</tr>
+		<tr>
+			<td></td>
+			<td><button name="login" id="login" onclick="login();">Login</button></td>
+		</tr>
+	</table>
+</section>
+
+<section id="obu_data" style="visibility: hidden; display: none;">
+	<h2>OBU DATA</h2>
+	
+	<p>Obu data. For alarms click alarms, for obu configuration click conf</p>
+	
+	<button name="load" id="load">Update</button>
+	<button name="logout" id="logout" onclick="logout();">Logout</button>
+	<button name="logout" id="logout" onclick="all_locations();">All locations</button>
+	<pre id="exampleconsole" class="console">Data updated</pre>
+	<div id="example" class="handsontable"></div>
+</section>
+
+
+</body>
+</html>

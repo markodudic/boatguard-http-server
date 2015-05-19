@@ -237,5 +237,15 @@
     <servlet-name>GetObuDataSMSServlet</servlet-name>
     <url-pattern>/getdatasms</url-pattern>
   </servlet-mapping>
-    
+
+  <servlet>
+    <servlet-name>LoginUserServlet</servlet-name>
+    <servlet-class>com.boatguard.boatguard.servlet.LoginUserServlet</servlet-class>
+    <load-on-startup>22</load-on-startup>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>LoginUserServlet</servlet-name>
+    <url-pattern>/loginuser</url-pattern>
+  </servlet-mapping>
+  
 </web-app>

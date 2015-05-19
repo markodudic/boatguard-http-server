@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+    <meta charset="utf-8">
+    <title>BOATGUARD location</title>
+	<link rel="stylesheet" media="screen" href="http://handsontable.com/dist/handsontable.full.css">
+	<link rel="stylesheet" media="screen" href="css/samples.css">
+	<link rel="stylesheet" href="css/bg.css"/>
+	<script src="js/settings.js"></script>
+
+	<link rel="shortcut icon" href="./img/fav.png" type="image/x-icon"/>
+	
+<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAi1_iBErRoU5bIfNEMy8aR06sHWBu6xCI"></script>
+
+    <script type="text/javascript">
+    if (!localStorage.getItem("logged")) {
+    	window.location.replace("index.html");   
+    }
+    
+    var QueryString = function () {
+    	  // This function is anonymous, is executed immediately and 
+    	  // the return value is assigned to QueryString!
+    	  var query_string = {};
+    	  var query = window.location.search.substring(1);
+    	  var vars = query.split("&");
+    	  for (var i=0;i<vars.length;i++) {
+    	    var pair = vars[i].split("=");
+    	        // If first entry with this name
+    	    if (typeof query_string[pair[0]] === "undefined") {
+    	      query_string[pair[0]] = pair[1];
+    	        // If second entry with this name
+    	    } else if (typeof query_string[pair[0]] === "string") {
+    	      var arr = [ query_string[pair[0]], pair[1] ];
+    	      query_string[pair[0]] = arr;
+    	        // If third or later entry with this name
+    	    } else {
+    	      query_string[pair[0]].push(pair[1]);
+    	    }
+    	  } 
+    	    return query_string;
+    } ();
+    	
+    function initialize() {
+    	var lon = QueryString.lat
+    	var lat = QueryString.lon
+    	
+    	var latF = Math.floor(lat/100);
+    	var latD = (lat/100 - latF)/0.6;
+		lat = latF + latD;
+		var lonF = Math.floor(lon/100);
+		var lonD = (lon/100 - lonF)/0.6;
+		lon = lonF + lonD;
+			
+        var myLatlng = new google.maps.LatLng(lat, lon);
+  		var mapOptions = {
+          center: myLatlng,
+          zoom: 13
+        };
+        var map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
+    	var marker = new google.maps.Marker({
+    	      position: myLatlng,
+    	      map: map,
+    	      title: 'Last location'
+    	});    	
+      }
+      google.maps.event.addDomListener(window, 'load', initialize);
+    </script>
+    
+</head>
+<body>
+
+<h2>OBU LOCATION</h2>
+
+	<button onclick="window.history.back();">Back</button>
+	<p></p>
+	<div id="map-canvas"></div>
+</body>
+</html>

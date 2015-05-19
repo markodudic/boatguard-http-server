@@ -222,6 +222,8 @@ public class ObuData {
 			boolean setLocation = false;
 			for (int i = 0; i < obuSettings.size(); i++) {
 				ObuSetting obuSetting = (ObuSetting) obuSettings.get(i);
+				if (obuSetting.getId_obu() == 0) continue;
+				
 				if  (obuSetting.getCode().equals(Constant.OBU_SETTINGS_LAT)) {
 					setLocation = obuSetting.getValue().equals("SET");
 				}
@@ -633,7 +635,7 @@ public class ObuData {
     	try {
     		con = DbManager.getConnection("config");
 
-	    	String	sql = "select * from obus";
+	    	String	sql = "select * from obus order by serial_number";
 	    		
     		stmt = con.createStatement();   	
 	    	rs = stmt.executeQuery(sql);
@@ -732,8 +734,18 @@ public class ObuData {
 	    		}*/
 	    		stateData.setValue(rs.getString("value"));	
 	    		stateData.setType(rs.getString("type"));
-	    		stateData.setDateState(rs.getTimestamp("date_state"));	
-	    		stateData.setDateString(Util.formatDate(rs.getTimestamp("date_state").getTime()));
+	    		//workaround za rejca
+	    		Timestamp tsf = rs.getTimestamp("date_state");
+	    		if ((id==1)||(id==3)) {
+	    			java.util.Date date= new java.util.Date();
+	    			Timestamp ts = new Timestamp(date.getTime());
+	    			tsf = new Timestamp(ts.getTime() - (100 * 1000L));
+	    			stateData.setDateState(tsf);
+	    		}
+	    		else {
+	    			stateData.setDateState(rs.getTimestamp("date_state"));	
+	    		}
+	    		stateData.setDateString(Util.formatDate(tsf.getTime()));
 	    		statesData.put(rs.getInt("id_state"), stateData);
 	    		//System.out.println(rs.getInt("id_state")+"+"+rs.getString("value"));
 	    	}
@@ -1345,8 +1357,9 @@ public class ObuData {
 	    	con = DbManager.getConnection("config");
 			stmt = con.createStatement();   	
 
-			String sql = "insert into devices (id_obu, gcm_registration_id, phone_model, phone_platform, phone_platform_version, phone_uuid, app_version, last_visited) " + 
-			    		" values (" + device.getId_obu() + ", '" + 
+			String sql = "insert into devices (id_obu, id_customer, gcm_registration_id, phone_model, phone_platform, phone_platform_version, phone_uuid, app_version, last_visited) " + 
+			    		" values (" + device.getId_obu() + ", " + 
+			    					device.getId_customer() + ", '" + 
 			    					device.getGcm_registration_id() + "', '" +
 			    					device.getPhone_model() + "', '" +
 			    					device.getPhone_platform() + "', '" +
@@ -1356,6 +1369,7 @@ public class ObuData {
 			    					"now())" +
 						" on duplicate key update " +
 			    		"	id_obu = " + device.getId_obu() + ", " +
+			    		"	id_customer = " + device.getId_customer() + ", " +
 	    				"	gcm_registration_id = '" + device.getGcm_registration_id() + "', " +
 	    				"	phone_model = '" + device.getPhone_model() + "', " +
 	    				"	phone_platform = '" + device.getPhone_platform() + "', " +
@@ -1569,7 +1583,31 @@ public class ObuData {
 		
 	}
 
+	public String loginUser(String username, String password, String sessionId) {
+		
+		Gson gson = new Gson();
+		String obuS = null;
+		String errorS = null;
+		
+ 	    try {
+    		if ((username.equalsIgnoreCase(Constant.SERVER_SETTINGS_USERNAME_VALUE) && (password.equalsIgnoreCase(Constant.SERVER_SETTINGS_PASSWORD_VALUE)))) {
+	    		
+	    	} else {
+	    		Error error = new Error(Error.LOGIN_ERROR, Error.LOGIN_ERROR_CODE, Error.LOGIN_ERROR_MSG);
+				errorS = gson.toJson(error);
+	    	}
+			
 	
+	    } catch (Exception theException) {
+	    	theException.printStackTrace();
+	    } finally {
+	    }	
+		
+		String result = "{\"sessionId\":\""+sessionId+"\",\"error\":"+errorS+"}";
+    	return result;
+
+		
+	}	
 	/*public void setLoginData(String username, String deviceName, String devicePlatform, String deviceVersion, String deviceUuid, String phoneNumber, String appVersion){
 		Connection con = null;
 		Statement stmt = null;
