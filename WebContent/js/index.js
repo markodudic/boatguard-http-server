@@ -66,7 +66,17 @@
 		  td.innerHTML = "<a href='/boatguard/location.html?id_obu="+value+"&sessionid="+localStorage.getItem("sessionid")+"'>loc</a>";
 	  }
 	  
-	  if ((col == 10) && (value == "2-ALARM")) {
+	  if (col == 7) {
+		  var n = new Date().getTime();
+		  var d = new Date(value).getTime();
+		  if (n-d<60*60*100) {
+			  td.style.background = '#0F0';
+		  }
+		  else if (n-d<24*60*60*100) {
+			  td.style.background = '#FF0';
+		  }
+	  }
+	  else if ((col == 10) && (value == "2-ALARM")) {
 		  td.style.background = '#F00';
 	  }
 	  else if ((col == 10) && (value == "1-HOME")) {
@@ -184,7 +194,7 @@
             for (i = 0; i < 30; i++) { 
         		if ((row.states[i] != undefined) && (row.states[i].id_state == attr)) {
                     if (attr == 1) {
-                    	return row.states[i].dateString
+                    	return row.states[i].dateState
                     }
                     else if (attr == 10) {
                     	if (row.states[i].value == 0) return "0-DISABLED"
@@ -223,21 +233,6 @@
   Handsontable.Dom.addEvent(load, 'click', function() {
 	  update();
 	});
-  
-/*  function bindDumpButton() {
-  
-      Handsontable.Dom.addEvent(document.body, 'click', function (e) {
-  
-        var element = e.target || e.srcElement;
-  
-        if (element.nodeName == "BUTTON" && element.name == 'dump') {
-          var name = element.getAttribute('data-dump');
-          var instance = element.getAttribute('data-instance');
-          var hot = window[instance];
-          console.log('data of ' + name, hot.getData());
-        }
-      });
-    }
-  bindDumpButton();*/
+
 
 });
