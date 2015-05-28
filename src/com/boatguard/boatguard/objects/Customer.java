@@ -14,6 +14,7 @@ public class Customer {
 		private int birth_year;
 		private String country;
 		private Timestamp register_date;
+		private String phone_number;
 		/*private Timestamp last_visited;
 		private String app_version;
 		private String phone_number;
@@ -77,6 +78,12 @@ public class Customer {
 		public void setRegister_date(Timestamp register_date) {
 			this.register_date = register_date;
 		}
+		public String getPhone_number() {
+			return phone_number;
+		}
+		public void setPhone_number(String phone_number) {
+			this.phone_number = phone_number;
+		}
 		/*public Timestamp getLast_visited() {
 			return last_visited;
 		}
@@ -106,12 +113,6 @@ public class Customer {
 		}
 		public void setHome_network(String home_network) {
 			this.home_network = home_network;
-		}
-		public String getPhone_number() {
-			return phone_number;
-		}
-		public void setPhone_number(String phone_number) {
-			this.phone_number = phone_number;
 		}
 		public String getPhone_platform_version() {
 			return phone_platform_version;

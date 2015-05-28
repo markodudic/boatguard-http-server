@@ -18,10 +18,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
+
 import si.bisoft.commons.dbpool.DbManager;
 
 import com.boatguard.boatguard.comm.MailClient;
-import com.boatguard.boatguard.comm.SmsClient;
 import com.boatguard.boatguard.objects.Alarm;
 import com.boatguard.boatguard.objects.AlarmData;
 import com.boatguard.boatguard.objects.BatterySetting;
@@ -41,11 +43,19 @@ import com.google.android.gcm.server.MulticastResult;
 import com.google.android.gcm.server.Sender;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.twilio.sdk.*;
+import com.twilio.sdk.resource.factory.*;
+
 
 public class ObuData {
 	
 	private static Map<Integer, StateData> lastStateData = new HashMap<Integer, StateData>();
+	public static final String ACCOUNT_SID = "AC112ea33cdbaeca1f35082386731fb9d0"; 
+	public static final String AUTH_TOKEN = "c9a002cfe476f7cf233d6ef382c99f18";
+	public static final String FROM = "+447903596041";
 	
+	public static final String GCM = "AIzaSyCqFRqsD4W9SC1urN5k5njvIzUKDmAM46Y";
+			
 	public ObuData(){
 
 	}
@@ -1029,11 +1039,25 @@ public class ObuData {
 	    	} else {
 				String msg = getMessage(message, obuid);
 				
+				Customer customer = getCustomer(obuid);
 				if ((sendCustomer == 1) && (active == 1)) {
-					SmsClient.sendSMSCustomer(obuid, msg);
+					//SmsClient.sendSMSCustomer(obuid, msg);
+					String phoneNum = customer.getPhone_number();
+				
+					if (phoneNum != null) {
+						sendSMS(phoneNum, msg);
+					}
 				}
 				if ((sendFriends == 1) && (active == 1)) {
-					SmsClient.sendSMSFriends(obuid, msg);
+					//SmsClient.sendSMSFriends(obuid, msg);
+					List<Friend> friends = getFriends(customer.getUid());
+					for (int i=0; i<friends.size(); i++) {
+						Friend friend = friends.get(i);
+						String phoneNum = friend.getNumber();
+						if (phoneNum != null) {
+							sendSMS(phoneNum, msg);
+						}
+					}
 				}
 				if ((sendEmail == 1) && (active == 1)) {
 					MailClient.sendMail(email_to, title, msg);
@@ -1045,7 +1069,7 @@ public class ObuData {
 		    	stmt.executeUpdate(sql);
 
 		    	//GCM
-				Sender sender = new Sender("AIzaSyCqFRqsD4W9SC1urN5k5njvIzUKDmAM46Y");
+				Sender sender = new Sender(GCM);
 				Message gcmMsg = new Message.Builder()
 					.addData("alarmid", alarmid+"")
 					.addData("title", title)
@@ -1082,7 +1106,28 @@ public class ObuData {
 	    }
 	}	
 	
-	public String getMessage(String message, int obuid) {
+	
+	private void sendSMS(String phoneNum, String message) {
+		 TwilioRestClient client = new TwilioRestClient(ACCOUNT_SID, AUTH_TOKEN); 
+		 
+		 // Build the parameters 
+		 List<NameValuePair> params = new ArrayList<NameValuePair>(); 
+		 params.add(new BasicNameValuePair("To", phoneNum)); 
+		 params.add(new BasicNameValuePair("From", FROM)); 
+		 params.add(new BasicNameValuePair("Body", message));   
+	 
+		 MessageFactory messageFactory = client.getAccount().getMessageFactory(); 
+		 com.twilio.sdk.resource.instance.Message msg;
+		 try {
+			 msg = messageFactory.create(params);
+			 System.out.println(msg.getSid()); 	
+		 } catch (TwilioRestException e) {
+			// TODO Auto-generated catch block
+			 e.printStackTrace();
+		 } 
+	}
+	
+	private String getMessage(String message, int obuid) {
 		Connection con = null;
 		Statement stmt = null;
 		ResultSet rs = null;
@@ -1278,9 +1323,9 @@ public class ObuData {
 	    		customer.setBirth_year(rs.getInt("birth_year"));
 	    		customer.setCountry(rs.getString("country"));
 	    		customer.setRegister_date(rs.getTimestamp("register_date"));
+	    		customer.setPhone_number(rs.getString("phone_number"));
 	    		/*customer.setLast_visited(rs.getTimestamp("last_visited"));
 	    		customer.setApp_version(rs.getString("app_version"));
-	    		customer.setPhone_number(rs.getString("phone_number"));
 	    		customer.setPhone_model(rs.getString("phone_model"));
 	    		customer.setPhone_platform(rs.getString("phone_platform"));
 	    		customer.setPhone_platform_version(rs.getString("phone_platform_version"));
