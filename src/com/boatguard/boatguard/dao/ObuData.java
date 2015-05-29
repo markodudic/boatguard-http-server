@@ -744,9 +744,9 @@ public class ObuData {
 	    		}*/
 	    		stateData.setValue(rs.getString("value"));	
 	    		stateData.setType(rs.getString("type"));
-	    		//workaround za rejca
+	    		//workaround za test account
 	    		Timestamp tsf = rs.getTimestamp("date_state");
-	    		if ((id==1)||(id==3)) {
+	    		if (id==1) {
 	    			java.util.Date date= new java.util.Date();
 	    			Timestamp ts = new Timestamp(date.getTime());
 	    			tsf = new Timestamp(ts.getTime() - (100 * 1000L));
