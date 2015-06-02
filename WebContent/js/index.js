@@ -65,8 +65,11 @@
 	  else if ((col == 2) && (value!=undefined)) {
 		  td.innerHTML = "<a href='/boatguard/location.html?id_obu="+value+"&sessionid="+localStorage.getItem("sessionid")+"'>loc</a>";
 	  }
+	  else if ((col == 3) && (value!=undefined)) {
+		  td.innerHTML = "<a href='/boatguard/history.html?id_obu="+value+"&sessionid="+localStorage.getItem("sessionid")+"'>hist</a>";
+	  }	  
 	  
-	  if (col == 7) {
+	  if (col == 8) {
 		  var n = new Date().getTime();
 		  var d = new Date(value).getTime();
 		  if (n-d<60*60*100) {
@@ -76,31 +79,31 @@
 			  td.style.background = '#FF0';
 		  }
 	  }
-	  else if ((col == 10) && (value == "2-ALARM")) {
+	  else if ((col == 11) && (value == "2-ALARM")) {
 		  td.style.background = '#F00';
 	  }
-	  else if ((col == 10) && (value == "1-HOME")) {
+	  else if ((col == 11) && (value == "1-HOME")) {
 		  td.style.background = '#0F0';
 	  }
-	  else if ((col == 16) && ((value == "1-PUMPING") || (value == "2-CLODGED") || (value == "3-DEMAGED") || (value == "4-SERVIS"))) {
+	  else if ((col == 17) && ((value == "1-PUMPING") || (value == "2-CLODGED") || (value == "3-DEMAGED") || (value == "4-SERVIS"))) {
 		  td.style.background = '#F00';
-	  }
-	  else if ((col == 20) && (value == "0-NO")) {
-		  td.style.background = '#F00';
-	  }
-	  else if ((col == 20) && (value == "1-YES")) {
-		  td.style.background = '#0F0';
 	  }
 	  else if ((col == 21) && (value == "0-NO")) {
-		  td.style.background = '#0F0';
-	  }
-	  else if ((col == 21) && (value == "1-YES")) {
 		  td.style.background = '#F00';
 	  }
-	  else if ((col == 23) && (value == "0-HOME")) {
+	  else if ((col == 21) && (value == "1-YES")) {
 		  td.style.background = '#0F0';
 	  }
-	  else if ((col == 23) && (value == "1-ALARM")) {
+	  else if ((col == 22) && (value == "0-NO")) {
+		  td.style.background = '#0F0';
+	  }
+	  else if ((col == 22) && (value == "1-YES")) {
+		  td.style.background = '#F00';
+	  }
+	  else if ((col == 24) && (value == "0-HOME")) {
+		  td.style.background = '#0F0';
+	  }
+	  else if ((col == 24) && (value == "1-ALARM")) {
 		  td.style.background = '#F00';
 	  }
 	}
@@ -113,7 +116,7 @@
     columnSorting: true,
     manualColumnResize: true,
     //fixedColumnsLeft: 4,
-    colHeaders: ['Conf', 'Alarm', 'Loc',
+    colHeaders: ['Conf', 'Alarm', 'Loc', 'Hist',
                  'Id', 'Serial', 'Name', 'Active', 
                  'Last Update', 'Clean Start', 'PIA Update', 
                  'GeoFence', 'Lat', 'Lon', 'Geo Distance', 'GPS Fix', 'Sat Num', 
@@ -123,6 +126,7 @@
                  'Lights', 'Fans', 'Doors'
                  ],
     columns: [
+      {data: params()},
       {data: params()},
       {data: params()},
       {data: params()},

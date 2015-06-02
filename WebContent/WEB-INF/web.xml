@@ -248,4 +248,14 @@
     <url-pattern>/loginuser</url-pattern>
   </servlet-mapping>
   
+  <servlet>
+    <servlet-name>GetObuHistoryRawDataServlet</servlet-name>
+    <servlet-class>com.boatguard.boatguard.servlet.GetObuHistoryRawDataServlet</servlet-class>
+    <load-on-startup>23</load-on-startup>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>GetObuHistoryRawDataServlet</servlet-name>
+    <url-pattern>/gethistoryrawdata</url-pattern>
+  </servlet-mapping>  
+  
 </web-app>

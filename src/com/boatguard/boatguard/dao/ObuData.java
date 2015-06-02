@@ -841,6 +841,65 @@ public class ObuData {
 		return historyData;
 	}
 	
+	public List<StateData> getObuHistoryRawData(int id) {
+		Connection con = null;
+		ResultSet rs = null;
+	    Statement stmt = null;
+	    StateData stateData = new StateData();
+		String statesDataWithoutDate = "";
+	    String statesDataWithoutDateLast = "";
+	    List<StateData> historyData = new ArrayList<StateData>();
+		
+	    Timestamp lastD = null;
+		try {
+    		con = DbManager.getConnection("config");
+    	    
+	    	String	sql = "select states_data.*"
+	    			+ "from states_data "
+	    			+ "where id_obu = " + id + " and id_state = 1 and date_state > date_add(now(), interval -1 week)" 
+	    			+ "order by date_state desc ";
+	    			//+ "limit 5000";
+	    	
+    		stmt = con.createStatement();   	
+    		rs = stmt.executeQuery(sql);
+			
+	    	while (rs.next()) {
+	    		Timestamp d = rs.getTimestamp("date_state");
+	    		
+	    		if (lastD==null || !d.equals(lastD)) {
+	    			if (lastD!=null) {
+	    				if (!statesDataWithoutDateLast.equals(statesDataWithoutDate)) {
+	    	    			historyData.add(stateData);
+		    				statesDataWithoutDateLast = statesDataWithoutDate;
+	    	    		}
+	    			}
+	    			stateData = new StateData();
+		    		statesDataWithoutDate = "";
+	    			lastD = d;
+	    		}
+	    		String raw = rs.getString("value");
+	    		stateData.setId_state(rs.getInt("id_state"));
+	    		stateData.setId_obu(rs.getInt("id_obu"));
+	    		stateData.setValue(raw);
+	    		stateData.setDateState(rs.getTimestamp("date_state"));	
+	    		
+	    		int index = Util.nthOccurrence(raw, ',', 5);
+	    		statesDataWithoutDate = raw.substring(index);
+	    	}
+		} catch (Exception theException) {
+	    	theException.printStackTrace();
+	    } finally {
+	    	try {
+	    		if (rs != null) rs.close();
+	    		if (stmt != null) stmt.close();
+	    		if (con != null) con.close();
+			} catch (Exception e) {}
+	    }
+		
+		return historyData;
+	}
+
+	
 	
 	public List<ObuAlarm> getObuAlarms(int obuid) {
 		Connection con = null;
