@@ -56,7 +56,7 @@ $(document).ready(function () {
 	update();
   
   function update() {
-	  ajax('/boatguard/gethistoryrawdata?obuid='+QueryString.id_obu+"&sessionid="+localStorage.getItem("sessionid"), 'GET', '', function(res) {
+	  ajax('/boatguard/gethistoryrawdata?obuid='+QueryString.id_obu, 'GET', '', function(res) {
 		  exampleConsole.innerText = 'Data updated: ' + new Date();
 		  
 		  var data = JSON.parse(res.response);

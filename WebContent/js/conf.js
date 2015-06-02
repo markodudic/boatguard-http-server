@@ -56,7 +56,7 @@ $(document).ready(function () {
 	update();
   
   function update() {
-	  ajax('/boatguard/getobusettings?obuid='+QueryString.id_obu+"&sessionid="+localStorage.getItem("sessionid"), 'GET', '', function(res) {
+	  ajax('/boatguard/getobusettings?obuid='+QueryString.id_obu, 'GET', '', function(res) {
 		  var data = JSON.parse(res.response);
 		   
 		  hot.loadData(data);
@@ -76,7 +76,7 @@ $(document).ready(function () {
 	
 	    if (element.nodeName == "BUTTON" && element.name == 'dump') {
 	      $.ajax({
-              url: "/boatguard/setobusettings?obuid="+QueryString.id_obu+"&sessionid="+localStorage.getItem("sessionid"),
+              url: "/boatguard/setobusettings?obuid="+QueryString.id_obu,
               data: JSON.stringify(hot.getData()),
               dataType: 'json',
               type: 'POST',

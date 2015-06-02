@@ -64,7 +64,7 @@ $(document).ready(function () {
 	update();
   
   function update() {
-	  ajax('/boatguard/getdata?obuid='+QueryString.id_obu+"&sessionid="+localStorage.getItem("sessionid"), 'GET', '', function(res) {
+	  ajax('/boatguard/getdata?obuid='+QueryString.id_obu, 'GET', '', function(res) {
 		  var data = JSON.parse(res.response);
 		   
 		  hot.loadData(data.alarms);
