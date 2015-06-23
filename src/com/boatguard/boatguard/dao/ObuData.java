@@ -1180,9 +1180,8 @@ public class ObuData {
 		 params.add(new BasicNameValuePair("Body", message));   
 	 
 		 MessageFactory messageFactory = client.getAccount().getMessageFactory(); 
-		 com.twilio.sdk.resource.instance.Message msg;
 		 try {
-			 msg = messageFactory.create(params);
+			 com.twilio.sdk.resource.instance.Message msg = messageFactory.create(params);
 			 System.out.println(msg.getSid()); 	
 		 } catch (TwilioRestException e) {
 			// TODO Auto-generated catch block
