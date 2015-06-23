@@ -1146,7 +1146,9 @@ public class ObuData {
 		    	
 				List<String> devices = new ArrayList<String>(); 
 		    	while (rs.next()) {
-		    		devices.add(rs.getString("gcm_registration_id"));
+		    		if (rs.getString("gcm_registration_id") != null && !rs.getString("gcm_registration_id").equals("null")) {
+		    			devices.add(rs.getString("gcm_registration_id"));
+		    		}
 		    	}
 		    	
 		    	if (devices.size() > 0) {
