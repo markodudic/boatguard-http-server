@@ -1,5 +1,7 @@
 package com.boatguard.boatguard.dao;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Type;
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -18,8 +20,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.protocol.BasicHttpContext;
+import org.apache.http.protocol.HttpContext;
 
 import si.bisoft.commons.dbpool.DbManager;
 
@@ -36,6 +45,7 @@ import com.boatguard.boatguard.objects.ObuComponent;
 import com.boatguard.boatguard.objects.ObuSetting;
 import com.boatguard.boatguard.objects.State;
 import com.boatguard.boatguard.objects.StateData;
+import com.boatguard.boatguard.objects.Timezone;
 import com.boatguard.boatguard.util.Constant;
 import com.boatguard.boatguard.util.Util;
 import com.google.android.gcm.server.Message;
@@ -43,8 +53,9 @@ import com.google.android.gcm.server.MulticastResult;
 import com.google.android.gcm.server.Sender;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.twilio.sdk.*;
-import com.twilio.sdk.resource.factory.*;
+import com.twilio.sdk.TwilioRestClient;
+import com.twilio.sdk.TwilioRestException;
+import com.twilio.sdk.resource.factory.MessageFactory;
 
 
 public class ObuData {
@@ -55,7 +66,10 @@ public class ObuData {
 	public static final String FROM = "+447903596041";
 	
 	public static final String GCM = "AIzaSyCqFRqsD4W9SC1urN5k5njvIzUKDmAM46Y";
-			
+	//public static final String TZA = "AIzaSyAi1_iBErRoU5bIfNEMy8aR06sHWBu6xCI";
+	public static final String TZ_URL = "https://maps.googleapis.com/maps/api/timezone/json";
+	public static int SERVER_ZONE = 3600;
+	
 	public ObuData(){
 
 	}
@@ -360,21 +374,65 @@ public class ObuData {
 		boolean isTok = false;
 		
 	    try {
-	    	//fake zaradi kite, ko posilja takale podatke
+	    	con = DbManager.getConnection("config");
+			stmt = con.createStatement();   	
+
+			//fake zaradi kite, ko posilja takale podatke
 	    	//0000000000000000000000000000000,0,N,N,N,D,0091,002E95,0391,00,00,
 	    	data = data.replace("0000000000000000000000000000000", "0,N,0,E,0,0,0");
 	    	
 	    	String[] states = data.split(",");
 	    	
 	    	DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-	    	Date today = Calendar.getInstance().getTime();        
+	    	Calendar cal = Calendar.getInstance();
+	    	
+	    	//date state popravim glede na time zone
+	    	//zaradi api quote preverim samo ob polnoci in zapisem v setting obuja
+	    	if (cal.get(Calendar.HOUR_OF_DAY) > 0 && cal.get(Calendar.HOUR_OF_DAY) < 1) {
+		    	float lat = Util.transform(Float.parseFloat(states[Constant.OBU_LAT_VALUE]));
+	    		float lon = Util.transform(Float.parseFloat(states[Constant.OBU_LON_VALUE]));
+				String nsIndicator = states[Constant.OBU_N_S_INDICATOR_VALUE];
+				String ewIndicator = states[Constant.OBU_E_W_INDICATOR_VALUE];				
+				if (ewIndicator.equals("W")) {
+					lat = -lat;
+				}
+				if (nsIndicator.equals("S")) {
+					lon = -lon;
+				}
+					
+		    	String url = TZ_URL + "?location="+lon+","+lat+"&timestamp="+cal.getTimeInMillis()/1000+"&key="+GCM;
+				HttpContext localContext = new BasicHttpContext();
+				HttpPost httpPost = new HttpPost(url);
+				System.out.println("url="+url);
+				HttpClient httpClient = new DefaultHttpClient();
+				   
+				String text = null;
+				HttpResponse response = httpClient.execute(httpPost, localContext);
+				HttpEntity entity = response.getEntity();
+				text = getASCIIContentFromEntity(entity);
+				System.out.println("text="+text);
+		    	
+				Gson gson = new Gson();
+				Timezone timezone = gson.fromJson(text, Timezone.class);
+				if (timezone.getStatus().equalsIgnoreCase("OK")) {
+					int diff = timezone.getRawOffset() - SERVER_ZONE;
+					cal.add(Calendar.SECOND, diff);
+					
+			    	String sql = "update obus " + 
+				    		" set timezone = " + diff +
+				    		" where uid = " + obu.getUid();
+			    	stmt.executeUpdate(sql);
+				}
+	    	} else {
+	    		cal.add(Calendar.SECOND, obu.getTimezone());
+	    	}
+	    	Date today = cal.getTime();        
 	    	String dateState = df.format(today);
+	    	
 	    	//if (lastStateData.get(Constant.STATE_ROW_STATE_VALUE)==null || tsDS.after(lastStateData.get(Constant.STATE_ROW_STATE_VALUE).getDateState())) {
 	    		//Map<Integer, StateData> stateDataLast = getStateData(obu.getId());
 	    		isAdd = true;
     			
-		    	con = DbManager.getConnection("config");
-				stmt = con.createStatement();   	
 	 
 		    	String	sql = "insert into states_data (id_state, id_obu, value, date_state) " + 
 		    				"values (" + Constant.STATE_ROW_STATE_VALUE + ", " + obu.getUid() + ", '" + data + "', '" + dateState + "')";
@@ -606,6 +664,7 @@ public class ObuData {
 	    		obu.setSerial_number(rs.getString("serial_number"));
 	    		obu.setFirmware(rs.getInt("firmware"));
 	    		obu.setId_battery_settings(rs.getInt("id_battery_settings"));
+	    		obu.setTimezone(rs.getInt("timezone"));
 	    		obu.setActive(rs.getInt("active"));	    		
 	    	}
 	    	
@@ -711,6 +770,20 @@ public class ObuData {
 		
     	return id_obu;
 	}	
+
+	protected String getASCIIContentFromEntity(HttpEntity entity) throws IllegalStateException, IOException {
+		InputStream in = entity.getContent();
+
+		StringBuffer out = new StringBuffer();
+		int n = 1;
+		while (n>0) {
+			byte[] b = new byte[4096];
+			n =  in.read(b);
+	
+			if (n>0) out.append(new String(b, 0, n));
+		}
+		return out.toString();
+	}
 	
 	public LinkedHashMap<Integer, StateData> getObuData(int id) {
 		Connection con = null;

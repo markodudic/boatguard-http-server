@@ -90,7 +90,11 @@ public class Constant {
 	public static final String OBU_LAT 							= "OBU_LAT";
 	public static Integer OBU_LAT_VALUE							= 0;
 	public static final String OBU_LON 							= "OBU_LON";
-	public static Integer OBU_LON_VALUE							= 1;
+	public static Integer OBU_LON_VALUE							= 2;
+	public static final String OBU_N_S_INDICATOR 				= "OBU_N_S_INDICATOR";
+	public static Integer OBU_N_S_INDICATOR_VALUE				= 1;
+	public static final String OBU_E_W_INDICATOR 				= "OBU_E_W_INDICATOR";
+	public static Integer OBU_E_W_INDICATOR_VALUE				= 3;
 	//public static final String OBU_DATE 						= "OBU_DATE";
 	//public static Integer OBU_DATE_VALUE						= -1;
 	public static final String OBU_GEO_FIX 						= "OBU_GEO_FIX";

@@ -16,6 +16,7 @@ public class Obu {
 	private String serial_number;
 	private int firmware;
 	private int id_battery_settings;
+	private int timezone;
 	private int active;
 	public Map<Integer, String> settings = new HashMap<Integer, String>();
 	
@@ -97,4 +98,11 @@ public class Obu {
 	public void setId_battery_settings(int id_battery_settings) {
 		this.id_battery_settings = id_battery_settings;
 	}
+	public int getTimezone() {
+		return timezone;
+	}
+	public void setTimezone(int timezone) {
+		this.timezone = timezone;
+	}
+	
 }
