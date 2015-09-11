@@ -45,13 +45,13 @@
     	var lon = QueryString.lat
     	var lat = QueryString.lon
     	
-    	var latF = Math.floor(lat/100);
+    	/*var latF = Math.floor(lat/100);
     	var latD = (lat/100 - latF)/0.6;
 		lat = latF + latD;
 		var lonF = Math.floor(lon/100);
 		var lonD = (lon/100 - lonF)/0.6;
 		lon = lonF + lonD;
-			
+			*/
         var myLatlng = new google.maps.LatLng(lat, lon);
   		var mapOptions = {
           center: myLatlng,
