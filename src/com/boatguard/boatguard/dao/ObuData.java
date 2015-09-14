@@ -391,7 +391,7 @@ public class ObuData {
 
 			//date state popravim glede na time zone
 	    	//zaradi api quote preverim samo ob polnoci in zapisem v setting obuja
-	    	if (cal.get(Calendar.HOUR_OF_DAY) > 0 && cal.get(Calendar.HOUR_OF_DAY) < 1) {
+	    	if (cal.get(Calendar.HOUR_OF_DAY) == 0) {
 		    	float lat = Util.transform(Float.parseFloat(states[Constant.OBU_LAT_VALUE]));
 	    		float lon = Util.transform(Float.parseFloat(states[Constant.OBU_LON_VALUE]));
 				if (ewIndicator.equals("W")) {
