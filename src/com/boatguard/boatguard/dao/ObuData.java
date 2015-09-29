@@ -1260,7 +1260,7 @@ public class ObuData {
 	}	
 	
 	
-	private void sendSMS(String phoneNum, String message) {
+	public void sendSMS(String phoneNum, String message) {
 		 TwilioRestClient client = new TwilioRestClient(ACCOUNT_SID, AUTH_TOKEN); 
 		 
 		 System.out.println("Twillio sms="+phoneNum+":"+FROM);

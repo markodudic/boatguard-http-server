@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-2">
+	<title>ENGINEGUARD</title>
+	
+	<script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
+	<script src="js/eg.js"></script>
+	      
+	<link rel="stylesheet" href="css/bg.css"/>
+	
+	<link rel="shortcut icon" href="./img/fav.png" type="image/x-icon"/>
+
+</head>
+<body>
+
+<table border="0" cellspacing="0" cellpadding="4" align="center">
+	<tr>
+		<td colspan=2>
+			<img src="./img/ic_logotype_day.png" width="300">
+		</td>
+	</tr>
+</table>
+
+<section id="login">
+	<table border="0" cellspacing="0" cellpadding="4" align="center">
+		<tr>
+			<td>ENGINEGUARD CODE</td>
+			<td><input type="text" id=engineguard size="20" value="12345"></td>
+		</tr>
+		<tr>
+			<td>GSM NUMBER</td>
+			<td><input type="text" id="number" size="20" value="+38640227627"></td>
+		</tr>
+		<tr>
+			<td></td>
+			<td><button name="send" id="send" onclick="send();">SEND DATA</button></td>
+		</tr>
+	</table>
+</section>
+
+<section id="verification" style="visibility: hidden; display: none;">
+	<table border="0" cellspacing="0" cellpadding="4" align="center">
+		<tr>
+			<td>RECEIVED CODE</td>
+			<td><input type="text" id="code" size="20"></td>
+		</tr>
+		<tr>
+			<td></td>
+			<td><button name="verify" id="verify" onclick="verify();">VERIFY CODE</button></td>
+		</tr>
+		<tr>
+			<td></td>
+			<td><button name="send" id="send" onclick="send();">REQUEST AGAIN</button></td>
+		</tr>
+	</table>		
+</section>
+
+<section id="location" style="visibility: hidden; display: none;">
+	<h2>LOCATION</h2>
+	
+</section>
+
+
+</body>
+</html>

@@ -258,4 +258,23 @@
     <url-pattern>/gethistoryrawdata</url-pattern>
   </servlet-mapping>  
   
+  <servlet>
+    <servlet-name>GetCodeServlet</servlet-name>
+    <servlet-class>com.boatguard.engineguard.servlet.GetCodeServlet</servlet-class>
+    <load-on-startup>24</load-on-startup>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>GetCodeServlet</servlet-name>
+    <url-pattern>/getcode</url-pattern>
+  </servlet-mapping>
+  
+  <servlet>
+    <servlet-name>VerifyCodeServlet</servlet-name>
+    <servlet-class>com.boatguard.engineguard.servlet.VerifyCodeServlet</servlet-class>
+    <load-on-startup>25</load-on-startup>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>VerifyCodeServlet</servlet-name>
+    <url-pattern>/verifycode</url-pattern>
+  </servlet-mapping>  
 </web-app>
