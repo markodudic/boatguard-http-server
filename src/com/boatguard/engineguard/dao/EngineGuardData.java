@@ -1,5 +1,12 @@
 package com.boatguard.engineguard.dao;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
@@ -18,6 +25,8 @@ import com.google.gson.Gson;
 
 public class EngineGuardData {
 
+	final String ALARM_URL = "http://localhost:8080/boatguard/engineguard.html";
+	final String GOOGLE_URL = "https://www.googleapis.com/urlshortener/v1/url?fields=id&key=AIzaSyCqFRqsD4W9SC1urN5k5njvIzUKDmAM46Y";
 	
 	public String getCode(String engineguard, String number, String sessionId) {
 		
@@ -87,6 +96,7 @@ public class EngineGuardData {
 		String gsm_number = null;
 		String email = null;
 		String refresh_time = null;
+		String serial_number = null;
 		
  	    try {
     		con = DbManager.getConnection("config");
@@ -103,6 +113,7 @@ public class EngineGuardData {
 	    		gsm_number = rs.getString("gsm_number");
 	    		email = rs.getString("email");
 	    		refresh_time = rs.getInt("refresh_time")+"";
+	    		serial_number = rs.getString("serial_number");
 	    		
 				String sql1 = "update sms_codes " +
 			    		"	set status = 1 " +
@@ -114,7 +125,6 @@ public class EngineGuardData {
 			    		"	set gsm_number = '" + number + "'" +
 						"	where uid = " + id_engineguard;
 			
-				System.out.println(sql1);
 				stmt.executeUpdate(sql1);
 	    	} else {
 	    		Error error = new Error(Error.LOGIN_ERROR, Error.LOGIN_ERROR_CODE, Error.LOGIN_ERROR_MSG);
@@ -132,7 +142,7 @@ public class EngineGuardData {
 			} catch (Exception e) {}
 	    }	
 		
-		String result = "{\"id_engineguard\":\""+id_engineguard+"\",\"gsm_number\":\""+(gsm_number==null?"":gsm_number)+"\",\"email\":\""+(email==null?"":email)+"\",\"refresh_time\":\""+refresh_time+"\",\"error\":"+errorS+"}";
+		String result = "{\"id_engineguard\":\""+id_engineguard+"\",\"serial_number\":\""+serial_number+"\",\"gsm_number\":\""+(gsm_number==null?"":gsm_number)+"\",\"email\":\""+(email==null?"":email)+"\",\"refresh_time\":\""+refresh_time+"\",\"error\":"+errorS+"}";
 		System.out.println(result);
 		return result;
 	}
@@ -187,5 +197,102 @@ public class EngineGuardData {
 		
 		return statesData;
 	}
+	
+	public String setAlarm(String id_engineguard, String sessionId) {
+		
+		Connection con = null;
+		ResultSet rs = null;
+	    Statement stmt = null;
+	    Gson gson = new Gson();
+		String errorS = null;
+
+		
+ 	    try {
+    		con = DbManager.getConnection("config");
+
+	    	String	sql = "select * "
+	    			+ "from engineguards "
+	    			+ "where uid = " + id_engineguard;
+	    		
+	    	stmt = con.createStatement();   	
+	    	rs = stmt.executeQuery(sql);
+    		
+	    	if (rs.next()) {
+	    		String gsm_number = rs.getString("gsm_number");
+	    		String email = rs.getString("email");
+	    		String refresh_time = rs.getInt("refresh_time")+"";
+	    		String serial_number = rs.getString("serial_number");
+
+	    		String url = ALARM_URL + "?alarm=true&gsm_number="+(gsm_number==null?"":gsm_number)+"&id_engineguard="+id_engineguard+"&email="+(email==null?"":email)+"&refresh_time="+rs.getString("refresh_time")+"&serial_number="+rs.getString("serial_number");
+	    		System.out.println(url);
+				String shortUrl = shorten(url);
+	    		System.out.println(shortUrl);
+				ObuData obuData = new ObuData();
+				obuData.sendSMS(rs.getString("gsm_number"), "ENGINEGUARD: CHECK ALARM: " + shortUrl);
+
+	    		String	sql1 = "update engineguards " +
+			    		"	set alarm = 1" +
+						"	where uid = " + id_engineguard;;
+		    	
+				stmt.executeUpdate(sql1);
+
+	    	} else {
+	    		Error error = new Error(Error.LOGIN_ERROR, Error.LOGIN_ERROR_CODE, Error.LOGIN_ERROR_MSG);
+				errorS = gson.toJson(error);
+	    	}
+			
+	
+	    } catch (Exception theException) {
+	    	theException.printStackTrace();
+	    } finally {
+	    	try {
+	    		if (rs != null) rs.close();
+	    		if (stmt != null) stmt.close();
+	    		if (con != null) con.close();
+			} catch (Exception e) {}
+	    }	
+		
+ 	    String result = "{\"error\":"+errorS+"}";
+		return result;
+	}
+	
+	public String shorten(String longUrl) {
+        if (longUrl == null) {
+            return longUrl;
+        }
+        
+        StringBuilder sb = null;
+        String line = null;
+        String urlStr = longUrl;
+
+        try {
+            URL url = new URL(GOOGLE_URL);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setDoOutput(true);
+            connection.setRequestMethod("POST");
+            connection.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
+
+            OutputStreamWriter writer = new OutputStreamWriter(connection.getOutputStream());
+            writer.write("{\"longUrl\": \"" + longUrl + "\"}");
+            writer.close();
+
+            BufferedReader rd = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+            sb = new StringBuilder();
+            while ((line = rd.readLine()) != null) {
+                sb.append(line + '\n');
+            }
+
+            String json = sb.toString();
+            //It extracts easily...
+            return json.substring(json.indexOf("http"), json.indexOf("\"", json.indexOf("http")));
+        } catch (MalformedURLException e) {
+        	System.out.println("1="+e.getMessage());
+            return longUrl;
+        } catch (IOException e) {
+        	System.out.println("2="+e.getMessage());
+            return longUrl;
+        }
+    }
+
 
 }

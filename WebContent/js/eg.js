@@ -1,6 +1,30 @@
  var id;
  var map;
  
+ 	var QueryString = function () {
+	  // This function is anonymous, is executed immediately and 
+	  // the return value is assigned to QueryString!
+	  var query_string = {};
+	  var query = window.location.search.substring(1);
+	  var vars = query.split("&");
+	  for (var i=0;i<vars.length;i++) {
+	    var pair = vars[i].split("=");
+	        // If first entry with this name
+	    if (typeof query_string[pair[0]] === "undefined") {
+	      query_string[pair[0]] = pair[1];
+	        // If second entry with this name
+	    } else if (typeof query_string[pair[0]] === "string") {
+	      var arr = [ query_string[pair[0]], pair[1] ];
+	      query_string[pair[0]] = arr;
+	        // If third or later entry with this name
+	    } else {
+	      query_string[pair[0]].push(pair[1]);
+	    }
+	  } 
+	    return query_string;
+	} ();
+
+	
   function send() {
 	 var engineguard = document.getElementById('engineguard').value;
      var number = document.getElementById('number').value;
@@ -53,13 +77,13 @@
 	    			  location.style.visibility='visible'; 	 
 	    			  location.style.height='100%'; 	 
 	    			  
-	    			  document.getElementById('set_code').value = id;
+	    			  document.getElementById('set_code').value = data.serial_number;
 	    			  document.getElementById('set_number').value = data.gsm_number;
 	    			  document.getElementById('set_email').value = data.email;
 	    			  document.getElementById('set_refresh_time').value = data.refresh_time;
 	    			  
 	    			  initialize();
-	    			  setInterval(initialize, 10000);
+	    			  setInterval(initialize, 60000);
 
 	            	  localStorage.setItem("eglogged", true);
 	              }
@@ -125,7 +149,48 @@
 	
   }  
   
+  
+  function deactivate() {
+		 $.ajax({
+	          url: "/boatguard/setalarm?&egid="+encodeURIComponent(id)+"&sessionid="+localStorage.getItem("sessionid"),
+	          type: 'POST',
+	          contentType: "application/json; charset=utf-8",
+	          success: function (res) {
+	        	  var data = JSON.parse(res);
+	    		  if (data.error === null) {
+
+	              }
+	              else {
+
+	              }
+	          }
+	      });	      
+}
+  
+  
   $(document).ready(function () {
 
-
+	  if(QueryString.alarm != undefined) {
+		  var 	logIn=document.getElementById('login'),
+	  			verification=document.getElementById('verification'),
+				location=document.getElementById('location');
+		  logIn.style.display='none';
+		  logIn.style.visibility='hidden'; 
+		  verification.style.display='none';
+		  verification.style.visibility='hidden'; 
+		  location.style.display='block';
+		  location.style.visibility='visible'; 	 
+		  location.style.height='100%'; 
+		  
+		  id = QueryString.id_engineguard;
+		  document.getElementById('set_code').value = QueryString.serial_number;
+		  document.getElementById('set_number').value = QueryString.gsm_number;
+		  document.getElementById('set_email').value = QueryString.email;
+		  document.getElementById('set_refresh_time').value = QueryString.refresh_time;
+		  
+		  initialize();
+		  setInterval(initialize, 30000);
+	
+		  localStorage.setItem("eglogged", true);		  		  
+	  }
   });
