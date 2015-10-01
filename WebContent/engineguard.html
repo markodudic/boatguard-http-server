@@ -1,15 +1,21 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="ISO-8859-2">
+	<meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+    <meta charset="utf-8">
 	<title>ENGINEGUARD</title>
 	
 	<script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
 	<script src="js/eg.js"></script>
-	      
+	
+	<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAi1_iBErRoU5bIfNEMy8aR06sHWBu6xCI"></script>
+	<script src="js/samples.js"></script>
+	<link rel="stylesheet" media="screen" href="css/samples.css">
+		     
 	<link rel="stylesheet" href="css/bg.css"/>
 	
 	<link rel="shortcut icon" href="./img/fav.png" type="image/x-icon"/>
+
 
 </head>
 <body>
@@ -29,7 +35,7 @@
 			<td><input type="text" id=engineguard size="20" value="12345"></td>
 		</tr>
 		<tr>
-			<td>GSM NUMBER</td>
+			<td>GSM NUMBER<br>format (+38640123456)</td>
 			<td><input type="text" id="number" size="20" value="+38640227627"></td>
 		</tr>
 		<tr>
@@ -56,9 +62,10 @@
 	</table>		
 </section>
 
-<section id="location" style="visibility: hidden; display: none;">
-	<h2>LOCATION</h2>
-	
+
+
+<section id="location" style="visibility: hidden; display: none; height:100%">
+	<div id="map-canvas"></div>
 </section>
 
 

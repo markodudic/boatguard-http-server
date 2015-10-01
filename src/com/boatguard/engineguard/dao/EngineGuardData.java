@@ -49,7 +49,7 @@ public class EngineGuardData {
 		    
 	    		//send code
 				ObuData obuData = new ObuData();
-				obuData.sendSMS(number, code);
+				//obuData.sendSMS(number, code);
 	    	} else {
 	    		Error error = new Error(Error.LOGIN_ERROR, Error.LOGIN_ERROR_CODE, Error.LOGIN_ERROR_MSG);
 				errorS = gson.toJson(error);
@@ -72,7 +72,7 @@ public class EngineGuardData {
 	}
 
 
-	public String verifyCode(String code, String sessionId) {
+	public String verifyCode(String code, String number, String sessionId) {
 		
 		Connection con = null;
 		ResultSet rs = null;
@@ -92,15 +92,20 @@ public class EngineGuardData {
 	    	rs = stmt.executeQuery(sql);
     		
 	    	if (rs.next()) {
-	    		id_engineguard = rs.getInt("uid")+"";
+	    		id_engineguard = rs.getInt("id_engineguard")+"";
 	    		
 				String sql1 = "update sms_codes " +
 			    		"	set status = 1 " +
 						"	where id_engineguard = " + id_engineguard;
 			
-				System.out.println(sql1);
 				stmt.executeUpdate(sql1);
 
+				sql1 = "update engineguards " +
+			    		"	set gsm_number = '" + number + "'" +
+						"	where uid = " + id_engineguard;
+			
+				System.out.println(sql1);
+				stmt.executeUpdate(sql1);
 	    	} else {
 	    		Error error = new Error(Error.LOGIN_ERROR, Error.LOGIN_ERROR_CODE, Error.LOGIN_ERROR_MSG);
 				errorS = gson.toJson(error);
