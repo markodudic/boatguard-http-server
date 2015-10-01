@@ -55,9 +55,10 @@ public class VerifyCodeServlet extends HttpServlet {
 
 		String code = (String) request.getParameter("code");
 		String number = (String) request.getParameter("number");
+		String id_engineguard = (String) request.getParameter("egid");
 				
 		EngineGuardData egData = new EngineGuardData();
-		String result = egData.verifyCode(code, number, sessionId);
+		String result = egData.verifyCode(code, number, id_engineguard, sessionId);
 		
 		OutputStream out = null;
     	response.setContentType("text/plain");

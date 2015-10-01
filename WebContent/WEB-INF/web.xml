@@ -277,4 +277,14 @@
     <servlet-name>VerifyCodeServlet</servlet-name>
     <url-pattern>/verifycode</url-pattern>
   </servlet-mapping>  
+  
+  <servlet>
+    <servlet-name>GetEngineGuardDataServlet</servlet-name>
+    <servlet-class>com.boatguard.engineguard.servlet.GetEngineGuardDataServlet</servlet-class>
+    <load-on-startup>26</load-on-startup>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>GetEngineGuardDataServlet</servlet-name>
+    <url-pattern>/getegdata</url-pattern>
+  </servlet-mapping>   
 </web-app>

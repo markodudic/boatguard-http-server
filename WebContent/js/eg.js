@@ -1,3 +1,6 @@
+ var id;
+ var map;
+ 
   function send() {
 	 var engineguard = document.getElementById('engineguard').value;
      var number = document.getElementById('number').value;
@@ -17,6 +20,7 @@
     			  verification.style.visibility='visible'; 
     			  location.style.display='none';
     			  location.style.visibility='hidden'; 
+    			  id = data.id_engineguard;
     			  
             	  localStorage.setItem("egsessionid", data.sessionId);
               }
@@ -32,7 +36,7 @@
 		 var code = document.getElementById('code').value;
 	     var number = document.getElementById('number').value;
 	     $.ajax({
-	          url: "/boatguard/verifycode?code="+encodeURIComponent(code)+"&number="+encodeURIComponent(number) + "&sessionid="+localStorage.getItem("sessionid"),
+	          url: "/boatguard/verifycode?code="+encodeURIComponent(code)+"&number="+encodeURIComponent(number)+"&egid="+encodeURIComponent(id)+"&sessionid="+localStorage.getItem("sessionid"),
 	          type: 'POST',
 	          contentType: "application/json; charset=utf-8",
 	          success: function (res) {
@@ -49,7 +53,13 @@
 	    			  location.style.visibility='visible'; 	 
 	    			  location.style.height='100%'; 	 
 	    			  
-	    			  initialize(data.id_engineguard);
+	    			  document.getElementById('set_code').value = id;
+	    			  document.getElementById('set_number').value = data.gsm_number;
+	    			  document.getElementById('set_email').value = data.email;
+	    			  document.getElementById('set_refresh_time').value = data.refresh_time;
+	    			  
+	    			  initialize();
+	    			  setInterval(initialize, 10000);
 
 	            	  localStorage.setItem("eglogged", true);
 	              }
@@ -61,18 +71,20 @@
 	      });	      
   }
   
-  function initialize(id) {
-	  ajax('/boatguard/getdata?obuid='+id, 'GET', '', function(res) {
+  function initialize() {
+	  ajax('/boatguard/getegdata?egid='+id, 'GET', '', function(res) {
 		  	var parsedJSON = JSON.parse(res.response);
 		  	var myLatlng;
 		  	var infowindow = new google.maps.InfoWindow();
 		  	var bounds = new google.maps.LatLngBounds();
 		  	
-	        var map = new google.maps.Map(document.getElementById('map-canvas'), {
+	        if (map == undefined) {
+	        	map = new google.maps.Map(document.getElementById('map-canvas'), {
 			      zoom: 10,
 			      mapTypeId: google.maps.MapTypeId.ROADMAP
 			    });
-			
+	        }
+	        
 	        var lat = 0;
             var lon = 0;
             var time = 0;
@@ -93,6 +105,11 @@
 	    	      map: map,
 	    	      title: 'Last location'
 	    	});  	
+            
+            marker.setPosition( new google.maps.LatLng(lat, lon) );
+            map.panTo( new google.maps.LatLng(lat, lon) );
+            
+            
 			var i = 0;
 	        google.maps.event.addListener(marker, 'click', (function(marker, i) {
 	          return function() {
@@ -101,9 +118,9 @@
 	          }
 	        })(marker, i));
 		      
-			bounds.extend(marker.position);	
+			//bounds.extend(marker.position);	
 		  			
-		  	map.fitBounds(bounds);
+		  	//map.fitBounds(bounds);
 	  });
 	
   }  
