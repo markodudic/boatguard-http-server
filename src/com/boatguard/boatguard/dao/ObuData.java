@@ -1523,7 +1523,8 @@ public class ObuData {
 			    		" 	password = '" + customer.getPassword() + "'," +
 			    		" 	email = '" + customer.getEmail() + "'," +
 			    		" 	birth_year = " + customer.getBirth_year() + "," +
-			    		" 	country = '" + customer.getCountry() + "'" +
+			    		" 	country = '" + customer.getCountry() + "'," +
+			    		" 	phone_number = '" + customer.getPhone_number() + "'" +
 			    		" where id_obu = " + customer.getId_obu();
 			//System.out.println(sql);
 		    stmt.executeUpdate(sql);
