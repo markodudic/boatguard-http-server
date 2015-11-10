@@ -25,7 +25,7 @@ import com.google.gson.Gson;
 
 public class EngineGuardData {
 
-	final String ALARM_URL = "http://localhost:8080/boatguard/engineguard.html";
+	final String ALARM_URL = "http://server.boatguard.com:8080/boatguard/engineguard.html";
 	final String GOOGLE_URL = "https://www.googleapis.com/urlshortener/v1/url?fields=id&key=AIzaSyCqFRqsD4W9SC1urN5k5njvIzUKDmAM46Y";
 	
 	public String getCode(String engineguard, String number, String sessionId) {
@@ -63,7 +63,7 @@ public class EngineGuardData {
 		    
 	    		//send code
 				ObuData obuData = new ObuData();
-				//obuData.sendSMS(number, code);
+				obuData.sendSMS(number, code);
 	    	} else {
 	    		Error error = new Error(Error.LOGIN_ERROR, Error.LOGIN_ERROR_CODE, Error.LOGIN_ERROR_MSG);
 				errorS = gson.toJson(error);
