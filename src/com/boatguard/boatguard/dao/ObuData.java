@@ -1739,7 +1739,7 @@ public class ObuData {
 
 	    	String	sql = "select customers.uid customer_id, obus.* "
 	    			+ "from customers left join obus on (customers.id_obu = obus.uid) "
-	    			+ "where (UPPER(username) = UPPER('" + username + "') and serial_number = '" + obuSerialNumber + "' and obus.active=1) OR "
+	    			+ "where (serial_number = '" + obuSerialNumber + "' and obus.active=1) OR "
 	    					+ "NOT EXISTS (select uid from obus where serial_number = '" + obuSerialNumber + "')";
 	    	stmt = con.createStatement();   	
 	    	rs = stmt.executeQuery(sql);
