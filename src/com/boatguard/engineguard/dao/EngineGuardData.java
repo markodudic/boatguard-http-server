@@ -156,10 +156,10 @@ public class EngineGuardData {
 		try {
     		con = DbManager.getConnection("config");
     	    
-	    	String	sql = "select eg_states_data.*, states.ord "
-	    			+ "from eg_states_data left join states on (eg_states_data.id_state = states.id) ,  "
-	    			+ "	(select max(date_state) as d from eg_states_data where id_engineguard = " + id + ") as max_date "
-	    			+ "where id_engineguard = " + id + "  and date_state = max_date.d "
+	    	String	sql = "select states_data.*, states.ord "
+	    			+ "from states_data left join states on (states_data.id_state = states.id) ,  "
+	    			+ "	(select max(date_state) as d from states_data where id_obu = " + id + ") as max_date "
+	    			+ "where id_obu = " + id + "  and date_state = max_date.d "
 	    			+ "order by ord";
 	    		
     		stmt = con.createStatement();   	
@@ -168,7 +168,7 @@ public class EngineGuardData {
 	    	while (rs.next()) {
 	    		StateData stateData = new StateData();
 	    		stateData.setId_state(rs.getInt("id_state"));
-	    		stateData.setId_obu(rs.getInt("id_engineguard"));
+	    		stateData.setId_obu(rs.getInt("id_obu"));
 	    		stateData.setValue(rs.getString("value"));	
 	    		//workaround za test account
 	    		Timestamp tsf = rs.getTimestamp("date_state");
