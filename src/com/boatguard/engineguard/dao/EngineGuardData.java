@@ -198,6 +198,39 @@ public class EngineGuardData {
 		return statesData;
 	}
 	
+	public String resetAlarm(String id_engineguard, String sessionId) {
+		
+		Connection con = null;
+		ResultSet rs = null;
+	    Statement stmt = null;
+	    String errorS = null;
+
+		
+ 	    try {
+    		con = DbManager.getConnection("config");
+
+	    	String	sql = "update engineguards " +
+			    		"	set alarm = 0" +
+						"	where uid = " + id_engineguard;;
+		    	
+			stmt = con.createStatement();   	
+			stmt.executeUpdate(sql);
+
+	
+	    } catch (Exception theException) {
+	    	theException.printStackTrace();
+	    } finally {
+	    	try {
+	    		if (rs != null) rs.close();
+	    		if (stmt != null) stmt.close();
+	    		if (con != null) con.close();
+			} catch (Exception e) {}
+	    }	
+		
+ 	    String result = "{\"error\":"+errorS+"}";
+		return result;
+	}
+	
 	public String setAlarm(String id_engineguard, String sessionId) {
 		
 		Connection con = null;
@@ -218,23 +251,25 @@ public class EngineGuardData {
 	    	rs = stmt.executeQuery(sql);
     		
 	    	if (rs.next()) {
-	    		String gsm_number = rs.getString("gsm_number");
-	    		String email = rs.getString("email");
-	    		String refresh_time = rs.getInt("refresh_time")+"";
-	    		String serial_number = rs.getString("serial_number");
-
-	    		String url = ALARM_URL + "?alarm=true&gsm_number="+(gsm_number==null?"":gsm_number)+"&id_engineguard="+id_engineguard+"&email="+(email==null?"":email)+"&refresh_time="+rs.getString("refresh_time")+"&serial_number="+rs.getString("serial_number");
-	    		System.out.println(url);
-				String shortUrl = shorten(url);
-	    		System.out.println(shortUrl);
-				ObuData obuData = new ObuData();
-				obuData.sendSMS(rs.getString("gsm_number"), "ENGINEGUARD: CHECK ALARM: " + shortUrl);
-
-	    		String	sql1 = "update engineguards " +
-			    		"	set alarm = 1" +
-						"	where uid = " + id_engineguard;;
-		    	
-				stmt.executeUpdate(sql1);
+	    		if (rs.getInt("alarm") == 0) {
+		    		String gsm_number = rs.getString("gsm_number");
+		    		String email = rs.getString("email");
+		    		String refresh_time = rs.getInt("refresh_time")+"";
+		    		String serial_number = rs.getString("serial_number");
+	
+		    		String url = ALARM_URL + "?alarm=true&gsm_number="+(gsm_number==null?"":gsm_number)+"&id_engineguard="+id_engineguard+"&email="+(email==null?"":email)+"&refresh_time="+rs.getString("refresh_time")+"&serial_number="+rs.getString("serial_number");
+		    		System.out.println(url);
+					String shortUrl = shorten(url);
+		    		System.out.println(shortUrl);
+					ObuData obuData = new ObuData();
+					obuData.sendSMS(rs.getString("gsm_number"), "ENGINEGUARD: CHECK ALARM: " + shortUrl);
+	
+		    		String	sql1 = "update engineguards " +
+				    		"	set alarm = 1" +
+							"	where uid = " + id_engineguard;;
+			    	
+					stmt.executeUpdate(sql1);
+	    	}
 
 	    	} else {
 	    		Error error = new Error(Error.LOGIN_ERROR, Error.LOGIN_ERROR_CODE, Error.LOGIN_ERROR_MSG);
@@ -255,6 +290,7 @@ public class EngineGuardData {
  	    String result = "{\"error\":"+errorS+"}";
 		return result;
 	}
+	
 	
 	public String shorten(String longUrl) {
         if (longUrl == null) {

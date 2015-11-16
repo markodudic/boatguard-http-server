@@ -56,7 +56,7 @@ public class SetAlarmServlet extends HttpServlet {
 		String id_engineguard = (String) request.getParameter("egid");
 				
 		EngineGuardData egData = new EngineGuardData();
-		String result = egData.setAlarm(id_engineguard, sessionId);
+		String result = egData.resetAlarm(id_engineguard, sessionId);
 		
 		OutputStream out = null;
     	response.setContentType("text/plain");

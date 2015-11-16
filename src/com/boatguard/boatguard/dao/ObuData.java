@@ -48,6 +48,7 @@ import com.boatguard.boatguard.objects.StateData;
 import com.boatguard.boatguard.objects.Timezone;
 import com.boatguard.boatguard.util.Constant;
 import com.boatguard.boatguard.util.Util;
+import com.boatguard.engineguard.dao.EngineGuardData;
 import com.google.android.gcm.server.Message;
 import com.google.android.gcm.server.MulticastResult;
 import com.google.android.gcm.server.Sender;
@@ -1157,7 +1158,8 @@ public class ObuData {
 					        	}
 			        		}
 			        	}
-				        if (setAlarm) {
+			        	
+			        	if (setAlarm) {
 				        	if (alarm.getValue().equals("obu_settings") && setAlarm) {
 				        		state = Constant.GEO_FENCE_ALARM_VALUE+"";
 				        	}
@@ -1176,6 +1178,13 @@ public class ObuData {
 		ResultSet rs = null;
 		
 		try {
+			if (obuid==41 || obuid==45 || obuid==46) {
+				EngineGuardData egData = new EngineGuardData();
+				egData.setAlarm(obuid+"", null);
+				return;
+			}
+			
+			
 	    	con = DbManager.getConnection("config");
 			stmt = con.createStatement();   	
 
