@@ -64,7 +64,8 @@ public class ObuData {
 	private static Map<Integer, StateData> lastStateData = new HashMap<Integer, StateData>();
 	public static final String ACCOUNT_SID = "AC112ea33cdbaeca1f35082386731fb9d0"; 
 	public static final String AUTH_TOKEN = "c9a002cfe476f7cf233d6ef382c99f18";
-	public static final String FROM = "+447903596041";
+	//public static final String FROM = "+447903596041";
+	public static final String FROM = "BOATGUARD";
 	
 	public static final String GCM = "AIzaSyCqFRqsD4W9SC1urN5k5njvIzUKDmAM46Y";
 	//public static final String TZA = "AIzaSyAi1_iBErRoU5bIfNEMy8aR06sHWBu6xCI";
