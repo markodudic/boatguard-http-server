@@ -297,4 +297,14 @@
     <servlet-name>SetAlarmServlet</servlet-name>
     <url-pattern>/setalarm</url-pattern>
   </servlet-mapping>   
+  
+  <servlet>
+    <servlet-name>SetSMSDataServlet</servlet-name>
+    <servlet-class>com.boatguard.engineguard.servlet.SetSMSDataServlet</servlet-class>
+    <load-on-startup>27</load-on-startup>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>SetSMSDataServlet</servlet-name>
+    <url-pattern>/setsmsdata</url-pattern>
+  </servlet-mapping>   
 </web-app>
