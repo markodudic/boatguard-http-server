@@ -389,7 +389,6 @@ public class ObuData {
 	    	DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	    	Calendar cal = Calendar.getInstance();
 	    	
-
 			//date state popravim glede na time zone
 	    	//zaradi api quote preverim samo ob polnoci in zapisem v setting obuja
 	    	if (cal.get(Calendar.HOUR_OF_DAY) == 0) {
@@ -431,7 +430,15 @@ public class ObuData {
 	    	Date today = cal.getTime();        
 	    	String dateState = df.format(today);
 	    	
-	    	//if (lastStateData.get(Constant.STATE_ROW_STATE_VALUE)==null || tsDS.after(lastStateData.get(Constant.STATE_ROW_STATE_VALUE).getDateState())) {
+    		float lat1 = Util.transform(Float.parseFloat(states[Constant.OBU_LAT_VALUE]));
+    		float lon1 = Util.transform(Float.parseFloat(states[Constant.OBU_LON_VALUE]));
+	    	if (ewIndicator.equalsIgnoreCase("W")) {
+				lat1 = -lat1;
+			}
+    		if (nsIndicator.equalsIgnoreCase("S")) {
+				lon1 = -lon1;
+			}
+    		//if (lastStateData.get(Constant.STATE_ROW_STATE_VALUE)==null || tsDS.after(lastStateData.get(Constant.STATE_ROW_STATE_VALUE).getDateState())) {
 	    		//Map<Integer, StateData> stateDataLast = getStateData(obu.getId());
 	    		isAdd = true;
     			
@@ -557,9 +564,11 @@ public class ObuData {
 				    				stateValue = lastStateData.get(state.getId()).getValue();
 				    				if (state.getId() == Constant.STATE_LON_VALUE) {
 				    					states[Constant.OBU_LON_VALUE] = stateValue;
+				    					lon1 = Float.parseFloat(stateValue);
 				    				}
 				    				else if (state.getId() == Constant.STATE_LAT_VALUE) {
 				    					states[Constant.OBU_LAT_VALUE] = stateValue;
+				    					lat1 = Float.parseFloat(stateValue);
 				    				}
 			    				}
 			    			} else 	{
@@ -609,16 +618,8 @@ public class ObuData {
 		    	}
 		    
 		    	//geo fence distance
-		    	Map<Integer, String> obuSettings = obu.getSettings();
-	    		float lat1 = Util.transform(Float.parseFloat(states[Constant.OBU_LAT_VALUE]));
-				if (ewIndicator.equalsIgnoreCase("W")) {
-					lat1 = -lat1;
-				}
-	    		float lon1 = Util.transform(Float.parseFloat(states[Constant.OBU_LON_VALUE]));
-				if (nsIndicator.equalsIgnoreCase("S")) {
-					lon1 = -lon1;
-				}
-				float lat2 = Float.parseFloat(obuSettings.get(Constant.OBU_SETTINGS_LAT_VALUE));
+				Map<Integer, String> obuSettings = obu.getSettings();
+	    		float lat2 = Float.parseFloat(obuSettings.get(Constant.OBU_SETTINGS_LAT_VALUE));
 				float lon2 = Float.parseFloat(obuSettings.get(Constant.OBU_SETTINGS_LON_VALUE));
 				int distance = (int) Math.round(Util.gps2m(lat1, lon1, lat2, lon2));
 	    		sql = "insert into states_data (id_state, id_obu, value, date_state) " + 
