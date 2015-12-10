@@ -61,7 +61,6 @@ import com.twilio.sdk.resource.factory.MessageFactory;
 
 public class ObuData {
 	
-	private static Map<Integer, StateData> lastStateData = new HashMap<Integer, StateData>();
 	public static final String ACCOUNT_SID = "AC112ea33cdbaeca1f35082386731fb9d0"; 
 	public static final String AUTH_TOKEN = "c9a002cfe476f7cf233d6ef382c99f18";
 	//public static final String FROM = "+447903596041";
@@ -371,7 +370,7 @@ public class ObuData {
 		Statement stmt = null;
 		Obu obu = getObu(gsmnum, serial);
 		Map<Integer, State> obuStates = getStates(obu.getUid());
-		lastStateData = getObuData(obu.getUid());
+		Map<Integer, StateData> lastStateData = getObuData(obu.getUid());
 		boolean isAdd = false;
 		boolean isTok = false;
 		
@@ -1138,6 +1137,7 @@ public class ObuData {
 			        	}
 			        	//check previous
 			        	if (setAlarm && (alarm.getPrevious()!=null)) {
+			        		Map<Integer, StateData> lastStateData = getObuData(obu.getUid());
 			        		StateData stateDataPrevious = lastStateData.get(stateId);
 			        		if (stateDataPrevious != null) {
 				        		if (alarm.getPrevious().equals("=")){
