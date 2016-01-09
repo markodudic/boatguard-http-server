@@ -97,7 +97,7 @@ public class GetObuDataServlet extends InitServlet {
 	
 	private String getObuData (String obuid) {
 		ObuData obuData = new ObuData();
-		LinkedHashMap<Integer, StateData> stateData = obuData.getObuData(Integer.parseInt(obuid));
+		LinkedHashMap<Integer, StateData> stateData = obuData.getObuData(Integer.parseInt(obuid), false);
 		Iterator it = stateData.entrySet().iterator();
 		List<StateData> stateDataList = new ArrayList<StateData>();
 		while (it.hasNext()) {

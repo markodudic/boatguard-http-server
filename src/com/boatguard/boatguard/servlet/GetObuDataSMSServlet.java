@@ -82,7 +82,7 @@ public class GetObuDataSMSServlet extends InitServlet {
 		
 		int obuid = obuData.getObuFromUser(originator, text);
 		if (obuid > 0) {
-			LinkedHashMap<Integer, StateData> stateData = obuData.getObuData(obuid);
+			LinkedHashMap<Integer, StateData> stateData = obuData.getObuData(obuid, false);
 			Iterator it = stateData.entrySet().iterator();
 			//List<StateData> stateDataList = new ArrayList<StateData>();
 			//LinkedHashMap<Integer, Component> components = Cache.components;

@@ -201,7 +201,7 @@ public class ObuData {
 	}	
 
 	private boolean hasAlarm(int obuid) {
-		Map<Integer, StateData> obuStates = getObuData(obuid);
+		Map<Integer, StateData> obuStates = getObuData(obuid, false);
 		return (Integer.parseInt(obuStates.get(Constant.STATE_GEO_FENCE_VALUE).getValue()) == 2 ||
 				Integer.parseInt(obuStates.get(Constant.STATE_PUMP_STATE_VALUE).getValue()) > 0 ||
 				Integer.parseInt(obuStates.get(Constant.STATE_ACCU_EMPTY_VALUE).getValue()) == 1 ||
@@ -370,7 +370,7 @@ public class ObuData {
 		Statement stmt = null;
 		Obu obu = getObu(gsmnum, serial);
 		Map<Integer, State> obuStates = getStates(obu.getUid());
-		Map<Integer, StateData> lastStateData = getObuData(obu.getUid());
+		Map<Integer, StateData> lastStateData = getObuData(obu.getUid(), false);
 		boolean isAdd = false;
 		boolean isTok = false;
 		
@@ -806,19 +806,30 @@ public class ObuData {
 		return out.toString();
 	}
 	
-	public LinkedHashMap<Integer, StateData> getObuData(int id) {
+	public LinkedHashMap<Integer, StateData> getObuData(int id, boolean previous) {
 		Connection con = null;
 		ResultSet rs = null;
 	    Statement stmt = null;
 	    LinkedHashMap<Integer, StateData> statesData = new LinkedHashMap<Integer, StateData>();
 		try {
     		con = DbManager.getConnection("config");
+    		
+    		String sql = "";
     	    
-	    	String	sql = "select states_data.*, states.ord "
-	    			+ "from states_data left join states on (states_data.id_state = states.id) ,  "
-	    			+ "	(select max(date_state) as d from states_data where id_obu = " + id + ") as max_date "
-	    			+ "where id_obu = " + id + "  and date_state = max_date.d "
-	    			+ "order by ord";
+	    	if (!previous) {
+	    		sql = "select states_data.*, states.ord "
+		    			+ "from states_data left join states on (states_data.id_state = states.id) ,  "
+		    			+ "	(select max(date_state) as d from states_data where id_obu = " + id + ") as max_date "
+		    			+ "where id_obu = " + id + "  and date_state = max_date.d "
+		    			+ "order by ord";
+	    	} else {
+	    		sql = "select states_data.*, states.ord "
+		    			+ "from states_data left join states on (states_data.id_state = states.id) ,  "
+		    			+ "(select max(date_state) as d from states_data where id_obu = " + id + " "
+		    			+ "and date_state < (select max(date_state) from states_data where id_obu = " + id + ")) as max_date  "
+		    			+ "where id_obu = " + id + "  and date_state = max_date.d "
+		    			+ "order by ord";    			    		
+	    	}
 	    		
     		stmt = con.createStatement();   	
     		rs = stmt.executeQuery(sql);
@@ -827,15 +838,6 @@ public class ObuData {
 	    		StateData stateData = new StateData();
 	    		stateData.setId_state(rs.getInt("id_state"));
 	    		stateData.setId_obu(rs.getInt("id_obu"));
-	    		/*if ((rs.getInt("id_state") == Constant.STATE_ACCU_NAPETOST_VALUE) || 
-	    			(rs.getInt("id_state") == Constant.STATE_ACCU_TOK_VALUE) ||
-	    			(rs.getInt("id_state") == Constant.STATE_ACCU_AH_VALUE)) {
-		    		String f = new DecimalFormat("#.##").format(Float.parseFloat(rs.getString("value")));
-	    			stateData.setValue(f);	
-	    		}
-	    		else {
-	    			stateData.setValue(rs.getString("value"));	
-	    		}*/
 	    		stateData.setValue(rs.getString("value"));	
 	    		stateData.setType(rs.getString("type"));
 	    		//workaround za test account
@@ -1081,7 +1083,7 @@ public class ObuData {
 		Obu obu = getObu(gsmnum, serial);
 		List<ObuAlarm> obuAlarms = getAlarms(obu.getUid());
     	
-		Map<Integer, StateData> obuLast = getObuData(obu.getUid());
+		Map<Integer, StateData> obuLast = getObuData(obu.getUid(), false);
 		Customer customer = getCustomer(obu.getUid());
 		
 		Iterator it = obuLast.entrySet().iterator();
@@ -1136,9 +1138,10 @@ public class ObuData {
 		            			setAlarm = true;
 		            		}
 			        	}
-			        	//check previous
+		        		
+		        		//check previous
 			        	if (setAlarm && (alarm.getPrevious()!=null)) {
-			        		Map<Integer, StateData> lastStateData = getObuData(obu.getUid());
+			        		Map<Integer, StateData> lastStateData = getObuData(obu.getUid(), true);
 			        		StateData stateDataPrevious = lastStateData.get(stateId);
 			        		if (stateDataPrevious != null) {
 				        		if (alarm.getPrevious().equals("=")){
