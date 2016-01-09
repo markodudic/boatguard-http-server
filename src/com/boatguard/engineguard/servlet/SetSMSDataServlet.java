@@ -74,7 +74,9 @@ public class SetSMSDataServlet extends HttpServlet {
 		ObuData obuData = new ObuData();
 		boolean isAdd = obuData.setData(null, serial, data);
 		
-		List<ObuSetting> obuSettings = obuData.getObuSettingsForObu(null, null, serial);
+		System.out.println("isAdd="+isAdd);
+		
+		/*List<ObuSetting> obuSettings = obuData.getObuSettingsForObu(null, null, serial);
 		String settings = "";
 		
 		for (int i=0; i<obuSettings.size(); i++) {
@@ -96,7 +98,10 @@ public class SetSMSDataServlet extends HttpServlet {
 		out = response.getOutputStream();
 		out.write(settings.getBytes());
 		out.flush();
-		out.close();  	
+		out.close(); */ 
+		
+		response.setContentType("text/html");
+		response.setStatus(HttpServletResponse.SC_OK);
 	
 	}
 	
