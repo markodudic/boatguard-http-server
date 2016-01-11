@@ -69,6 +69,30 @@ public class SetObuDataServlet extends InitServlet {
 			//dodam se 000 in 000 za SteviloInputov in SteviloOutputov
 			settings += "0000";
 		}
+		else if (obu.getFirmware() == Constant.FIRMWARE_3) {
+			for (int i=0; i<obuSettings.size(); i++) {
+				ObuSetting obuSetting = obuSettings.get(i);
+		        settings += obuSetting.getValue();
+			}
+			String outputIndx = (String) request.getSession().getAttribute("outputIndx");
+			settings += "0000";
+			if (outputIndx==null || outputIndx.equals("3")) {
+				settings += "0000";
+				request.getSession().setAttribute("outputIndx", "0");
+			}
+			else if (outputIndx.equals("0")) {
+				settings += "0101";
+				request.getSession().setAttribute("outputIndx", "1");
+			}
+			else if (outputIndx.equals("1")) {
+				settings += "0202";
+				request.getSession().setAttribute("outputIndx", "2");
+			}
+			else if (outputIndx.equals("2")) {
+				settings += "0303";
+				request.getSession().setAttribute("outputIndx", "3");
+			}
+		}
 		else {
 			String output = "0000";
 			String outputValues = "";
