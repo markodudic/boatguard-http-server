@@ -45,6 +45,8 @@ public class InitServlet extends HttpServlet implements javax.servlet.Servlet {
 
 	Locale locale = Locale.getDefault();
 	private static Log log = LogFactory.getLog(InitServlet.class);
+	
+	protected static int outputIndx = 0;
   
 	public static String realPath = "WebContent/";
 	//public static Properties mainSettings;

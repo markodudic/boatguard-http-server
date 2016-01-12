@@ -74,22 +74,22 @@ public class SetObuDataServlet extends InitServlet {
 				ObuSetting obuSetting = obuSettings.get(i);
 		        settings += obuSetting.getValue();
 			}
-			String outputIndx = (String) request.getSession().getAttribute("outputIndx");
-			if (outputIndx==null || outputIndx.equals("3")) {
+			//String outputIndx = (String) request.getSession().getAttribute("outputIndx");
+			if (outputIndx==3) {
 				settings += "0000";
-				request.getSession().setAttribute("outputIndx", "0");
+				outputIndx=0;
 			}
-			else if (outputIndx.equals("0")) {
+			else if (outputIndx==0) {
 				settings += "0101";
-				request.getSession().setAttribute("outputIndx", "1");
+				outputIndx=1;
 			}
-			else if (outputIndx.equals("1")) {
+			else if (outputIndx==1) {
 				settings += "0202";
-				request.getSession().setAttribute("outputIndx", "2");
+				outputIndx=2;
 			}
-			else if (outputIndx.equals("2")) {
+			else if (outputIndx==2) {
 				settings += "0303";
-				request.getSession().setAttribute("outputIndx", "3");
+				outputIndx=3;
 			}
 		}
 		else {
