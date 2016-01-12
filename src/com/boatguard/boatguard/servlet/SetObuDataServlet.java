@@ -75,7 +75,6 @@ public class SetObuDataServlet extends InitServlet {
 		        settings += obuSetting.getValue();
 			}
 			String outputIndx = (String) request.getSession().getAttribute("outputIndx");
-			settings += "0000";
 			if (outputIndx==null || outputIndx.equals("3")) {
 				settings += "0000";
 				request.getSession().setAttribute("outputIndx", "0");
