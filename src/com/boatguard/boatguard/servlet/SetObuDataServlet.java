@@ -74,23 +74,27 @@ public class SetObuDataServlet extends InitServlet {
 				ObuSetting obuSetting = obuSettings.get(i);
 		        settings += obuSetting.getValue();
 			}
+			settings += "0000";
 			//String outputIndx = (String) request.getSession().getAttribute("outputIndx");
 			if (outputIndx==3) {
-				settings += "0000";
+				//settings += "0000";
 				outputIndx=0;
 			}
 			else if (outputIndx==0) {
-				settings += "0101";
+				//settings += "0101";
 				outputIndx=1;
 			}
 			else if (outputIndx==1) {
-				settings += "0202";
+				//settings += "0202";
 				outputIndx=2;
 			}
 			else if (outputIndx==2) {
-				settings += "0303";
+				//settings += "0303";
 				outputIndx=3;
 			}
+			System.out.println(settings);
+			settings = settings.substring(0, 4) + outputIndx + settings.substring(5);
+			System.out.println(settings);
 		}
 		else {
 			String output = "0000";
