@@ -1086,7 +1086,7 @@ public class ObuData {
 		return historyData;
 	}
 
-	public List<ObuAlarm> getObuAlarms(int obuid) {
+	public List<ObuAlarm> getObuAlarms(int obuid, int stateId) {
 		Connection con = null;
 		ResultSet rs = null;
 		Statement stmt = null;
@@ -1095,7 +1095,8 @@ public class ObuData {
 			con = DbManager.getConnection("config");
 
 			String sql = "select * "
-					+ "from obu_alarms left join alarms on (obu_alarms.id_alarm = alarms.id) "
+					+ "from obu_alarms "
+					+ "left join alarms on (obu_alarms.id_alarm = alarms.id) "
 					+ "where id_obu = " + obuid;
 
 			stmt = con.createStatement();
@@ -1106,7 +1107,7 @@ public class ObuData {
 				obuAlarm.setId_alarm(rs.getInt("id_alarm"));
 				obuAlarm.setId_obu(rs.getInt("id_obu"));
 				obuAlarm.setValue(rs.getString("value"));
-				obuAlarm.setMessage(getMessage(rs.getString("message"), obuid));
+				obuAlarm.setMessage(getMessage(rs.getString("message"), obuid, rs.getInt("id_state")));
 				obuAlarm.setMessage_short(rs.getString("message_short"));
 				obuAlarm.setTitle(rs.getString("title"));
 				obuAlarm.setAction(rs.getString("action"));
@@ -1281,7 +1282,7 @@ public class ObuData {
 									&& setAlarm) {
 								state = Constant.GEO_FENCE_ALARM_VALUE + "";
 							}
-							setAlarm(alarm.getId(), obu.getUid(), state,
+							setAlarm(alarm.getId(), obu.getUid(), state, alarm.getId_state(),
 									alarm.getMessage(),
 									alarm.getMessage_short(), alarm.getTitle(),
 									alarm.getAction(), alarm.getType(),
@@ -1298,7 +1299,7 @@ public class ObuData {
 		}
 	}
 
-	public void setAlarm(int alarmid, int obuid, String stateValue,
+	public void setAlarm(int alarmid, int obuid, String stateValue, int stateId,
 			String message, String messageShort, String title, String action,
 			String type, int sound, int vibrate, int sendEmail,
 			int sendCustomer, int sendFriends, Timestamp date_alarm,
@@ -1325,7 +1326,7 @@ public class ObuData {
 
 			if (rs.next()) {
 			} else {
-				String msg = getMessage(message, obuid);
+				String msg = getMessage(message, obuid, stateId);
 
 				Customer customer = getCustomer(obuid);
 				if ((sendCustomer == 1) && (active == 1)) {
@@ -1448,7 +1449,7 @@ public class ObuData {
 		}
 	}
 
-	private String getMessage(String message, int obuid) {
+	private String getMessage(String message, int obuid, int stateId) {
 		Connection con = null;
 		Statement stmt = null;
 		ResultSet rs = null;
@@ -1457,9 +1458,11 @@ public class ObuData {
 			con = DbManager.getConnection("config");
 			stmt = con.createStatement();
 
-			String sql = "select obus.name obus_name, customers.name customers_name, customers.surname customers_surname, customers.phone_number customers_number "
-					+ "from obus left join customers on (obus.uid = customers.id_obu)"
-					+ " where obus.uid = " + obuid;
+			String sql = "select obus.name obus_name, customers.name customers_name, customers.surname customers_surname, customers.phone_number customers_number, obu_settings.value ext_name "
+					+ "from obus " 
+					+ "left join customers on (obus.uid = customers.id_obu)"
+					+ "left join obu_settings on (obus.uid = obu_settings.id_obu and id_setting = " + stateId + ") "
+					+ "where obus.uid = " + obuid;
 
 			stmt = con.createStatement();
 			rs = stmt.executeQuery(sql);

@@ -58,7 +58,7 @@ public class GetObuAlarmsServlet extends InitServlet {
 		String obuid = (String) request.getParameter("obuid");
 		
 		ObuData obuData = new ObuData();
-		List<ObuAlarm> alarms = obuData.getObuAlarms(Integer.parseInt(obuid));
+		List<ObuAlarm> alarms = obuData.getObuAlarms(Integer.parseInt(obuid), -1);
 		Gson gson = new Gson();
 		String data = gson.toJson(alarms);
 		
