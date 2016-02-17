@@ -298,10 +298,20 @@
     <url-pattern>/setalarm</url-pattern>
   </servlet-mapping>   
   
+    <servlet>
+    <servlet-name>SetObuComponentsServlet</servlet-name>
+    <servlet-class>com.boatguard.boatguard.servlet.SetObuComponentsServlet</servlet-class>
+    <load-on-startup>28</load-on-startup>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>SetObuComponentsServlet</servlet-name>
+    <url-pattern>/setobucomponents</url-pattern>
+  </servlet-mapping>  
+  
   <servlet>
     <servlet-name>SetSMSDataServlet</servlet-name>
     <servlet-class>com.boatguard.engineguard.servlet.SetSMSDataServlet</servlet-class>
-    <load-on-startup>27</load-on-startup>
+    <load-on-startup>99</load-on-startup>
   </servlet>
   <servlet-mapping>
     <servlet-name>SetSMSDataServlet</servlet-name>

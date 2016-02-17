@@ -2,14 +2,23 @@ package com.boatguard.boatguard.objects;
 
 public class ObuComponent {
 	
+	private int id_obu;
 	private int id_component;
 	private String name;
+	private String label;
 	private String type;
 	private int show;
 	
 	@Override
 	public String toString(){
-		return "OBUCOMPONENT: id_component: " + this.id_component + ", name:" + this.name + ", show:" + this.show + ", type" + this.type;
+		return "OBUCOMPONENT: id_component: " + this.id_component + ", id_obu:" + this.id_obu + ", name:" + this.name + ", label:" + this.label + ", show:" + this.show + ", type" + this.type;
+	}
+	
+	public int getId_obu() {
+		return id_obu;
+	}
+	public void setId_obu(int id_obu) {
+		this.id_obu = id_obu;
 	}
 
 	public int getId_component() {
@@ -36,4 +45,11 @@ public class ObuComponent {
 	public void setShow(int show) {
 		this.show = show;
 	}
+	public String getLabel() {
+		return label;
+	}
+	public void setLabel(String label) {
+		this.label = label;
+	}
+	
 }

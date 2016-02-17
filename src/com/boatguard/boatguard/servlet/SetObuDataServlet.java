@@ -70,31 +70,28 @@ public class SetObuDataServlet extends InitServlet {
 			settings += "0000";
 		}
 		else if (obu.getFirmware() == Constant.FIRMWARE_3) {
+			boolean ext1 = false;
+			boolean ext2 = false;
+
 			for (int i=0; i<obuSettings.size(); i++) {
 				ObuSetting obuSetting = obuSettings.get(i);
-		        settings += obuSetting.getValue();
+		        if (obuSetting.getId_setting() == Constant.OBU_SETTINGS_EXT1_VALUE) {
+		        	ext1 = obuSetting.getValue().equals("1"); 
+		        }
+		        else if (obuSetting.getId_setting() == Constant.OBU_SETTINGS_EXT2_VALUE) {
+		        	ext2 = obuSetting.getValue().equals("1"); 
+		        }
+		        else {
+		        	settings += obuSetting.getValue();
+		        }
 			}
+			String outputValues = "0";
+			if (ext1 && ext2) outputValues = "3";
+			else if (ext1) outputValues = "1";
+			else if (ext2) outputValues = "2";
+			
+			settings = settings.substring(0, 4) + outputValues + settings.substring(5);
 			settings += "0000";
-			//String outputIndx = (String) request.getSession().getAttribute("outputIndx");
-			if (outputIndx==3) {
-				//settings += "0000";
-				outputIndx=0;
-			}
-			else if (outputIndx==0) {
-				//settings += "0101";
-				outputIndx=1;
-			}
-			else if (outputIndx==1) {
-				//settings += "0202";
-				outputIndx=2;
-			}
-			else if (outputIndx==2) {
-				//settings += "0303";
-				outputIndx=3;
-			}
-			System.out.println(settings);
-			settings = settings.substring(0, 4) + outputIndx + settings.substring(5);
-			System.out.println(settings);
 		}
 		else {
 			String output = "0000";

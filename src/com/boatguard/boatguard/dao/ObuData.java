@@ -330,7 +330,7 @@ public class ObuData {
 		try {
 			con = DbManager.getConnection("config");
 
-			String sql = "select obu_components.id_component, components.name, components.type, components.show "
+			String sql = "select obus.uid, obu_components.id_component, components.name, IFNULL(obu_components.name, components.name) label, components.type, components.show "
 					+ "from obus left join "
 					+ "		obu_components on (obus.uid = obu_components.id_obu) left join "
 					+ "		components on (obu_components.id_component = components.id) "
@@ -348,8 +348,10 @@ public class ObuData {
 
 			while (rs.next()) {
 				ObuComponent obuComponent = new ObuComponent();
+				obuComponent.setId_obu(rs.getInt("uid"));
 				obuComponent.setId_component(rs.getInt("id_component"));
 				obuComponent.setName(rs.getString("name"));
+				obuComponent.setLabel(rs.getString("label"));
 				obuComponent.setType(rs.getString("type"));
 				obuComponent.setShow(rs.getInt("show"));
 				obuComponents.put(rs.getInt("id_component"), obuComponent);
@@ -372,6 +374,44 @@ public class ObuData {
 		return obuComponents;
 	}
 
+	public void setObuComponents(String data) {
+		Gson gson = new Gson();
+		Type listType = new TypeToken<List<ObuComponent>>() {
+		}.getType();
+		List obuComponents = gson.fromJson(data, listType);
+
+		Connection con = null;
+		Statement stmt = null;
+		try {
+			con = DbManager.getConnection("config");
+			stmt = con.createStatement();
+			
+			for (int i = 0; i < obuComponents.size(); i++) {
+				ObuComponent obuComponent = (ObuComponent) obuComponents.get(i);
+				
+				String sql = "update obu_components "
+						+ " set name = '"	+ obuComponent.getLabel() + "'"
+						+ " where id_obu = " + obuComponent.getId_obu()
+						+ " and id_component = " + obuComponent.getId_component();
+
+				stmt.executeUpdate(sql);
+
+			}
+		} catch (Exception theException) {
+			theException.printStackTrace();
+		} finally {
+			try {
+				if (stmt != null)
+					stmt.close();
+				if (con != null)
+					con.close();
+			} catch (Exception e) {
+			}
+		}
+
+	}
+
+	
 	/*
 	 * 1234.1222,N,12345.1111,E,1,5,0,N,N,N,D,2F50,1A1B1C,2F50,00,00 0.-LATITUDE
 	 * 1.-N/S INDICATOR 2.-LONGITUDE 3.-E/W INDICATOR 4.-GPS FIX 5.-SAT NUM
