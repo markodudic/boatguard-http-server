@@ -1369,6 +1369,8 @@ public class ObuData {
 			if (rs.next()) {
 			} else {
 				String msg = getMessage(message, obuid, stateId);
+				messageShort = getMessage(messageShort, obuid, stateId);
+				title = getMessage(title, obuid, stateId);
 
 				Customer customer = getCustomer(obuid);
 				if ((sendCustomer == 1) && (active == 1)) {
@@ -1500,10 +1502,11 @@ public class ObuData {
 			con = DbManager.getConnection("config");
 			stmt = con.createStatement();
 
-			String sql = "select obus.name obus_name, customers.name customers_name, customers.surname customers_surname, customers.phone_number customers_number, obu_settings.value ext_name "
+			String sql = "select obus.name obus_name, customers.name customers_name, customers.surname customers_surname, customers.phone_number customers_number, IFNULL(obu_components.name, components.name) ext_name "
 					+ "from obus " 
 					+ "left join customers on (obus.uid = customers.id_obu)"
-					+ "left join obu_settings on (obus.uid = obu_settings.id_obu and id_setting = " + stateId + ") "
+					+ "left join obu_components on (obus.uid = obu_components.id_obu and id_component = " + stateId + ") "
+					+ "left join components on (components.id = " + stateId + ") "
 					+ "where obus.uid = " + obuid;
 
 			stmt = con.createStatement();
