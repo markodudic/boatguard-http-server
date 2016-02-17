@@ -1108,8 +1108,10 @@ public class ObuData {
 				obuAlarm.setId_obu(rs.getInt("id_obu"));
 				obuAlarm.setValue(rs.getString("value"));
 				obuAlarm.setMessage(getMessage(rs.getString("message"), obuid, rs.getInt("id_state")));
-				obuAlarm.setMessage_short(rs.getString("message_short"));
-				obuAlarm.setTitle(rs.getString("title"));
+				obuAlarm.setMessage_short(getMessage(rs.getString("message_short"), obuid, rs.getInt("id_state")));
+				//obuAlarm.setMessage_short(rs.getString("message_short"));
+				obuAlarm.setTitle(getMessage(rs.getString("title"), obuid, rs.getInt("id_state")));
+				//obuAlarm.setTitle(rs.getString("title"));
 				obuAlarm.setAction(rs.getString("action"));
 				obuAlarm.setSound(rs.getInt("sound"));
 				obuAlarm.setVibrate(rs.getInt("vibrate"));
