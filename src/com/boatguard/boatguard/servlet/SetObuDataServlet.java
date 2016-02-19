@@ -70,25 +70,25 @@ public class SetObuDataServlet extends InitServlet {
 			settings += "0000";
 		}
 		else if (obu.getFirmware() == Constant.FIRMWARE_3) {
-			boolean ext1 = false;
-			boolean ext2 = false;
+			boolean output1 = false;
+			boolean output2 = false;
 
 			for (int i=0; i<obuSettings.size(); i++) {
 				ObuSetting obuSetting = obuSettings.get(i);
-		        if (obuSetting.getId_setting() == Constant.OBU_SETTINGS_EXT1_VALUE) {
-		        	ext1 = obuSetting.getValue().equals("1"); 
+		        if (obuSetting.getId_setting() == Constant.OBU_SETTINGS_OUTPUT1_VALUE) {
+		        	output1 = obuSetting.getValue().equals("1"); 
 		        }
-		        else if (obuSetting.getId_setting() == Constant.OBU_SETTINGS_EXT2_VALUE) {
-		        	ext2 = obuSetting.getValue().equals("1"); 
+		        else if (obuSetting.getId_setting() == Constant.OBU_SETTINGS_OUTPUT2_VALUE) {
+		        	output2 = obuSetting.getValue().equals("1"); 
 		        }
 		        else {
 		        	settings += obuSetting.getValue();
 		        }
 			}
 			String outputValues = "0";
-			if (ext1 && ext2) outputValues = "3";
-			else if (ext1) outputValues = "1";
-			else if (ext2) outputValues = "2";
+			if (output1 && output2) outputValues = "3";
+			else if (output1) outputValues = "1";
+			else if (output2) outputValues = "2";
 			
 			settings = settings.substring(0, 4) + outputValues + settings.substring(5);
 			settings += "0000";

@@ -31,10 +31,14 @@ public class Constant {
 	public static Integer STATE_ANCHOR_VALUE					= 40;
 	public static final String STATE_ANCHOR_DRIFTING 			= "ANCHOR_DRIFTING";
 	public static Integer STATE_ANCHOR_DRIFTING_VALUE			= 41;
-	public static final String STATE_EXT1				 		= "EXT1";
-	public static Integer STATE_EXT1_VALUE						= 80;
-	public static final String STATE_EXT2			 			= "EXT2";
-	public static Integer STATE_EXT2_VALUE						= 90;
+	public static final String STATE_INPUT1				 		= "INPUT1";
+	public static Integer STATE_INPUT1_VALUE					= 80;
+	public static final String STATE_INPUT2			 			= "INPUT2";
+	public static Integer STATE_INPUT2_VALUE					= 90;
+	public static final String STATE_OUTPUT1				 	= "OUTPUT1";
+	public static Integer STATE_OUTPUT1_VALUE					= 100;
+	public static final String STATE_OUTPUT2			 		= "OUTPUT2";
+	public static Integer STATE_OUTPUT2_VALUE					= 110;
 
 	//OBU SETTINGS ID
 	public static final String OBU_SETTINGS_REFRESH_TIME 		= "REFRESH_TIME";
@@ -61,10 +65,10 @@ public class Constant {
 	public static Integer OBU_SETTINGS_LIGHT_VALUE				= 50;
 	public static final String OBU_SETTINGS_FAN					= "FAN";
 	public static Integer OBU_SETTINGS_FAN_VALUE				= 60;
-	public static final String OBU_SETTINGS_EXT1				= "EXT1";
-	public static Integer OBU_SETTINGS_EXT1_VALUE				= 80;
-	public static final String OBU_SETTINGS_EXT2				= "EXT2";
-	public static Integer OBU_SETTINGS_EXT2_VALUE				= 90;
+	public static final String OBU_SETTINGS_OUTPUT1				= "OUTPUT1";
+	public static Integer OBU_SETTINGS_OUTPUT1_VALUE			= 100;
+	public static final String OBU_SETTINGS_OUTPUT2				= "OUTPUT2";
+	public static Integer OBU_SETTINGS_OUTPUT2_VALUE			= 110;
 
 	//PARAMETRI
 	public static final String APP_SETTINGS_NAPETOST_TOK_MAX 	= "NAPETOST_TOK_MAX";
@@ -107,8 +111,8 @@ public class Constant {
 	//public static Integer OBU_DATE_VALUE						= -1;
 	public static final String OBU_GEO_FIX 						= "OBU_GEO_FIX";
 	public static Integer OBU_GEO_FIX_VALUE						= 4;
-	public static final String OBU_EXT 							= "OBU_EXT";
-	public static Integer OBU_EXT_VALUE							= 8;
+	public static final String OBU_INPUT 						= "OBU_INPUT";
+	public static Integer OBU_INPUT_VALUE						= 8;
 
 	//ALARMI
 	public static final String GEO_FENCE_DISABLED 				= "GEO_FENCE_DISABLED";
@@ -133,10 +137,10 @@ public class Constant {
 	public static Integer PUMP_DEMAGED_VALUE					= 3;
 	public static final String ANCHOR_ENABLED					= "ANCHOR_ENABLED";
 	public static Integer ANCHOR_ENABLED_VALUE					= 1;
-	public static final String EXT_ON							= "EXT_ON";
-	public static Integer EXT_ON_VALUE							= 1;
-	public static final String EXT_OFF							= "EXT_OFF";
-	public static Integer EXT_OFF_VALUE							= 0;
+	public static final String INPUT_ON							= "INPUT_ON";
+	public static Integer INPUT_ON_VALUE						= 1;
+	public static final String INPUT_OFF						= "INPUT_OFF";
+	public static Integer INPUT_OFF_VALUE						= 0;
 	//Firmware
 	public static final int FIRMWARE_1							= 1;
 	public static final int FIRMWARE_2							= 2;

@@ -667,29 +667,29 @@ public class ObuData {
 			    		
 			    		//EXT
 			    		if (obu.getFirmware() == Constant.FIRMWARE_3) {
-			    			if (i == Constant.OBU_EXT_VALUE) {
+			    			if (i == Constant.OBU_INPUT_VALUE) {
 			    				try {
-			    					String ext1 = "0";
-			    					String ext2 = "0";
+			    					String input1 = "0";
+			    					String input2 = "0";
 			    					switch (Integer.parseInt(stateValue)) {
 			    					case 1:
-				    					ext1 = "1";
-				    					ext2 = "0";
+			    						input1 = "1";
+			    						input2 = "0";
 				    					break;
 			    					case 2:
-				    					ext1 = "0";
-				    					ext2 = "1";
+			    						input1 = "0";
+			    						input2 = "1";
 				    					break;
 			    					case 3:
-				    					ext1 = "1";
-				    					ext2 = "1";
+			    						input1 = "1";
+			    						input2 = "1";
 				    					break;
 			    					}
 			    					sql = "insert into states_data (id_state, id_obu, value, date_state) " + 
-						    	    		"values ('" + Constant.OBU_SETTINGS_EXT1_VALUE + "', " + obu.getUid() + ", '" + ext1 + "', '" + dateState + "')";
+						    	    		"values ('" + Constant.STATE_INPUT1_VALUE + "', " + obu.getUid() + ", '" + input1 + "', '" + dateState + "')";
 		    						stmt.executeUpdate(sql);
 		    						sql = "insert into states_data (id_state, id_obu, value, date_state) " + 
-		    								"values ('" + Constant.OBU_SETTINGS_EXT2_VALUE + "', " + obu.getUid() + ", '" + ext2 + "', '" + dateState + "')";
+		    								"values ('" + Constant.STATE_INPUT1_VALUE + "', " + obu.getUid() + ", '" + input2 + "', '" + dateState + "')";
 		    						stmt.executeUpdate(sql);
 			    				
 			    				} catch (Exception e) {
@@ -1502,7 +1502,7 @@ public class ObuData {
 			con = DbManager.getConnection("config");
 			stmt = con.createStatement();
 
-			String sql = "select obus.name obus_name, customers.name customers_name, customers.surname customers_surname, customers.phone_number customers_number, IFNULL(obu_components.name, components.name) ext_name "
+			String sql = "select obus.name obus_name, customers.name customers_name, customers.surname customers_surname, customers.phone_number customers_number, IFNULL(obu_components.name, components.name) input_name "
 					+ "from obus " 
 					+ "left join customers on (obus.uid = customers.id_obu)"
 					+ "left join obu_components on (obus.uid = obu_components.id_obu and id_component = " + stateId + ") "
