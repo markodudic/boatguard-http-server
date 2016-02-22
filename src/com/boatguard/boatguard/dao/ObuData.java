@@ -689,7 +689,7 @@ public class ObuData {
 						    	    		"values ('" + Constant.STATE_INPUT1_VALUE + "', " + obu.getUid() + ", '" + input1 + "', '" + dateState + "')";
 		    						stmt.executeUpdate(sql);
 		    						sql = "insert into states_data (id_state, id_obu, value, date_state) " + 
-		    								"values ('" + Constant.STATE_INPUT1_VALUE + "', " + obu.getUid() + ", '" + input2 + "', '" + dateState + "')";
+		    								"values ('" + Constant.STATE_INPUT2_VALUE + "', " + obu.getUid() + ", '" + input2 + "', '" + dateState + "')";
 		    						stmt.executeUpdate(sql);
 			    				
 			    				} catch (Exception e) {
