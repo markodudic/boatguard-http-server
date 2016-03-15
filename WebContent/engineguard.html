@@ -20,7 +20,7 @@
 </head>
 <body>
 
-<table border="0" cellspacing="0" cellpadding="4" align="center">
+<table border="0" cellspacing="0" cellpadding="4" align="center" style="width:100%">
 	<tr>
 		<td colspan=2>
 			<img src="./img/ic_logotype_day.png" width="300">
@@ -64,19 +64,17 @@
 
 
 
-<section id="location" style="visibility: hidden; display: none; height:100%">
-	<table border="0" cellspacing="0" cellpadding="4" align="center">
+<section id="location" style="visibility: hidden; display: none; height:100%; width:100%">
+	<table border="0" cellspacing="0" cellpadding="4"  align="center" style="width:100%">
 		<tr>
-			<td>CODE:</td>
-			<td><input type="text" id="set_code" size="20" readonly></td>
-			<td>NUMBER:</td>
-			<td><input type="text" id="set_number" size="20"></td>
-			<td>EMAIL:</td>
-			<td><input type="text" id="set_email" size="20"></td>
-			<td>INTERVAL:</td>
-			<td><input type="range" id="set_refresh_time" min="0" max="60" step="15"></td>
-			<td><button name="confirm" id="confirm" onclick="confirm();">CONFIRM</button></td>
-			<td><button name="deactivate" id="deactivate" onclick="deactivate();">DEACTIVATE ALARM</button></td>
+			<td>CODE:<input type="text" id="set_code" size="20" readonly>
+				NUMBER:<input type="text" id="set_number" size="20">
+				EMAIL:<input type="text" id="set_email" size="20">
+				INTERVAL:<input type="range" id="set_refresh_time" min="0" max="60" step="15"></td>
+		</tr>
+		<tr>
+			<td><button name="confirm" id="confirm" onclick="confirm();">CONFIRM SETTINGS</button>
+				<button name="deactivate" id="deactivate" onclick="deactivate();">DEACTIVATE ALARM</button></td>
 		</tr>
 	</table>
 	<div id="map-canvas"></div>
