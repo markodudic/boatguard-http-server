@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+    <meta charset="utf-8">
+	<title>ENGINEGUARD</title>
+	
+	<script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
+	<script src="js/eg.js"></script>
+	
+	<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAi1_iBErRoU5bIfNEMy8aR06sHWBu6xCI"></script>
+	<script src="js/samples.js"></script>
+	<link rel="stylesheet" media="screen" href="css/samples.css">
+		     
+	<link rel="stylesheet" href="css/bg.css"/>
+	
+	<link rel="shortcut icon" href="./img/fav.png" type="image/x-icon"/>
+
+
+</head>
+<body>
+
+<table border="0" cellspacing="0" cellpadding="4" align="center" style="width:100%; padding-top: 10px; padding-bottom: 10px;">
+	<tr>
+		<td colspan=2 style="text-align: center;">
+			<img src="./img/ic_logotype_day.png" width="300">
+		</td>
+	</tr>
+</table>
+
+<section id="login">
+	<table border="0" cellspacing="0" cellpadding="4" align="center">
+		<tr>
+			<td>ENGINEGUARD CODE</td>
+			<td><input type="text" id=engineguard size="20" value="12345"></td>
+		</tr>
+		<tr>
+			<td>GSM NUMBER<br>format (+38640123456)</td>
+			<td><input type="text" id="number" size="20" value="+38640227627"></td>
+		</tr>
+		<tr>
+			<td></td>
+			<td><button name="send" id="send" onclick="send();">REGISTER</button></td>
+		</tr>
+	</table>
+</section>
+
+<section id="verification" style="visibility: hidden; display: none;">
+	<table border="0" cellspacing="0" cellpadding="4" align="center">
+		<tr>
+			<td>RECEIVED CODE</td>
+			<td><input type="text" id="code" size="20"></td>
+		</tr>
+		<tr>
+			<td></td>
+			<td><button name="verify" id="verify" onclick="verify();">VERIFY CODE</button></td>
+		</tr>
+		<tr>
+			<td></td>
+			<td><button name="send" id="send" onclick="send();">REQUEST AGAIN</button></td>
+		</tr>
+	</table>		
+</section>
+
+
+
+<section id="location" style="visibility: hidden; display: none; height:100%; width:100%">
+	<table cellspacing="0" cellpadding="4"  align="center" style="width:100%; margin-bottom:20px; border: solid 1px black;">
+		<tr style="border: solid 1px black;">
+			<td style="border-bottom: solid 1px black;">
+				Your activation code:
+			</td>
+			<td style="border-bottom: solid 1px black;">
+				<input type="text" id="set_code" style="border-width: 0px; font-weight: bold;" readonly>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				Mobile Phone:
+			</td>
+			<td>
+				<input type="text" id="set_number" size="20" style="font-weight: bold;">
+			</td>
+		</tr>
+		<tr>
+			<td>
+				E-mail:
+			</td>
+			<td>
+				<input type="text" id="set_email" size="20" style="font-weight: bold;">
+			</td>
+		</tr>
+		<tr>
+			<td style="border-bottom: solid 1px black;">
+			</td>
+			<td style="border-bottom: solid 1px black; text-align: right;">
+				<button name="confirm" id="confirm" onclick="confirmSettings();">SAVE SETTINGS</button>
+			</td>
+		</tr>
+		<tr>
+			<td style="border-bottom: solid 1px black;">
+				Refresh interval:
+			</td>
+			<td style="border-bottom: solid 1px black;">
+				<input type="range" id="set_refresh_time" min="0" max="60" step="15"  onchange="confirmRefreshTime()" style="font-weight: bold;">
+				<input type="text" id="refresh_time" size="5" style="border-width: 0px; font-weight: bold;" readonly><br>
+				<span style="font-size:.8em">Your EG will send location data approximately 700 times. The longer the interval, more time to recover your property.</span>
+			</td>
+		</tr>
+		<tr>
+			<td>
+			</td>
+			<td style="text-align: right;">
+				<button name="deactivate" id="deactivate" onclick="deactivate();">DISMISS ALARM</button>
+			</td>
+		</tr>
+	</table>
+	Last refresh:
+	<input type="text" id="last_refresh" style="border-width: 0px; font-weight: bold; margin-left:10px" readonly>
+	<div id="map-canvas"></div>
+</section>
+
+
+</body>
+</html>

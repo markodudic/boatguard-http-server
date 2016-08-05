@@ -198,6 +198,75 @@ public class EngineGuardData {
 		return statesData;
 	}
 	
+	public String setSettings(String id_engineguard, String gsmNumber, String email) {
+		
+		Connection con = null;
+		ResultSet rs = null;
+	    Statement stmt = null;
+	    String errorS = null;
+
+		
+ 	    try {
+    		con = DbManager.getConnection("config");
+
+	    	String	sql = "update engineguards " +
+			    		"	set gsm_number = '" + gsmNumber + "'," +
+			    		"		email = '" + email + "'" +
+						"	where uid = " + id_engineguard;
+		    	
+			stmt = con.createStatement();   	
+			stmt.executeUpdate(sql);
+
+	
+	    } catch (Exception theException) {
+	    	theException.printStackTrace();
+	    } finally {
+	    	try {
+	    		if (rs != null) rs.close();
+	    		if (stmt != null) stmt.close();
+	    		if (con != null) con.close();
+			} catch (Exception e) {}
+	    }	
+		
+ 	    String result = "{\"error\":"+errorS+"}";
+		return result;
+	}
+
+	public String setRefreshTime(String id_engineguard, String refreshTime) {
+		
+		Connection con = null;
+		ResultSet rs = null;
+	    Statement stmt = null;
+	    String errorS = null;
+
+		
+ 	    try {
+    		con = DbManager.getConnection("config");
+
+	    	String	sql = "update engineguards " +
+			    		"	set refresh_time = '" + refreshTime + "'" +
+						"	where uid = " + id_engineguard;
+		    	
+			stmt = con.createStatement();   	
+			stmt.executeUpdate(sql);
+
+	
+	    } catch (Exception theException) {
+	    	theException.printStackTrace();
+	    } finally {
+	    	try {
+	    		if (rs != null) rs.close();
+	    		if (stmt != null) stmt.close();
+	    		if (con != null) con.close();
+			} catch (Exception e) {}
+	    }	
+		
+ 	    String result = "{\"error\":"+errorS+"}";
+		return result;
+	}
+
+	
+	
 	public String resetAlarm(String id_engineguard, String sessionId) {
 		
 		Connection con = null;

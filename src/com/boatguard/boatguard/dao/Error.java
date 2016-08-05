@@ -4,7 +4,7 @@ public class Error {
 
 	public static final String LOGIN_ERROR = "Login error";
 	public static final String LOGIN_ERROR_CODE = "1";
-	public static final String LOGIN_ERROR_MSG = "Wrong login";
+	public static final String LOGIN_ERROR_MSG = "Error: Code doesn't exsist. Check the code. ";
 
 	public static final String REGISTER_ERROR = "Register error";
 	public static final String REGISTER_ERROR_CODE = "2";

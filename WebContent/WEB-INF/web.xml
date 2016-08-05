@@ -289,9 +289,29 @@
   </servlet-mapping>   
   
   <servlet>
+    <servlet-name>SetSettingsServlet</servlet-name>
+    <servlet-class>com.boatguard.engineguard.servlet.SetSettingsServlet</servlet-class>
+    <load-on-startup>27</load-on-startup>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>SetSettingsServlet</servlet-name>
+    <url-pattern>/setsettings</url-pattern>
+  </servlet-mapping>   
+  
+   <servlet>
+    <servlet-name>SetRefreshTimeServlet</servlet-name>
+    <servlet-class>com.boatguard.engineguard.servlet.SetRefreshTimeServlet</servlet-class>
+    <load-on-startup>27</load-on-startup>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>SetRefreshTimeServlet</servlet-name>
+    <url-pattern>/setrefreshtime</url-pattern>
+  </servlet-mapping>  
+  
+  <servlet>
     <servlet-name>SetAlarmServlet</servlet-name>
     <servlet-class>com.boatguard.engineguard.servlet.SetAlarmServlet</servlet-class>
-    <load-on-startup>27</load-on-startup>
+    <load-on-startup>29</load-on-startup>
   </servlet>
   <servlet-mapping>
     <servlet-name>SetAlarmServlet</servlet-name>
@@ -301,7 +321,7 @@
     <servlet>
     <servlet-name>SetObuComponentsServlet</servlet-name>
     <servlet-class>com.boatguard.boatguard.servlet.SetObuComponentsServlet</servlet-class>
-    <load-on-startup>28</load-on-startup>
+    <load-on-startup>30</load-on-startup>
   </servlet>
   <servlet-mapping>
     <servlet-name>SetObuComponentsServlet</servlet-name>

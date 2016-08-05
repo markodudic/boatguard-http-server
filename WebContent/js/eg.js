@@ -50,11 +50,53 @@
               }
               else {
             	  localStorage.setItem("eglogged", false);
-                  alert('Wrong login');
+                  alert('Error: Code or gsm number doesn\'t exsist. Check the code and gsm number and try again.');
               }
           }
       });	      
   }
+
+  function confirmSettings() {
+	  var gsm_number = document.getElementById('set_number').value;
+	  var email = document.getElementById('set_email').value;
+	  
+	  
+	 $.ajax({
+          url: "/boatguard/setsettings?&egid="+encodeURIComponent(id)+"&gsmnumber="+encodeURIComponent(gsm_number)+"&email="+email+"&sessionid="+localStorage.getItem("sessionid"),
+          type: 'POST',
+          contentType: "application/json; charset=utf-8",
+          success: function (res) {
+        	  var data = JSON.parse(res);
+    		  if (data.error === null) {
+    			  alert("Settings have been saved.");
+              }
+              else {
+    			  alert("Error: Settings are not saved. Try again.");
+              }
+          }
+      });
+  }
+  
+  function confirmRefreshTime() {
+	  var range = document.getElementById('set_refresh_time').value;
+	  var rt = document.getElementById('refresh_time');
+	  if (range == 0) range = 5;
+	  rt.value = range + " MIN";
+	  
+	  $.ajax({
+          url: "/boatguard/setrefreshtime?&egid="+encodeURIComponent(id)+"&refreshtime="+range+"&sessionid="+localStorage.getItem("sessionid"),
+          type: 'POST',
+          contentType: "application/json; charset=utf-8",
+          success: function (res) {
+        	  var data = JSON.parse(res);
+    		  if (data.error === null) {
+              }
+              else {
+              }
+          }
+      });	  
+  }
+  
   
   function verify() {
 		 var code = document.getElementById('code').value;
@@ -81,6 +123,7 @@
 	    			  document.getElementById('set_number').value = data.gsm_number;
 	    			  document.getElementById('set_email').value = data.email;
 	    			  document.getElementById('set_refresh_time').value = data.refresh_time;
+	    			  document.getElementById('refresh_time').value = data.refresh_time  + " MIN";
 	    			  
 	    			  initialize();
 	    			  setInterval(initialize, 60000);
@@ -112,17 +155,21 @@
 	        var lat = 0;
             var lon = 0;
             var time = 0;
+            var timeStr = 0;
             
             var states = parsedJSON.states;
             for (var ii=0;ii<states.length;ii++) {
 		        if (states[ii].id_state == 11) {
 		        	lon = states[ii].value;
 		        	time = states[ii].dateString;
+		        	timeStr = states[ii].dateState;
 		        }
 		        if (states[ii].id_state == 12) {
 		        	lat = states[ii].value;
 		        }		            
 		    }
+            
+            document.getElementById('last_refresh').value = timeStr;
             
             var marker = new google.maps.Marker({
 	    	      position: new google.maps.LatLng(lat, lon),
@@ -158,10 +205,10 @@
 	          success: function (res) {
 	        	  var data = JSON.parse(res);
 	    		  if (data.error === null) {
-
+	    			  alert("You have dismissed the current alarm. Make sure that the connector on your device is in the original position (Closed) to put EG into idle mode. Your EG is now ready to detect the next engine removal.");
 	              }
 	              else {
-
+	    			  alert("Error: Alarm is not dismissed. Try again.");
 	              }
 	          }
 	      });	      
@@ -187,6 +234,7 @@
 		  document.getElementById('set_number').value = QueryString.gsm_number;
 		  document.getElementById('set_email').value = QueryString.email;
 		  document.getElementById('set_refresh_time').value = QueryString.refresh_time;
+		  document.getElementById('refresh_time').value = data.refresh_time  + " MIN";
 		  
 		  initialize();
 		  setInterval(initialize, 30000);
