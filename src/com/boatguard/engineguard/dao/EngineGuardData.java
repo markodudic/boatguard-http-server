@@ -25,7 +25,7 @@ import com.google.gson.Gson;
 
 public class EngineGuardData {
 
-	final String ALARM_URL = "http://server.boatguard.com:8080/boatguard/engineguard.html";
+	final String ALARM_URL = "http://www.boatguard.com/engineguard/register";
 	final String GOOGLE_URL = "https://www.googleapis.com/urlshortener/v1/url?fields=id&key=AIzaSyCqFRqsD4W9SC1urN5k5njvIzUKDmAM46Y";
 	
 	public String getCode(String engineguard, String number, String sessionId) {
