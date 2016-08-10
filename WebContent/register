@@ -65,59 +65,69 @@
 
 
 <section id="location" style="visibility: hidden; display: none; height:100%; width:100%">
-	<table cellspacing="0" cellpadding="4"  align="center" style="width:100%; margin-bottom:20px; border: solid 1px black;">
-		<tr style="border: solid 1px black;">
-			<td style="border-bottom: solid 1px black;">
-				Your activation code:
-			</td>
-			<td style="border-bottom: solid 1px black;">
-				<input type="text" id="set_code" style="border-width: 0px; font-weight: bold;" readonly>
-			</td>
-		</tr>
-		<tr>
-			<td>
-				Mobile Phone:
-			</td>
-			<td>
-				<input type="text" id="set_number" size="20" style="font-weight: bold;">
-			</td>
-		</tr>
-		<tr>
-			<td>
-				E-mail:
-			</td>
-			<td>
-				<input type="text" id="set_email" size="20" style="font-weight: bold;">
-			</td>
-		</tr>
-		<tr>
-			<td style="border-bottom: solid 1px black;">
-			</td>
-			<td style="border-bottom: solid 1px black; text-align: right;">
-				<button name="confirm" id="confirm" onclick="confirmSettings();">SAVE SETTINGS</button>
-			</td>
-		</tr>
-		<tr>
-			<td style="border-bottom: solid 1px black;">
-				Refresh interval:
-			</td>
-			<td style="border-bottom: solid 1px black;">
-				<input type="range" id="set_refresh_time" min="0" max="60" step="15"  onchange="confirmRefreshTime()" style="font-weight: bold;">
-				<input type="text" id="refresh_time" size="5" style="border-width: 0px; font-weight: bold;" readonly><br>
-				<span style="font-size:.8em">Your EG will send location data approximately 700 times. The longer the interval, more time to recover your property.</span>
-			</td>
-		</tr>
-		<tr>
-			<td>
-			</td>
-			<td style="text-align: right;">
-				<button name="deactivate" id="deactivate" onclick="deactivate();">DISMISS ALARM</button>
-			</td>
-		</tr>
-	</table>
-	Last refresh:
-	<input type="text" id="last_refresh" style="border-width: 0px; font-weight: bold; margin-left:10px" readonly>
-	<div id="map-canvas"></div>
+	<button onclick="showMap();">MAP</button>
+	<button onclick="showSettings();">SETTINGS</button>
+	
+	
+	<section id="map_section" style="width:100%; height:100%; margin-top:20px;">
+		Last refresh:
+		<input type="text" id="last_refresh" style="border-width: 0px; font-weight: bold; margin-left:10px" readonly>
+		<div id="map-canvas"></div>
+	</section>
+	
+	<section id="settings_section" style="visibility: hidden; display: none; width:100%; margin-top:20px;">
+		<table cellspacing="0" cellpadding="4"  align="center" style="width:100%; border: solid 1px black;">
+			<tr style="border: solid 1px black;">
+				<td style="border-bottom: solid 1px black;">
+					Your activation code:
+				</td>
+				<td style="border-bottom: solid 1px black;">
+					<input type="text" id="set_code" style="border-width: 0px; font-weight: bold;" readonly>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					Mobile Phone:
+				</td>
+				<td>
+					<input type="text" id="set_number" size="20" style="font-weight: bold;">
+				</td>
+			</tr>
+			<tr>
+				<td>
+					E-mail:
+				</td>
+				<td>
+					<input type="text" id="set_email" size="20" style="font-weight: bold;">
+				</td>
+			</tr>
+			<tr>
+				<td style="border-bottom: solid 1px black;">
+				</td>
+				<td style="border-bottom: solid 1px black; text-align: right;">
+					<button name="confirm" id="confirm" onclick="confirmSettings();">SAVE SETTINGS</button>
+				</td>
+			</tr>
+			<tr>
+				<td style="border-bottom: solid 1px black;">
+					Refresh interval:
+				</td>
+				<td style="border-bottom: solid 1px black;">
+					<input type="range" id="set_refresh_time" min="0" max="60" step="15"  onchange="confirmRefreshTime()" style="font-weight: bold;">
+					<input type="text" id="refresh_time" size="5" style="border-width: 0px; font-weight: bold;" readonly><br>
+					<span style="font-size:.8em">Your EG will send location data approximately 700 times. The longer the interval, more time to recover your property.</span>
+				</td>
+			</tr>
+			<tr>
+				<td>
+				</td>
+				<td style="text-align: right;">
+					<button name="deactivate" id="deactivate" onclick="deactivate();">DISMISS ALARM</button>
+				</td>
+			</tr>
+		</table>
+	</section>
+
 </section>
 
 

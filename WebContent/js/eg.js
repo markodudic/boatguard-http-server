@@ -25,6 +25,27 @@
 	} ();
 
 	
+  function showMap() {
+	var map_section=document.getElementById('map_section'),
+	  	settings_section=document.getElementById('settings_section');
+
+	settings_section.style.display='none';
+	settings_section.style.visibility='hidden'; 
+	map_section.style.display='block';
+	map_section.style.visibility='visible'; 	 
+  }
+  
+  function showSettings() {
+	var map_section=document.getElementById('map_section'),
+		settings_section=document.getElementById('settings_section');
+
+	map_section.style.display='none';
+	map_section.style.visibility='hidden'; 
+	settings_section.style.display='block';
+	settings_section.style.visibility='visible'; 	 
+  }
+  
+  
   function send() {
 	 var engineguard = document.getElementById('engineguard').value;
      var number = document.getElementById('number').value;
