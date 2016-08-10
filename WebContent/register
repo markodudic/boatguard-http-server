@@ -67,6 +67,7 @@
 <section id="location" style="visibility: hidden; display: none; height:100%; width:100%">
 	<button onclick="showMap();">MAP</button>
 	<button onclick="showSettings();">SETTINGS</button>
+	<button name="deactivate" id="deactivate" onclick="deactivate();">DISMISS ALARM</button>
 	
 	
 	<section id="map_section" style="width:100%; height:100%; margin-top:20px;">
