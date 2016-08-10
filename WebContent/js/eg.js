@@ -255,7 +255,6 @@
 		  document.getElementById('set_number').value = QueryString.gsm_number;
 		  document.getElementById('set_email').value = QueryString.email;
 		  document.getElementById('set_refresh_time').value = QueryString.refresh_time;
-		  document.getElementById('refresh_time').value = data.refresh_time  + " MIN";
 		  
 		  initialize();
 		  setInterval(initialize, 30000);
