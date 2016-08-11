@@ -431,7 +431,12 @@ public class ObuData {
 		boolean isTok = false;
 		
 	    try {
-	    	con = DbManager.getConnection("config");
+	    	//če je engine guard dam alarm
+			EngineGuardData egData = new EngineGuardData();
+			egData.setAlarm(obu.getUid() + "", null);
+			//
+			
+			con = DbManager.getConnection("config");
 			stmt = con.createStatement();   	
 
 			//fake zaradi kite, ko posilja takale podatke
@@ -1351,7 +1356,12 @@ public class ObuData {
 		ResultSet rs = null;
 
 		try {
-			if (obuid == 41 || obuid == 45 || obuid == 46) {
+			String sql = "select * from engineguards where active=1 and uid = " + obuid;
+
+			stmt = con.createStatement();
+			rs = stmt.executeQuery(sql);
+
+			if (rs.next()) {
 				EngineGuardData egData = new EngineGuardData();
 				egData.setAlarm(obuid + "", null);
 				return;
@@ -1360,7 +1370,7 @@ public class ObuData {
 			con = DbManager.getConnection("config");
 			stmt = con.createStatement();
 
-			String sql = "select * " + "from alarm_data " + "where id_alarm = "
+			sql = "select * " + "from alarm_data " + "where id_alarm = "
 					+ alarmid + " and id_obu = " + obuid + " and confirmed=0";
 
 			stmt = con.createStatement();
