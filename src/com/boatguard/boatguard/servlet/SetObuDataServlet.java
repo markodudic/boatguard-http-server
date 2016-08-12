@@ -3,11 +3,11 @@ package com.boatguard.boatguard.servlet;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Logger;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -15,7 +15,6 @@ import com.boatguard.boatguard.dao.ObuData;
 import com.boatguard.boatguard.objects.Obu;
 import com.boatguard.boatguard.objects.ObuSetting;
 import com.boatguard.boatguard.util.Constant;
-import com.boatguard.boatguard.util.HttpLog;
 
 
 public class SetObuDataServlet extends InitServlet {
@@ -49,6 +48,11 @@ public class SetObuDataServlet extends InitServlet {
 
 		String gsmnum = (String) request.getParameter("gsmnum");
 		String serial = (String) request.getParameter("serial");
+		if (serial == null) {
+			//zaradi kitine slamparije iščem "SKOK2=Dserial" če obstaja
+			serial = (String) request.getParameter("SKOK2");
+			serial = serial.replace("Dserial=", "");
+		}
 		String data = (String) request.getParameter("data");
 		
 		ObuData obuData = new ObuData();
