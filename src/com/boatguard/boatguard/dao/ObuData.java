@@ -1356,6 +1356,8 @@ public class ObuData {
 		ResultSet rs = null;
 
 		try {
+			con = DbManager.getConnection("config");
+			
 			String sql = "select * from engineguards where active=1 and uid = " + obuid;
 
 			stmt = con.createStatement();
@@ -1366,9 +1368,6 @@ public class ObuData {
 				egData.setAlarm(obuid + "", null);
 				return;
 			}
-
-			con = DbManager.getConnection("config");
-			stmt = con.createStatement();
 
 			sql = "select * " + "from alarm_data " + "where id_alarm = "
 					+ alarmid + " and id_obu = " + obuid + " and confirmed=0";
