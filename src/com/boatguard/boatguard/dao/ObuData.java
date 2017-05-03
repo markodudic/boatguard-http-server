@@ -620,7 +620,7 @@ public class ObuData {
 			    			Integer geoFixValue = Integer.parseInt(states[Constant.OBU_GEO_FIX_VALUE]);
 			    			
 			    			//ce je geo_fix=0 prepisem stare koordinate
-			    			if (geoFixValue != Constant.GEO_FIX_OK_VALUE) {
+			    			if (geoFixValue != Constant.GEO_FIX_OK_VALUE && obu.getUid() != 19) {
 			    				if (lastStateData.get(state.getId()) != null) {
 				    				stateValue = lastStateData.get(state.getId()).getValue();
 				    				if (state.getId() == Constant.STATE_LON_VALUE) {
